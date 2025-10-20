@@ -1,0 +1,56 @@
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
+
+export function HeroSection() {
+	return (
+		<section className="relative py-20 md:py-32 overflow-hidden">
+			{/* Background gradient effect */}
+			<div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/20 via-background to-background" />
+
+			<div className="container">
+				<div className="mx-auto max-w-4xl text-center">
+					{/* Badge */}
+					<div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm">
+						<Sparkles className="h-4 w-4 text-primary" />
+						<span className="text-muted-foreground">AI-Powered Customer Engagement</span>
+					</div>
+
+					{/* Heading */}
+					<h1 className="mb-6 text-4xl font-bold tracking-tight text-balance sm:text-5xl md:text-6xl lg:text-7xl">
+						Create AI Agents That Engage Your Customers <span className="text-primary">24/7</span>
+					</h1>
+
+					{/* Description */}
+					<p className="mb-10 text-lg text-muted-foreground text-pretty leading-relaxed md:text-xl max-w-3xl mx-auto">
+						Build specialized AI agents with custom prompts and connect them to WhatsApp and your website. Automate customer support, boost
+						engagement, and scale your business effortlessly.
+					</p>
+
+					{/* CTA Buttons */}
+					<div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+						<Button size="lg" className="gap-2 text-base" asChild>
+							<Link href="/sign-up">
+								Start Free Trial
+								<ArrowRight className="h-5 w-5" />
+							</Link>
+						</Button>
+						<Button size="lg" variant="outline" className="text-base bg-transparent" asChild>
+							<Link href="/pricing">View Pricing</Link>
+						</Button>
+					</div>
+
+					{/* Social proof */}
+					<p className="mt-8 text-sm text-muted-foreground">Trusted by 10,000+ businesses worldwide</p>
+				</div>
+
+				{/* Hero image placeholder */}
+				<div className="mt-16 mx-auto max-w-5xl">
+					<div className="rounded-xl border border-border bg-muted/30 p-2 shadow-2xl">
+						<img src="/modern-ai-chatbot-dashboard-interface-with-dark-th.jpg" alt="AgentHub Dashboard Preview" className="rounded-lg w-full" />
+					</div>
+				</div>
+			</div>
+		</section>
+	);
+}
