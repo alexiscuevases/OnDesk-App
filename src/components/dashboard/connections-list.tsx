@@ -3,101 +3,152 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Globe, Smartphone, Mail, Check, Plus } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { MessageCircle, Globe, Smartphone, Mail, Check, Plus, Loader2, Plug } from "lucide-react";
 import { ConnectIntegrationDialog } from "./connect-integration-dialog";
 import { ManageIntegrationDialog } from "./manage-integration-dialog";
+import { useConnections } from "@/hooks/use-connections";
 
-const connections = [
+const availableIntegrations = [
 	{
 		id: "whatsapp",
 		name: "WhatsApp Business",
-		description: "Connect your agents to WhatsApp for customer messaging",
+		description: "Conecta tus agentes a WhatsApp para mensajería con clientes",
 		icon: MessageCircle,
-		status: "connected",
-		connectedAccounts: 2,
 	},
 	{
 		id: "website",
-		name: "Website Widget",
-		description: "Embed a chat widget on your website",
+		name: "Widget de Sitio Web",
+		description: "Integra un widget de chat en tu sitio web",
 		icon: Globe,
-		status: "connected",
-		connectedAccounts: 3,
 	},
 	{
 		id: "sms",
 		name: "SMS",
-		description: "Send and receive SMS messages with your agents",
+		description: "Envía y recibe mensajes SMS con tus agentes",
 		icon: Smartphone,
-		status: "available",
-		connectedAccounts: 0,
 	},
 	{
 		id: "email",
 		name: "Email",
-		description: "Handle customer emails with AI-powered responses",
+		description: "Maneja emails de clientes con respuestas impulsadas por IA",
 		icon: Mail,
-		status: "available",
-		connectedAccounts: 0,
 	},
 ];
 
+const getIntegrationIcon = (type: string) => {
+	const integration = availableIntegrations.find((i) => i.id === type.toLowerCase());
+	return integration?.icon || Plug;
+};
+
 export function ConnectionsList() {
-	return (
-		<div className="grid gap-4 md:grid-cols-2">
-			{connections.map((connection) => (
-				<Card key={connection.id}>
-					<CardHeader>
-						<div className="flex items-start justify-between">
-							<div className="flex items-center gap-3">
-								<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-									<connection.icon className="h-5 w-5 text-primary" />
-								</div>
-								<div>
-									<CardTitle className="text-lg">{connection.name}</CardTitle>
-									<Badge variant={connection.status === "connected" ? "default" : "outline"} className="mt-1 text-xs">
-										{connection.status === "connected" && <Check className="mr-1 h-3 w-3" />}
-										{connection.status === "connected" ? "Connected" : "Available"}
-									</Badge>
+	const { connections, isLoading, error } = useConnections();
+
+	if (isLoading) {
+		return (
+			<div className="grid gap-4 md:grid-cols-2">
+				{[1, 2, 3, 4].map((i) => (
+					<Card key={i}>
+						<CardHeader>
+							<div className="flex items-start justify-between">
+								<div className="flex items-center gap-3">
+									<Skeleton className="h-10 w-10 rounded-lg" />
+									<div className="space-y-2">
+										<Skeleton className="h-5 w-32" />
+										<Skeleton className="h-4 w-20" />
+									</div>
 								</div>
 							</div>
-						</div>
-					</CardHeader>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<Skeleton className="h-4 w-full" />
+							<Skeleton className="h-4 w-3/4" />
+							<Skeleton className="h-8 w-full" />
+						</CardContent>
+					</Card>
+				))}
+			</div>
+		);
+	}
 
-					<CardContent className="space-y-4">
-						<CardDescription className="leading-relaxed">{connection.description}</CardDescription>
+	if (error) {
+		return (
+			<Card>
+				<CardContent className="p-8 text-center">
+					<p className="text-destructive">Error: {error}</p>
+				</CardContent>
+			</Card>
+		);
+	}
 
-						{connection.status === "connected" && (
-							<p className="text-sm text-muted-foreground">
-								{connection.connectedAccounts} {connection.connectedAccounts === 1 ? "account" : "accounts"} connected
-							</p>
-						)}
+	// Group connections by type to count
+	const connectionsByType = connections.reduce((acc, conn) => {
+		const type = conn.type.toLowerCase();
+		if (!acc[type]) acc[type] = [];
+		acc[type].push(conn);
+		return acc;
+	}, {} as Record<string, typeof connections>);
 
-						<div className="flex gap-2">
-							{connection.status === "connected" ? (
-								<>
-									<ManageIntegrationDialog integration={connection}>
-										<Button variant="outline" size="sm" className="flex-1 bg-transparent">
-											Manage
-										</Button>
-									</ManageIntegrationDialog>
-									<ConnectIntegrationDialog integration={connection}>
-										<Button variant="outline" size="sm">
-											<Plus className="h-4 w-4" />
+	return (
+		<div className="grid gap-4 md:grid-cols-2">
+			{availableIntegrations.map((integration) => {
+				const connectedCount = connectionsByType[integration.id]?.length || 0;
+				const isConnected = connectedCount > 0;
+
+				return (
+					<Card key={integration.id}>
+						<CardHeader>
+							<div className="flex items-start justify-between">
+								<div className="flex items-center gap-3">
+									<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+										<integration.icon className="h-5 w-5 text-primary" />
+									</div>
+									<div>
+										<CardTitle className="text-lg">{integration.name}</CardTitle>
+										<Badge variant={isConnected ? "default" : "outline"} className="mt-1 text-xs">
+											{isConnected && <Check className="mr-1 h-3 w-3" />}
+											{isConnected ? "Conectado" : "Disponible"}
+										</Badge>
+									</div>
+								</div>
+							</div>
+						</CardHeader>
+
+						<CardContent className="space-y-4">
+							<CardDescription className="leading-relaxed">{integration.description}</CardDescription>
+
+							{isConnected && (
+								<p className="text-sm text-muted-foreground">
+									{connectedCount} {connectedCount === 1 ? "cuenta conectada" : "cuentas conectadas"}
+								</p>
+							)}
+
+							<div className="flex gap-2">
+								{isConnected ? (
+									<>
+										<ManageIntegrationDialog integration={integration}>
+											<Button variant="outline" size="sm" className="flex-1 bg-transparent">
+												Administrar
+											</Button>
+										</ManageIntegrationDialog>
+										<ConnectIntegrationDialog integration={integration}>
+											<Button variant="outline" size="sm">
+												<Plus className="h-4 w-4" />
+											</Button>
+										</ConnectIntegrationDialog>
+									</>
+								) : (
+									<ConnectIntegrationDialog integration={integration}>
+										<Button size="sm" className="flex-1">
+											Conectar
 										</Button>
 									</ConnectIntegrationDialog>
-								</>
-							) : (
-								<ConnectIntegrationDialog integration={connection}>
-									<Button size="sm" className="flex-1">
-										Connect
-									</Button>
-								</ConnectIntegrationDialog>
-							)}
-						</div>
-					</CardContent>
-				</Card>
-			))}
+								)}
+							</div>
+						</CardContent>
+					</Card>
+				);
+			})}
 		</div>
 	);
 }

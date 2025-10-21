@@ -1,96 +1,144 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus } from "lucide-react"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Loader2 } from "lucide-react";
+import { useAgents } from "@/hooks/use-agents";
+import { toast } from "sonner";
+import { agentSchema, type AgentInput } from "@/lib/validations/agent";
 
 export function CreateAgentDialog() {
-  const [open, setOpen] = useState(false)
+	const [open, setOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const { createAgent } = useAgents();
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Agent
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Create New Agent</DialogTitle>
-          <DialogDescription>
-            Configure your AI agent with a name, description, and specialized prompt
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Agent Name</Label>
-            <Input id="name" placeholder="e.g., Support Bot" />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
-            <Input id="description" placeholder="Brief description of what this agent does" />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="type">Agent Type</Label>
-            <Select defaultValue="support">
-              <SelectTrigger id="type">
-                <SelectValue placeholder="Select agent type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="support">Customer Support</SelectItem>
-                <SelectItem value="sales">Sales Assistant</SelectItem>
-                <SelectItem value="technical">Technical Support</SelectItem>
-                <SelectItem value="onboarding">Onboarding Guide</SelectItem>
-                <SelectItem value="custom">Custom</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="prompt">System Prompt</Label>
-            <Textarea
-              id="prompt"
-              placeholder="You are a helpful customer support agent. Your goal is to..."
-              className="min-h-[120px]"
-            />
-            <p className="text-xs text-muted-foreground">
-              This prompt defines your agent's personality, knowledge, and behavior
-            </p>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="model">AI Model</Label>
-            <Select defaultValue="gpt-4">
-              <SelectTrigger id="model">
-                <SelectValue placeholder="Select AI model" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="gpt-4">GPT-4 (Recommended)</SelectItem>
-                <SelectItem value="gpt-3.5">GPT-3.5 Turbo</SelectItem>
-                <SelectItem value="claude">Claude 3</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={() => setOpen(false)}>Create Agent</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+		setValue,
+		watch,
+	} = useForm<AgentInput>({
+		resolver: zodResolver(agentSchema),
+		defaultValues: {
+			type: "support",
+			model: "gpt-4",
+			temperature: 0.7,
+			maxTokens: 500,
+			status: "active",
+		},
+	});
+
+	const onSubmit = async (data: AgentInput) => {
+		setIsLoading(true);
+		try {
+			await createAgent(data);
+			toast.success("Agente creado", {
+				description: "El agente ha sido creado exitosamente.",
+			});
+			setOpen(false);
+			reset();
+		} catch (error: any) {
+			toast.error("Error", {
+				description: error.message || "No se pudo crear el agente",
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button>
+					<Plus className="mr-2 h-4 w-4" />
+					Crear Agente
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[600px]">
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<DialogHeader>
+						<DialogTitle>Crear Nuevo Agente</DialogTitle>
+						<DialogDescription>Configura tu agente de IA con un nombre, descripción y prompt especializado</DialogDescription>
+					</DialogHeader>
+					<div className="grid gap-4 py-4">
+						<div className="grid gap-2">
+							<Label htmlFor="name">Nombre del Agente</Label>
+							<Input id="name" placeholder="ej., Bot de Soporte" {...register("name")} />
+							{errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="description">Descripción</Label>
+							<Input id="description" placeholder="Breve descripción de lo que hace este agente" {...register("description")} />
+							{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="type">Tipo de Agente</Label>
+							<Select value={watch("type")} onValueChange={(value) => setValue("type", value)}>
+								<SelectTrigger id="type">
+									<SelectValue placeholder="Selecciona el tipo de agente" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="support">Soporte al Cliente</SelectItem>
+									<SelectItem value="sales">Asistente de Ventas</SelectItem>
+									<SelectItem value="technical">Soporte Técnico</SelectItem>
+									<SelectItem value="onboarding">Guía de Onboarding</SelectItem>
+									<SelectItem value="custom">Personalizado</SelectItem>
+								</SelectContent>
+							</Select>
+							{errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="systemPrompt">Prompt del Sistema</Label>
+							<Textarea
+								id="systemPrompt"
+								placeholder="Eres un agente de soporte al cliente útil. Tu objetivo es..."
+								className="min-h-[120px]"
+								{...register("systemPrompt")}
+							/>
+							<p className="text-xs text-muted-foreground">Este prompt define la personalidad, conocimiento y comportamiento de tu agente</p>
+							{errors.systemPrompt && <p className="text-xs text-destructive">{errors.systemPrompt.message}</p>}
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="model">Modelo de IA</Label>
+							<Select value={watch("model")} onValueChange={(value) => setValue("model", value)}>
+								<SelectTrigger id="model">
+									<SelectValue placeholder="Selecciona el modelo de IA" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="gpt-4">GPT-4 (Recomendado)</SelectItem>
+									<SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
+									<SelectItem value="claude-3">Claude 3</SelectItem>
+								</SelectContent>
+							</Select>
+							{errors.model && <p className="text-xs text-destructive">{errors.model.message}</p>}
+						</div>
+					</div>
+					<DialogFooter>
+						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+							Cancelar
+						</Button>
+						<Button type="submit" disabled={isLoading}>
+							{isLoading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Creando...
+								</>
+							) : (
+								"Crear Agente"
+							)}
+						</Button>
+					</DialogFooter>
+				</form>
+			</DialogContent>
+		</Dialog>
+	);
 }

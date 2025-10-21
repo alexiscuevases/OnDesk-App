@@ -7,23 +7,38 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Loader2 } from "lucide-react";
+import { useTeam, type TeamMember } from "@/hooks/use-team";
+import { toast } from "sonner";
 
 interface ChangeRoleDialogProps {
 	children: React.ReactNode;
-	member: {
-		name: string;
-		currentRole: string;
-	};
+	member: TeamMember;
 }
 
 export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 	const [open, setOpen] = useState(false);
-	const [selectedRole, setSelectedRole] = useState(member.currentRole.toLowerCase());
+	const [selectedRole, setSelectedRole] = useState(member.role.toLowerCase());
+	const [isLoading, setIsLoading] = useState(false);
+	const { updateTeamMemberRole } = useTeam();
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		// Handle role change logic here
-		setOpen(false);
+		setIsLoading(true);
+
+		try {
+			await updateTeamMemberRole(member.id, selectedRole);
+			toast.success("Rol actualizado", {
+				description: `El rol de ${member.email} ha sido actualizado a ${selectedRole}.`,
+			});
+			setOpen(false);
+		} catch (error: any) {
+			toast.error("Error", {
+				description: error.message || "No se pudo actualizar el rol",
+			});
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -32,8 +47,8 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 			<DialogContent className="sm:max-w-[450px]">
 				<form onSubmit={handleSubmit}>
 					<DialogHeader>
-						<DialogTitle>Change Role</DialogTitle>
-						<DialogDescription>Update the role for {member.name}</DialogDescription>
+						<DialogTitle>Cambiar Rol</DialogTitle>
+						<DialogDescription>Actualizar el rol para {member.email}</DialogDescription>
 					</DialogHeader>
 
 					<div className="py-6">
@@ -45,7 +60,7 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 										Admin
 									</Label>
 									<p className="text-sm text-muted-foreground">
-										Can manage team members, agents, and all settings. Cannot delete the workspace.
+										Puede gestionar miembros del equipo, agentes y todas las configuraciones. No puede eliminar el workspace.
 									</p>
 								</div>
 							</div>
@@ -54,10 +69,10 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 								<RadioGroupItem value="member" id="member" />
 								<div className="space-y-1 leading-none">
 									<Label htmlFor="member" className="font-medium cursor-pointer">
-										Member
+										Miembro
 									</Label>
 									<p className="text-sm text-muted-foreground">
-										Can create and manage agents, view conversations, and access analytics. Cannot manage team or billing.
+										Puede crear y gestionar agentes, ver conversaciones y acceder a análisis. No puede gestionar equipo o facturación.
 									</p>
 								</div>
 							</div>
@@ -66,19 +81,30 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 								<RadioGroupItem value="viewer" id="viewer" />
 								<div className="space-y-1 leading-none">
 									<Label htmlFor="viewer" className="font-medium cursor-pointer">
-										Viewer
+										Observador
 									</Label>
-									<p className="text-sm text-muted-foreground">Can only view conversations and analytics. Cannot create or modify agents.</p>
+									<p className="text-sm text-muted-foreground">
+										Solo puede ver conversaciones y análisis. No puede crear o modificar agentes.
+									</p>
 								</div>
 							</div>
 						</RadioGroup>
 					</div>
 
 					<DialogFooter>
-						<Button type="button" variant="outline" onClick={() => setOpen(false)}>
-							Cancel
+						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+							Cancelar
 						</Button>
-						<Button type="submit">Update Role</Button>
+						<Button type="submit" disabled={isLoading}>
+							{isLoading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Actualizando...
+								</>
+							) : (
+								"Actualizar Rol"
+							)}
+						</Button>
 					</DialogFooter>
 				</form>
 			</DialogContent>

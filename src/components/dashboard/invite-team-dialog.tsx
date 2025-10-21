@@ -1,69 +1,109 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
+import { useTeam } from "@/hooks/use-team";
+import { toast } from "sonner";
+import { inviteTeamMemberSchema, type InviteTeamMemberInput } from "@/lib/validations/team";
 
 export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+	const [open, setOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const { inviteTeamMember } = useTeam();
 
-  const handleInvite = () => {
-    // Handle invitation logic
-    setOpen(false)
-  }
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+		setValue,
+		watch,
+	} = useForm<InviteTeamMemberInput>({
+		resolver: zodResolver(inviteTeamMemberSchema),
+		defaultValues: {
+			role: "member",
+		},
+	});
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Invite Team Member</DialogTitle>
-          <DialogDescription>Send an invitation to join your workspace</DialogDescription>
-        </DialogHeader>
+	const onSubmit = async (data: InviteTeamMemberInput) => {
+		setIsLoading(true);
+		try {
+			await inviteTeamMember(data);
+			toast.success("Invitación enviada", {
+				description: `Se ha enviado una invitación a ${data.email}.`,
+			});
+			setOpen(false);
+			reset();
+		} catch (error: any) {
+			toast.error("Error", {
+				description: error.message || "No se pudo enviar la invitación",
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="invite-email">Email Address</Label>
-            <Input id="invite-email" type="email" placeholder="colleague@example.com" />
-          </div>
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogContent>
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<DialogHeader>
+						<DialogTitle>Invitar Miembro del Equipo</DialogTitle>
+						<DialogDescription>Envía una invitación para unirse a tu espacio de trabajo</DialogDescription>
+					</DialogHeader>
 
-          <div className="space-y-2">
-            <Label htmlFor="invite-role">Role</Label>
-            <Select defaultValue="member">
-              <SelectTrigger id="invite-role">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="member">Member</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Admins can manage team members and settings. Members can create and manage agents.
-            </p>
-          </div>
-        </div>
+					<div className="space-y-4 py-4">
+						<div className="space-y-2">
+							<Label htmlFor="invite-email">Dirección de Email</Label>
+							<Input id="invite-email" type="email" placeholder="colega@ejemplo.com" {...register("email")} />
+							{errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+						</div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleInvite}>Send Invitation</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+						<div className="space-y-2">
+							<Label htmlFor="invite-role">Rol</Label>
+							<Select value={watch("role")} onValueChange={(value) => setValue("role", value)}>
+								<SelectTrigger id="invite-role">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="admin">Admin</SelectItem>
+									<SelectItem value="member">Miembro</SelectItem>
+								</SelectContent>
+							</Select>
+							{errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}
+							<p className="text-xs text-muted-foreground">
+								Los Admins pueden gestionar miembros del equipo y configuraciones. Los Miembros pueden crear y gestionar agentes.
+							</p>
+						</div>
+					</div>
+
+					<DialogFooter>
+						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+							Cancelar
+						</Button>
+						<Button type="submit" disabled={isLoading}>
+							{isLoading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Enviando...
+								</>
+							) : (
+								"Enviar Invitación"
+							)}
+						</Button>
+					</DialogFooter>
+				</form>
+			</DialogContent>
+		</Dialog>
+	);
 }
