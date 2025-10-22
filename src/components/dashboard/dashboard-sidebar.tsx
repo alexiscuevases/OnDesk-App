@@ -43,8 +43,8 @@ export function DashboardSidebar() {
 	const pathname = usePathname();
 
 	return (
-		<Sidebar>
-			<SidebarHeader className="border-b border-sidebar-border p-4">
+		<Sidebar className="border-none">
+			<SidebarHeader className="p-4">
 				<Link href="/dashboard" className="flex items-center gap-2">
 					<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
 						<Bot className="h-5 w-5 text-sidebar-primary-foreground" />
@@ -91,7 +91,7 @@ export function DashboardSidebar() {
 				</SidebarGroup>
 			</SidebarContent>
 
-			<SidebarFooter className="border-t border-sidebar-border p-4">
+			<SidebarFooter className="p-4">
 				<DropdownMenu>
 					<DropdownMenuTrigger className="w-full">
 						<div className="flex items-center gap-3 rounded-lg p-2 hover:bg-sidebar-accent transition-colors">
