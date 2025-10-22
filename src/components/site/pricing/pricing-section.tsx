@@ -10,7 +10,7 @@ const plans = [
 		description: "Perfect for small businesses getting started with AI agents",
 		features: ["1 AI Agent", "1,000 conversations/month", "WhatsApp integration", "Website chat widget", "Basic analytics", "Email support"],
 		cta: "Start Free Trial",
-		href: "/sign-up?plan=starter",
+		href: "/auth/sign-up?plan=starter",
 		popular: false,
 	},
 	{
@@ -28,7 +28,7 @@ const plans = [
 			"Priority support",
 		],
 		cta: "Start Free Trial",
-		href: "/sign-up?plan=professional",
+		href: "/auth/sign-up?plan=professional",
 		popular: true,
 	},
 	{

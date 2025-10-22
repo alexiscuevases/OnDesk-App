@@ -69,11 +69,11 @@ export function SignUpForm() {
 				<Checkbox id="terms" checked={agreedToTerms} onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)} />
 				<label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
 					I agree to the{" "}
-					<Link href="/terms" className="text-primary hover:underline">
+					<Link href="/legal/terms" className="text-primary hover:underline">
 						Terms of Service
 					</Link>{" "}
 					and{" "}
-					<Link href="/privacy" className="text-primary hover:underline">
+					<Link href="/legal/privacy" className="text-primary hover:underline">
 						Privacy Policy
 					</Link>
 				</label>

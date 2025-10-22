@@ -30,17 +30,14 @@ export function SiteHeader() {
 					<Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
 						Blog
 					</Link>
-					<Link href="/roadmap" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-						Roadmap
-					</Link>
 				</nav>
 
 				<div className="flex items-center gap-3">
 					<Button variant="ghost" asChild>
-						<Link href="/sign-in">Sign In</Link>
+						<Link href="/auth/sign-in">Sign In</Link>
 					</Button>
 					<Button asChild>
-						<Link href="/sign-up">Get Started</Link>
+						<Link href="/auth/sign-up">Get Started</Link>
 					</Button>
 				</div>
 			</div>

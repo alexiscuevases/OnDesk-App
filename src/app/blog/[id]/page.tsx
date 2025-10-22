@@ -207,7 +207,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
 								Start building AI agents that engage customers 24/7 across all channels.
 							</p>
 							<Button size="lg" asChild>
-								<Link href="/sign-up">Get Started Free</Link>
+								<Link href="/auth/sign-up">Get Started Free</Link>
 							</Button>
 						</div>
 					</div>

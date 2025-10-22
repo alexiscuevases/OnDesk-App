@@ -36,6 +36,11 @@ export function SiteFooter() {
 									Roadmap
 								</Link>
 							</li>
+							<li>
+								<Link href="/faq" className="text-muted-foreground hover:text-foreground transition-colors">
+									FAQ
+								</Link>
+							</li>
 						</ul>
 					</div>
 
@@ -58,11 +63,6 @@ export function SiteFooter() {
 									Contact
 								</Link>
 							</li>
-							<li>
-								<Link href="/faq" className="text-muted-foreground hover:text-foreground transition-colors">
-									FAQ
-								</Link>
-							</li>
 						</ul>
 					</div>
 
@@ -71,12 +71,12 @@ export function SiteFooter() {
 						<h3 className="mb-3 text-sm font-semibold">Legal</h3>
 						<ul className="space-y-2 text-sm">
 							<li>
-								<Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+								<Link href="/legal/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
 									Privacy Policy
 								</Link>
 							</li>
 							<li>
-								<Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
+								<Link href="/legal/terms" className="text-muted-foreground hover:text-foreground transition-colors">
 									Terms of Service
 								</Link>
 							</li>

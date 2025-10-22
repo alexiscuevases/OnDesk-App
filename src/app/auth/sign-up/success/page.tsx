@@ -19,7 +19,7 @@ export default function SignUpSuccessPage() {
 						Please check your email and click the confirmation link to activate your account. Once confirmed, you can sign in and select your plan.
 					</p>
 					<Button asChild className="w-full">
-						<Link href="/sign-in">Go to Sign In</Link>
+						<Link href="/auth/sign-in">Go to Sign In</Link>
 					</Button>
 				</CardContent>
 			</Card>
