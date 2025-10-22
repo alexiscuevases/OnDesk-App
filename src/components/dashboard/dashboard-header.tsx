@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bell, Search, Menu, Loader2 } from "lucide-react";
+import { Bell, Search, Menu, Loader2, Sun, Moon } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 import {
 	DropdownMenu,
@@ -18,10 +18,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNotifications } from "@/hooks/use-notifications";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { useTheme } from "next-themes";
 
 export function DashboardHeader() {
 	const { toggleSidebar } = useSidebar();
 	const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useNotifications();
+	const { setTheme } = useTheme();
 
 	// Mostrar solo las 5 notificaciones más recientes
 	const recentNotifications = notifications.slice(0, 5);
@@ -127,6 +129,21 @@ export function DashboardHeader() {
 								<Link href="/dashboard/notifications">Ver todas las notificaciones</Link>
 							</Button>
 						</div>
+					</DropdownMenuContent>
+				</DropdownMenu>
+
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" size="icon">
+							<Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+							<Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+							<span className="sr-only">Toggle theme</span>
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
