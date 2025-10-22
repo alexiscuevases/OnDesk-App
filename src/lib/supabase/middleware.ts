@@ -2,9 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-	if (request.nextUrl.pathname.startsWith("/api/webhooks")) {
-		return NextResponse.next();
-	}
+	// Skip for api
+	if (request.nextUrl.pathname.startsWith("/api")) return NextResponse.next();
 
 	let supabaseResponse = NextResponse.next({
 		request,
@@ -30,9 +29,9 @@ export async function updateSession(request: NextRequest) {
 	} = await supabase.auth.getUser();
 
 	// Allow public routes
-	const publicRoutes = ["/", "/pricing", "/about", "/contact", "/blog", "/roadmap", "/faq", "/terms", "/privacy", "/sign-in", "/sign-up", "/sign-up-success"];
+	const publicRoutes = ["/pricing", "/about", "/contact", "/blog", "/roadmap", "/faq", "/terms", "/privacy", "/sign-in", "/sign-up", "/sign-up-success"];
 
-	const isPublicRoute = publicRoutes.some((route) => route !== "/" && request.nextUrl.pathname.startsWith(route));
+	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
 
 	// Redirect to sign-in if not authenticated and trying to access protected route
 	if (!user && !isPublicRoute) {

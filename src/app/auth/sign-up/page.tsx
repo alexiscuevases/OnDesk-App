@@ -1,4 +1,4 @@
-import { SignUpForm } from "@/components/auth/sign-up-form";
+import { SignUpForm } from "@/components/site/auth/sign-up-form";
 import { Bot } from "lucide-react";
 import Link from "next/link";
 

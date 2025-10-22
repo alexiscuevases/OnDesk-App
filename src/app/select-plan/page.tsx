@@ -7,7 +7,7 @@ import { Check, Loader2 } from "lucide-react";
 import { PRODUCTS } from "@/lib/products";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { startCheckoutSession, verifyCheckoutSession } from "@/app/actions/stripe";
+import { startCheckoutSession, verifyCheckoutSession } from "@/actions/stripe";
 import { useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";

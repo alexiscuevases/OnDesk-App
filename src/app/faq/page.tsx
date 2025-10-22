@@ -1,5 +1,5 @@
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
+import { SiteFooter } from "@/components/site/site-footer";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";

@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CreditCard, Download } from "lucide-react";
-import { ChangePlanDialog } from "../change-plan-dialog";
-import { CancelSubscriptionDialog } from "../cancel-subscription-dialog";
-import { UpdatePaymentDialog } from "../update-payment-dialog";
+import { ChangePlanDialog } from "../dialogs/change-plan-dialog";
+import { CancelSubscriptionDialog } from "../dialogs/cancel-subscription-dialog";
+import { UpdatePaymentDialog } from "../dialogs/update-payment-dialog";
 
 export function BillingSettings() {
 	return (

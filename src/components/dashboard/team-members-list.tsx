@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Mail, Loader2, Users } from "lucide-react";
-import { ChangeRoleDialog } from "./change-role-dialog";
+import { ChangeRoleDialog } from "./dialogs/change-role-dialog";
 import { useTeam } from "@/hooks/use-team";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
