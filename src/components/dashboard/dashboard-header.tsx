@@ -86,7 +86,7 @@ export function DashboardHeader() {
 											Marcar todas como leídas
 										</Button>
 									)}
-									<Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-primary" asChild>
+									<Button variant="ghost" size="sm" className="h-auto px-2 py-1 text-xs text-primary" asChild>
 										<Link href="/dashboard/notifications">Ver todas</Link>
 									</Button>
 								</div>
