@@ -6,7 +6,7 @@ export function HeroSection() {
 	return (
 		<section className="relative py-20 md:py-32 overflow-hidden">
 			{/* Background gradient effect */}
-			<div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/20 via-background to-background" />
+			<div className="absolute inset-0 -z-10 from-accent/20 via-background to-background" />
 
 			<div className="container">
 				<div className="mx-auto max-w-4xl text-center">
@@ -46,9 +46,11 @@ export function HeroSection() {
 
 				{/* Hero image placeholder */}
 				<div className="mt-16 mx-auto max-w-5xl">
-					<div className="rounded-xl border border-border bg-muted/30 p-2 shadow-2xl">
-						<img src="/modern-ai-chatbot-dashboard-interface-with-dark-th.jpg" alt="AgentHub Dashboard Preview" className="rounded-lg w-full" />
-					</div>
+					<img
+						src="/modern-ai-chatbot-dashboard-interface-with-dark-th.jpg"
+						alt="AgentHub Dashboard Preview"
+						className="rounded-4xl shadow-2xl w-full"
+					/>
 				</div>
 			</div>
 		</section>

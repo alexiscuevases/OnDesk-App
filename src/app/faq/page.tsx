@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { MessageCircle, Mail } from "lucide-react";
 import Link from "next/link";
 
@@ -157,10 +157,10 @@ export default function FAQPage() {
 
 				{/* Contact CTA */}
 				<section className="container pb-16 md:pb-24">
-					<div className="mx-auto max-w-4xl">
-						<Card className="p-8 md:p-12 text-center bg-primary/5 border-primary/20">
-							<h2 className="text-2xl font-bold mb-3">Still have questions?</h2>
-							<p className="text-muted-foreground mb-6 leading-relaxed">
+					<Card className="mx-auto max-w-4xl p-8 md:p-12 text-center">
+						<CardContent>
+							<h2 className="text-3xl font-bold mb-3">Still have questions?</h2>
+							<p className="text-muted-foreground text-lg mb-6 leading-relaxed">
 								Can't find the answer you're looking for? Our support team is here to help.
 							</p>
 							<div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -177,8 +177,8 @@ export default function FAQPage() {
 									</Link>
 								</Button>
 							</div>
-						</Card>
-					</div>
+						</CardContent>
+					</Card>
 				</section>
 			</main>
 			<SiteFooter />

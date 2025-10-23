@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bot, Home, Users, MessageSquare, Settings, BarChart3, Plug, LogOut, Bell } from "lucide-react";
+import { Bot, Home, Users, MessageSquare, Settings, BarChart3, Plug, Bell } from "lucide-react";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
@@ -15,15 +14,6 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const mainNavItems = [
 	{ title: "Home", href: "/dashboard", icon: Home },
@@ -90,38 +80,6 @@ export function DashboardSidebar() {
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarContent>
-
-			<SidebarFooter className="p-4">
-				<DropdownMenu>
-					<DropdownMenuTrigger className="w-full">
-						<div className="flex items-center gap-3 rounded-lg p-2 hover:bg-sidebar-accent transition-colors">
-							<Avatar className="h-8 w-8">
-								<AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-								<AvatarFallback>JD</AvatarFallback>
-							</Avatar>
-							<div className="flex flex-col items-start text-sm">
-								<span className="font-medium">John Doe</span>
-								<span className="text-xs text-muted-foreground">john@example.com</span>
-							</div>
-						</div>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end" className="w-56">
-						<DropdownMenuLabel>My Account</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem asChild>
-							<Link href="/dashboard/profile">Profile</Link>
-						</DropdownMenuItem>
-						<DropdownMenuItem asChild>
-							<Link href="/dashboard/settings">Settings</Link>
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem variant="destructive">
-							<LogOut className="mr-2 h-4 w-4" />
-							<span>Log out</span>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</SidebarFooter>
 		</Sidebar>
 	);
 }

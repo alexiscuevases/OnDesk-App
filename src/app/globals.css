@@ -46,20 +46,20 @@
 :root {
   --radius: 1rem; /* Changed */
   --background: lab(53.02 3.5 -65.65 / 0.03); /* Changed */
-  --foreground: oklch(0.145 0 0);
+  --foreground: lab(18.73% 0.6 -10.75); /* Changed */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --card-foreground: var(--foreground); /* Changed */
+  --popover: var(--card); /* Changed */
+  --popover-foreground: var(--foreground); /* Changed */
   --primary: oklch(.6 .2 250); /* Changed */
-  --primary-foreground: oklch(0.985 0 0);
+  --primary-foreground: var(--card); /* Changed */
   --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary-foreground: var(--foreground); /* Changed */
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(.6 .2 250 / 0.075); /* Changed */
-  --accent-foreground: oklch(.6 .2 250); /* Changed */
-  --destructive: oklch(56.337% 0.16879 21.486); /* Changed */
+  --accent-foreground: var(--primary); /* Changed */
+  --destructive: oklch(0.56 0.16879 21.486); /* Changed */
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(.6 .2 250 / 0.5); /* Changed */
@@ -68,14 +68,14 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(1 0 0); /* Changed */
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(.6 .2 250); /* Changed */
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(.6 .2 250 / 0.075); /* Changed */
-  --sidebar-accent-foreground: oklch(.6 .2 250); /* Changed */
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(.6 .2 250 / 0.5); /* Changed */
+  --sidebar: var(--card); /* Changed */
+  --sidebar-foreground: var(--foreground); /* Changed */
+  --sidebar-primary: var(--primary); /* Changed */
+  --sidebar-primary-foreground: var(--primary-foreground); /* Changed */
+  --sidebar-accent: var(--accent); /* Changed */
+  --sidebar-accent-foreground: var(--accent-foreground); /* Changed */
+  --sidebar-border: var(--border); /* Changed */
+  --sidebar-ring: var(--ring); /* Changed */
 }
 
 .dark {

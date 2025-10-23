@@ -138,7 +138,7 @@ export function AgentsList() {
 											{agent.status === "active" ? "Desactivar" : "Activar"}
 										</DropdownMenuItem>
 										<DropdownMenuSeparator />
-										<DropdownMenuItem className="text-destructive" onClick={() => handleDeleteAgent(agent.id)}>
+										<DropdownMenuItem variant="destructive" onClick={() => handleDeleteAgent(agent.id)}>
 											<Trash2 className="mr-2 h-4 w-4" />
 											Eliminar
 										</DropdownMenuItem>

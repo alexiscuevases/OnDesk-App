@@ -167,8 +167,6 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="gpt-4">GPT-4 (Recomendado)</SelectItem>
-										<SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
-										<SelectItem value="claude-3">Claude 3</SelectItem>
 									</SelectContent>
 								</Select>
 								{errors.model && <p className="text-xs text-destructive">{errors.model.message}</p>}
