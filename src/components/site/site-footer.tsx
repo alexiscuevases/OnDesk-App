@@ -3,7 +3,7 @@ import { Bot } from "lucide-react";
 
 export function SiteFooter() {
 	return (
-		<footer className="border-t border-border bg-muted/30">
+		<footer className="bg-card shadow-xs">
 			<div className="container py-12 md:py-16">
 				<div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
 					{/* Brand */}
