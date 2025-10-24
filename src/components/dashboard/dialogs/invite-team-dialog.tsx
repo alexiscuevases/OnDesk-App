@@ -78,6 +78,7 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 								<SelectContent>
 									<SelectItem value="admin">Admin</SelectItem>
 									<SelectItem value="member">Miembro</SelectItem>
+									<SelectItem value="viewer">Viewer</SelectItem>
 								</SelectContent>
 							</Select>
 							{errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}
