@@ -6,6 +6,7 @@ import { Bot, Home, Users, MessageSquare, Settings, BarChart3, Plug, Bell } from
 import {
 	Sidebar,
 	SidebarContent,
+	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
@@ -14,6 +15,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { TeamSwitcher } from "./team-switcher";
 
 const mainNavItems = [
 	{ title: "Home", href: "/dashboard", icon: Home },
@@ -80,6 +82,9 @@ export function DashboardSidebar() {
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarContent>
+			<SidebarFooter className="p-4">
+				<TeamSwitcher />
+			</SidebarFooter>
 		</Sidebar>
 	);
 }

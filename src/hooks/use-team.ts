@@ -31,6 +31,7 @@ export interface Team {
 export function useTeam() {
 	const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+	const [allTeams, setAllTeams] = useState<Team[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();
@@ -45,28 +46,56 @@ export function useTeam() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			// Obtener el team del usuario
-			const { data: teamMember, error: memberError } = await supabase
-				.from("team_members")
-				.select(
-					`
-          *,
-          teams:team_id (*)
-        `
-				)
-				.eq("user_id", user.id)
-				.eq("status", "active")
-				.single();
+			// Obtener el team_id del profile del usuario
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("team_id").eq("id", user.id).single();
 
-			if (memberError) throw memberError;
+			if (profileError) throw profileError;
 
-			if (teamMember && teamMember.teams) {
-				setCurrentTeam(teamMember.teams as Team);
+			if (profile?.team_id) {
+				// Obtener los detalles del team seleccionado
+				const { data: team, error: teamError } = await supabase.from("teams").select("*").eq("id", profile.team_id).single();
+
+				if (teamError) throw teamError;
+
+				setCurrentTeam(team);
+			} else {
+				setCurrentTeam(null);
 			}
 		} catch (err: any) {
 			setError(err.message || "Failed to fetch team");
 		} finally {
 			setIsLoading(false);
+		}
+	};
+
+	const fetchAllTeams = async () => {
+		setError(null);
+
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			// Obtener todos los teams donde el usuario es miembro
+			const { data: teamMembers, error: membersError } = await supabase
+				.from("team_members")
+				.select(
+					`
+          team_id,
+          role,
+          teams:team_id (*)
+        `
+				)
+				.eq("user_id", user.id)
+				.eq("status", "active");
+
+			if (membersError) throw membersError;
+
+			const teams = teamMembers?.map((tm: any) => tm.teams).filter(Boolean) || [];
+			setAllTeams(teams);
+		} catch (err: any) {
+			setError(err.message || "Failed to fetch teams");
 		}
 	};
 
@@ -134,10 +163,48 @@ export function useTeam() {
 
 			if (memberError) throw memberError;
 
+			// Actualizar el profile para seleccionar el nuevo team
+			await supabase.from("profiles").update({ team_id: team.id }).eq("id", user.id);
+
 			setCurrentTeam(team);
+			await fetchAllTeams();
 			return team;
 		} catch (err: any) {
 			setError(err.message || "Failed to create team");
+			throw err;
+		}
+	};
+
+	const switchTeam = async (teamId: string) => {
+		setError(null);
+
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			// Verificar que el usuario pertenezca a ese team
+			const { data: teamMember, error: memberError } = await supabase
+				.from("team_members")
+				.select("*")
+				.eq("user_id", user.id)
+				.eq("team_id", teamId)
+				.eq("status", "active")
+				.single();
+
+			if (memberError || !teamMember) throw new Error("No perteneces a este equipo");
+
+			// Actualizar el team_id en el profile
+			const { error: updateError } = await supabase.from("profiles").update({ team_id: teamId }).eq("id", user.id);
+
+			if (updateError) throw updateError;
+
+			// Actualizar el estado local
+			await fetchCurrentTeam();
+			return true;
+		} catch (err: any) {
+			setError(err.message || "Failed to switch team");
 			throw err;
 		}
 	};
@@ -221,15 +288,19 @@ export function useTeam() {
 
 	useEffect(() => {
 		fetchCurrentTeam();
+		fetchAllTeams();
 	}, []);
 
 	return {
 		teamMembers,
 		currentTeam,
+		allTeams,
 		isLoading,
 		error,
 		createTeam,
+		switchTeam,
 		fetchCurrentTeam,
+		fetchAllTeams,
 		fetchTeamMembers,
 		inviteTeamMember,
 		updateTeamMemberRole,

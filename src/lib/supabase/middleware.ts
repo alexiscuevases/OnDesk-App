@@ -39,80 +39,63 @@ export async function updateSession(request: NextRequest) {
 		return NextResponse.redirect(url);
 	}
 
-	// Check if user has a team and subscription for dashboard/create-team/select-plan access
+	// Check if user has a team and subscription for dashboard access
 	if (user && (request.nextUrl.pathname.startsWith("/dashboard") || request.nextUrl.pathname === "/")) {
-		// Verificar si el usuario tiene algún team donde sea owner o member
-		const { data: teamMember } = await supabase
-			.from("team_members")
-			.select(
-				`
-        id,
-        team_id,
-        role,
-        status,
-        teams:team_id (
-          id,
-          name,
-          owner_id,
-          stripe_subscription_id,
-          stripe_subscription_status,
-          plan
-        )
-      `
-			)
-			.eq("user_id", user.id)
-			.eq("status", "active")
-			.single();
+		// Obtener el profile del usuario para ver qué team tiene seleccionado
+		const { data: profile } = await supabase.from("profiles").select("team_id").eq("id", user.id).single();
 
-		// Si no tiene ningún team, redirigir a create-team
-		if (!teamMember || !teamMember.teams) {
-			if (request.nextUrl.pathname !== "/create-team") {
+		// Si no tiene un team seleccionado, verificar si tiene algún team
+		if (!profile?.team_id) {
+			// Verificar si el usuario pertenece a algún team
+			const { data: teamMembers } = await supabase
+				.from("team_members")
+				.select("team_id, teams:team_id(*)")
+				.eq("user_id", user.id)
+				.eq("status", "active")
+				.limit(1);
+
+			// Si no tiene ningún team, redirigir a create-team
+			if (!teamMembers || teamMembers.length === 0) {
+				if (request.nextUrl.pathname !== "/create-team") {
+					const url = request.nextUrl.clone();
+					url.pathname = "/create-team";
+					return NextResponse.redirect(url);
+				}
+			} else {
+				// Si tiene teams pero no tiene ninguno seleccionado, seleccionar el primero automáticamente
+				const firstTeam = teamMembers[0].teams;
+				await supabase.from("profiles").update({ team_id: firstTeam.id }).eq("id", user.id);
+
+				// Redirigir según el estado de la suscripción del team
+				if (!firstTeam.stripe_subscription_status || firstTeam.stripe_subscription_status !== "active") {
+					const url = request.nextUrl.clone();
+					url.pathname = `/select-plan?team_id=${firstTeam.id}`;
+					return NextResponse.redirect(url);
+				}
+			}
+		} else {
+			// Verificar el team seleccionado
+			const { data: team } = await supabase
+				.from("teams")
+				.select("id, stripe_subscription_id, stripe_subscription_status")
+				.eq("id", profile.team_id)
+				.single();
+
+			if (!team) {
+				// El team seleccionado no existe, limpiar y redirigir
+				await supabase.from("profiles").update({ team_id: null }).eq("id", user.id);
 				const url = request.nextUrl.clone();
 				url.pathname = "/create-team";
 				return NextResponse.redirect(url);
 			}
-		} else {
-			const team = teamMember.teams;
 
-			// Si tiene team pero no tiene suscripción activa, redirigir a select-plan
+			// Si el team no tiene suscripción activa, redirigir a select-plan
 			if (!team.stripe_subscription_status || team.stripe_subscription_status !== "active") {
 				if (!request.nextUrl.pathname.startsWith("/select-plan")) {
 					const url = request.nextUrl.clone();
 					url.pathname = `/select-plan?team_id=${team.id}`;
 					return NextResponse.redirect(url);
 				}
-			}
-		}
-	}
-
-	// Si el usuario está en create-team pero ya tiene un team, redirigir según corresponda
-	if (user && request.nextUrl.pathname === "/create-team") {
-		const { data: teamMember } = await supabase
-			.from("team_members")
-			.select(
-				`
-        teams:team_id (
-          id,
-          stripe_subscription_status
-        )
-      `
-			)
-			.eq("user_id", user.id)
-			.eq("status", "active")
-			.single();
-
-		if (teamMember?.teams) {
-			const team = teamMember.teams;
-			// Si ya tiene team con suscripción activa, ir al dashboard
-			if (team.stripe_subscription_status === "active") {
-				const url = request.nextUrl.clone();
-				url.pathname = "/dashboard";
-				return NextResponse.redirect(url);
-			} else {
-				// Si tiene team sin suscripción, ir a select-plan
-				const url = request.nextUrl.clone();
-				url.pathname = `/select-plan?team_id=${team.id}`;
-				return NextResponse.redirect(url);
 			}
 		}
 	}

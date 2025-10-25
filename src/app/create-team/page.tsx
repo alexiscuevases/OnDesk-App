@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Users } from "lucide-react";
+import { Loader2, Users, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { createTeamSchema } from "@/lib/validations/team";
+import Link from "next/link";
 
 export default function CreateTeamPage() {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const fromDashboard = searchParams.get("from") === "dashboard";
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [formData, setFormData] = useState({
@@ -64,8 +67,16 @@ export default function CreateTeamPage() {
 
 			if (memberError) throw memberError;
 
-			// Redirigir a select-plan con el team_id
-			router.push(`/select-plan?team_id=${team.id}`);
+			// Actualizar el profile para seleccionar el nuevo team
+			await supabase.from("profiles").update({ team_id: team.id }).eq("id", user.id);
+
+			// Si viene del dashboard, regresar al dashboard
+			if (fromDashboard) {
+				router.push("/dashboard");
+			} else {
+				// Si es el primer team, ir a select-plan
+				router.push(`/select-plan?team_id=${team.id}`);
+			}
 		} catch (err: any) {
 			console.error("Error creando team:", err);
 			if (err.errors) {
@@ -91,11 +102,25 @@ export default function CreateTeamPage() {
 		<div className="min-h-screen bg-background flex items-center justify-center p-6">
 			<Card className="w-full max-w-2xl">
 				<CardHeader className="text-center">
+					{fromDashboard && (
+						<div className="flex justify-start mb-4">
+							<Button variant="ghost" size="sm" asChild>
+								<Link href="/dashboard">
+									<ArrowLeft className="h-4 w-4 mr-2" />
+									Volver al dashboard
+								</Link>
+							</Button>
+						</div>
+					)}
 					<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
 						<Users className="h-6 w-6 text-accent" />
 					</div>
-					<CardTitle className="text-3xl">Crea tu equipo</CardTitle>
-					<CardDescription>Configura tu espacio de trabajo para comenzar a utilizar los agentes de IA</CardDescription>
+					<CardTitle className="text-3xl">{fromDashboard ? "Crear nuevo equipo" : "Crea tu equipo"}</CardTitle>
+					<CardDescription>
+						{fromDashboard
+							? "Configura un nuevo espacio de trabajo para tu organización"
+							: "Configura tu espacio de trabajo para comenzar a utilizar los agentes de IA"}
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleSubmit} className="space-y-6">
@@ -142,11 +167,13 @@ export default function CreateTeamPage() {
 						<div className="flex flex-col gap-3 pt-4">
 							<Button type="submit" className="w-full" size="lg" disabled={isLoading || !formData.name.trim()}>
 								{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-								Continuar a selección de plan
+								{fromDashboard ? "Crear equipo" : "Continuar a selección de plan"}
 							</Button>
-							<p className="text-xs text-center text-muted-foreground">
-								Después de crear tu equipo, podrás seleccionar el plan que mejor se adapte a tus necesidades
-							</p>
+							{!fromDashboard && (
+								<p className="text-xs text-center text-muted-foreground">
+									Después de crear tu equipo, podrás seleccionar el plan que mejor se adapte a tus necesidades
+								</p>
+							)}
 						</div>
 					</form>
 				</CardContent>
