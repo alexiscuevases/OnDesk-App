@@ -17,9 +17,7 @@ export async function POST(req: Request) {
 	const headersList = await headers();
 	const signature = headersList.get("stripe-signature");
 
-	if (!signature) {
-		return NextResponse.json({ error: "No signature" }, { status: 400 });
-	}
+	if (!signature) return NextResponse.json({ error: "No signature" }, { status: 400 });
 
 	let event: Stripe.Event;
 
@@ -38,12 +36,13 @@ export async function POST(req: Request) {
 				const session = event.data.object as Stripe.Checkout.Session;
 				console.log("[v0] Checkout session completed:", session.id);
 
-				// Get user ID from metadata
+				// Get user ID and team ID from metadata
 				const userId = session.metadata?.supabase_user_id;
+				const teamId = session.metadata?.team_id;
 				const planId = session.metadata?.plan_id;
 
-				if (!userId || !planId) {
-					console.error("[v0] Missing user ID or plan ID in session metadata");
+				if (!userId || !teamId || !planId) {
+					console.error("[v0] Missing user ID, team ID or plan ID in session metadata");
 					return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
 				}
 
@@ -51,27 +50,24 @@ export async function POST(req: Request) {
 				const subscriptionId = session.subscription as string;
 				const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-				console.log("[v0] Updating profile for user:", userId);
+				console.log("[v0] Updating team for team:", teamId);
 
-				// Update user profile with subscription info
-				const { error: profileError } = await supabaseAdmin
-					.from("profiles")
+				// Update team with subscription info
+				const { error: teamError } = await supabaseAdmin
+					.from("teams")
 					.update({
-						stripe_customer_id: session.customer as string,
 						stripe_subscription_id: subscriptionId,
-						subscription_status: subscription.status,
-						plan_id: planId,
-						subscription_current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-						subscription_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+						stripe_subscription_status: subscription.status,
+						plan: planId,
 					})
-					.eq("id", userId);
+					.eq("id", teamId);
 
-				if (profileError) {
-					console.error("[v0] Error updating profile:", profileError);
-					throw profileError;
+				if (teamError) {
+					console.error("[v0] Error updating team:", teamError);
+					throw teamError;
 				}
 
-				console.log("[v0] Profile updated successfully");
+				console.log("[v0] Team updated successfully");
 				break;
 			}
 
@@ -79,18 +75,16 @@ export async function POST(req: Request) {
 				const subscription = event.data.object as Stripe.Subscription;
 				console.log("[v0] Subscription updated:", subscription.id);
 
-				// Find user by subscription ID
-				const { data: profile } = await supabaseAdmin.from("profiles").select("id").eq("stripe_subscription_id", subscription.id).single();
+				// Find team by subscription ID
+				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single();
 
-				if (profile) {
+				if (team) {
 					const { error } = await supabaseAdmin
-						.from("profiles")
+						.from("teams")
 						.update({
-							subscription_status: subscription.status,
-							subscription_current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-							subscription_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+							stripe_subscription_status: subscription.status,
 						})
-						.eq("id", profile.id);
+						.eq("id", team.id);
 
 					if (error) {
 						console.error("[v0] Error updating subscription:", error);
@@ -106,17 +100,17 @@ export async function POST(req: Request) {
 				const subscription = event.data.object as Stripe.Subscription;
 				console.log("[v0] Subscription deleted:", subscription.id);
 
-				// Find user by subscription ID
-				const { data: profile } = await supabaseAdmin.from("profiles").select("id").eq("stripe_subscription_id", subscription.id).single();
+				// Find team by subscription ID
+				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single();
 
-				if (profile) {
+				if (team) {
 					const { error } = await supabaseAdmin
-						.from("profiles")
+						.from("teams")
 						.update({
-							subscription_status: "canceled",
+							stripe_subscription_status: "canceled",
 							stripe_subscription_id: null,
 						})
-						.eq("id", profile.id);
+						.eq("id", team.id);
 
 					if (error) {
 						console.error("[v0] Error canceling subscription:", error);

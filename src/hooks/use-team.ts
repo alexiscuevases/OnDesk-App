@@ -1,140 +1,238 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-import type { InviteTeamMemberInput } from "@/lib/validations/team"
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { InviteTeamMemberInput, CreateTeamInput } from "@/lib/validations/team";
 
 export interface TeamMember {
-  id: string
-  email: string
-  role: string
-  status: string
-  user_id: string | null
-  invited_by: string
-  created_at: string
-  updated_at: string
+	id: string;
+	team_id: string;
+	email: string;
+	role: string;
+	status: string;
+	user_id: string | null;
+	invited_by: string;
+	created_at: string;
+	updated_at: string;
+}
+
+export interface Team {
+	id: string;
+	owner_id: string;
+	name: string;
+	description: string | null;
+	stripe_subscription_id: string | null;
+	stripe_subscription_status: string | null;
+	plan: string | null;
+	created_at: string;
+	updated_at: string;
 }
 
 export function useTeam() {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+	const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const supabase = createClient();
 
-  const fetchTeamMembers = async () => {
-    setIsLoading(true)
-    setError(null)
+	const fetchCurrentTeam = async () => {
+		setIsLoading(true);
+		setError(null);
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      const { data, error: fetchError } = await supabase
-        .from("team_members")
-        .select("*")
-        .eq("invited_by", user.id)
-        .order("created_at", { ascending: false })
+			// Obtener el team del usuario
+			const { data: teamMember, error: memberError } = await supabase
+				.from("team_members")
+				.select(
+					`
+          *,
+          teams:team_id (*)
+        `
+				)
+				.eq("user_id", user.id)
+				.eq("status", "active")
+				.single();
 
-      if (fetchError) throw fetchError
+			if (memberError) throw memberError;
 
-      setTeamMembers(data || [])
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch team members")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+			if (teamMember && teamMember.teams) {
+				setCurrentTeam(teamMember.teams as Team);
+			}
+		} catch (err: any) {
+			setError(err.message || "Failed to fetch team");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  const inviteTeamMember = async (input: InviteTeamMemberInput) => {
-    setError(null)
+	const fetchTeamMembers = async (teamId?: string) => {
+		setIsLoading(true);
+		setError(null);
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      const { data, error: createError } = await supabase
-        .from("team_members")
-        .insert({
-          email: input.email,
-          role: input.role,
-          status: "pending",
-          invited_by: user.id,
-        })
-        .select()
-        .single()
+			let query = supabase.from("team_members").select("*").order("created_at", { ascending: false });
 
-      if (createError) throw createError
+			if (teamId) {
+				query = query.eq("team_id", teamId);
+			} else if (currentTeam) {
+				query = query.eq("team_id", currentTeam.id);
+			}
 
-      await fetchTeamMembers()
-      return data
-    } catch (err: any) {
-      setError(err.message || "Failed to invite team member")
-      throw err
-    }
-  }
+			const { data, error: fetchError } = await query;
 
-  const updateTeamMemberRole = async (id: string, role: string) => {
-    setError(null)
+			if (fetchError) throw fetchError;
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+			setTeamMembers(data || []);
+		} catch (err: any) {
+			setError(err.message || "Failed to fetch team members");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-      const { data, error: updateError } = await supabase
-        .from("team_members")
-        .update({ role, updated_at: new Date().toISOString() })
-        .eq("id", id)
-        .eq("invited_by", user.id)
-        .select()
-        .single()
+	const createTeam = async (input: CreateTeamInput) => {
+		setError(null);
 
-      if (updateError) throw updateError
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      await fetchTeamMembers()
-      return data
-    } catch (err: any) {
-      setError(err.message || "Failed to update team member role")
-      throw err
-    }
-  }
+			// Crear el team
+			const { data: team, error: teamError } = await supabase
+				.from("teams")
+				.insert({
+					owner_id: user.id,
+					name: input.name,
+					description: input.description || null,
+				})
+				.select()
+				.single();
 
-  const removeTeamMember = async (id: string) => {
-    setError(null)
+			if (teamError) throw teamError;
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+			// Crear el team member para el owner
+			const { error: memberError } = await supabase.from("team_members").insert({
+				team_id: team.id,
+				user_id: user.id,
+				email: user.email!,
+				role: "owner",
+				status: "active",
+				invited_by: user.id,
+			});
 
-      const { error: deleteError } = await supabase.from("team_members").delete().eq("id", id).eq("invited_by", user.id)
+			if (memberError) throw memberError;
 
-      if (deleteError) throw deleteError
+			setCurrentTeam(team);
+			return team;
+		} catch (err: any) {
+			setError(err.message || "Failed to create team");
+			throw err;
+		}
+	};
 
-      await fetchTeamMembers()
-    } catch (err: any) {
-      setError(err.message || "Failed to remove team member")
-      throw err
-    }
-  }
+	const inviteTeamMember = async (input: InviteTeamMemberInput) => {
+		setError(null);
 
-  useEffect(() => {
-    fetchTeamMembers()
-  }, [])
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-  return {
-    teamMembers,
-    isLoading,
-    error,
-    fetchTeamMembers,
-    inviteTeamMember,
-    updateTeamMemberRole,
-    removeTeamMember,
-  }
+			const { data, error: createError } = await supabase
+				.from("team_members")
+				.insert({
+					team_id: input.team_id,
+					email: input.email,
+					role: input.role,
+					status: "pending",
+					invited_by: user.id,
+				})
+				.select()
+				.single();
+
+			if (createError) throw createError;
+
+			await fetchTeamMembers(input.team_id);
+			return data;
+		} catch (err: any) {
+			setError(err.message || "Failed to invite team member");
+			throw err;
+		}
+	};
+
+	const updateTeamMemberRole = async (id: string, role: string, teamId?: string) => {
+		setError(null);
+
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			const { data, error: updateError } = await supabase
+				.from("team_members")
+				.update({ role, updated_at: new Date().toISOString() })
+				.eq("id", id)
+				.select()
+				.single();
+
+			if (updateError) throw updateError;
+
+			await fetchTeamMembers(teamId);
+			return data;
+		} catch (err: any) {
+			setError(err.message || "Failed to update team member role");
+			throw err;
+		}
+	};
+
+	const removeTeamMember = async (id: string, teamId?: string) => {
+		setError(null);
+
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			const { error: deleteError } = await supabase.from("team_members").delete().eq("id", id);
+
+			if (deleteError) throw deleteError;
+
+			await fetchTeamMembers(teamId);
+		} catch (err: any) {
+			setError(err.message || "Failed to remove team member");
+			throw err;
+		}
+	};
+
+	useEffect(() => {
+		fetchCurrentTeam();
+	}, []);
+
+	return {
+		teamMembers,
+		currentTeam,
+		isLoading,
+		error,
+		createTeam,
+		fetchCurrentTeam,
+		fetchTeamMembers,
+		inviteTeamMember,
+		updateTeamMemberRole,
+		removeTeamMember,
+	};
 }

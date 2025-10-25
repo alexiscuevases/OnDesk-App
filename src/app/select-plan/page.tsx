@@ -21,13 +21,21 @@ export default function SelectPlanPage() {
 	const [error, setError] = useState<string | null>(null);
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const teamId = searchParams.get("team_id");
 
 	useEffect(() => {
+		// Verificar que tengamos el team_id
+		if (!teamId) {
+			setError("No se encontró el ID del equipo. Por favor, crea un equipo primero.");
+			router.push("/create-team");
+			return;
+		}
+
 		const sessionId = searchParams.get("session_id");
 		const errorParam = searchParams.get("error");
 
 		if (errorParam === "payment_failed") {
-			setError("Payment failed. Please try again.");
+			setError("El pago falló. Por favor, intenta de nuevo.");
 			return;
 		}
 
@@ -36,7 +44,7 @@ export default function SelectPlanPage() {
 
 			// Poll for subscription activation (webhook might take a few seconds)
 			const checkSubscription = async (attempts = 0) => {
-				const result = await verifyCheckoutSession(sessionId);
+				const result = await verifyCheckoutSession(sessionId, teamId);
 
 				if (result.success) {
 					// Subscription is active, redirect to dashboard
@@ -47,18 +55,18 @@ export default function SelectPlanPage() {
 				} else {
 					// Failed after retries
 					setIsVerifying(false);
-					setError("Payment verification is taking longer than expected. Please refresh the page or contact support.");
+					setError("La verificación del pago está tomando más tiempo del esperado. Por favor, actualiza la página o contacta a soporte.");
 				}
 			};
 
 			checkSubscription();
 		}
-	}, [searchParams, router, isVerifying]);
+	}, [searchParams, router, isVerifying, teamId]);
 
 	const startCheckout = useCallback(async () => {
-		if (!selectedPlan) return null;
-		return await startCheckoutSession(selectedPlan);
-	}, [selectedPlan]);
+		if (!selectedPlan || !teamId) return null;
+		return await startCheckoutSession(selectedPlan, teamId);
+	}, [selectedPlan, teamId]);
 
 	const handleSelectPlan = (planId: string) => {
 		setSelectedPlan(planId);
@@ -74,21 +82,21 @@ export default function SelectPlanPage() {
 						<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
 							<Loader2 className="h-6 w-6 animate-spin text-accent" />
 						</div>
-						<CardTitle>Verifying your payment</CardTitle>
-						<CardDescription>Please wait while we confirm your subscription. This should only take a few seconds.</CardDescription>
+						<CardTitle>Verificando tu pago</CardTitle>
+						<CardDescription>Por favor espera mientras confirmamos tu suscripción. Esto solo tomará unos segundos.</CardDescription>
 					</CardHeader>
 				</Card>
 			</div>
 		);
 	}
 
-	if (selectedPlan && isLoading) {
+	if (selectedPlan && isLoading && teamId) {
 		return (
 			<div className="min-h-screen bg-background p-6">
 				<div className="mx-auto max-w-4xl">
 					<div className="mb-8 text-center">
-						<h1 className="text-3xl font-bold">Complete your subscription</h1>
-						<p className="mt-2 text-muted-foreground">Enter your payment details to get started</p>
+						<h1 className="text-3xl font-bold">Completa tu suscripción</h1>
+						<p className="mt-2 text-muted-foreground">Ingresa tus datos de pago para comenzar</p>
 					</div>
 					<EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret: startCheckout }}>
 						<EmbeddedCheckout />
@@ -102,8 +110,8 @@ export default function SelectPlanPage() {
 		<div className="min-h-screen bg-background p-6">
 			<div className="mx-auto max-w-6xl">
 				<div className="mb-12 text-center">
-					<h1 className="text-4xl font-bold">Choose your plan</h1>
-					<p className="mt-3 text-lg text-muted-foreground">Select the perfect plan for your business needs</p>
+					<h1 className="text-4xl font-bold">Elige tu plan</h1>
+					<p className="mt-3 text-lg text-muted-foreground">Selecciona el plan perfecto para las necesidades de tu negocio</p>
 				</div>
 
 				{error && (
@@ -117,7 +125,7 @@ export default function SelectPlanPage() {
 						<Card key={product.id} className={`relative ${product.popular ? "border-accent shadow-lg" : ""}`}>
 							{product.popular && (
 								<div className="absolute -top-4 left-1/2 -translate-x-1/2">
-									<span className="rounded-full bg-accent px-4 py-1 text-sm font-medium text-accent-foreground">Most Popular</span>
+									<span className="rounded-full bg-accent px-4 py-1 text-sm font-medium text-accent-foreground">Más Popular</span>
 								</div>
 							)}
 							<CardHeader>
@@ -125,7 +133,7 @@ export default function SelectPlanPage() {
 								<CardDescription>{product.description}</CardDescription>
 								<div className="mt-4">
 									<span className="text-4xl font-bold">${product.priceInCents / 100}</span>
-									<span className="text-muted-foreground">/month</span>
+									<span className="text-muted-foreground">/mes</span>
 								</div>
 							</CardHeader>
 							<CardContent className="space-y-4">
@@ -137,8 +145,12 @@ export default function SelectPlanPage() {
 										</li>
 									))}
 								</ul>
-								<Button className="w-full" variant={product.popular ? "default" : "outline"} onClick={() => handleSelectPlan(product.id)}>
-									Get Started
+								<Button
+									className="w-full"
+									variant={product.popular ? "default" : "outline"}
+									onClick={() => handleSelectPlan(product.id)}
+									disabled={!teamId}>
+									Comenzar
 								</Button>
 							</CardContent>
 						</Card>

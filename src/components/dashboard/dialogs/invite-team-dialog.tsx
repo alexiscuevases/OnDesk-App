@@ -13,12 +13,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { useTeam } from "@/hooks/use-team";
 import { toast } from "sonner";
-import { teamMemberSchema, type TeamMemberInput } from "@/lib/validations/team";
+import { inviteTeamMemberSchema, type InviteTeamMemberInput } from "@/lib/validations/team";
 
 export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const { inviteTeamMember } = useTeam();
+	const { inviteTeamMember, currentTeam } = useTeam();
 
 	const {
 		register,
@@ -27,17 +27,24 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 		reset,
 		setValue,
 		watch,
-	} = useForm<TeamMemberInput>({
-		resolver: zodResolver(teamMemberSchema),
+	} = useForm<InviteTeamMemberInput>({
+		resolver: zodResolver(inviteTeamMemberSchema),
 		defaultValues: {
 			role: "member",
 		},
 	});
 
-	const onSubmit = async (data: TeamMemberInput) => {
+	const onSubmit = async (data: InviteTeamMemberInput) => {
+		if (!currentTeam) {
+			toast.error("Error", {
+				description: "No se encontró el equipo actual",
+			});
+			return;
+		}
+
 		setIsLoading(true);
 		try {
-			await inviteTeamMember(data);
+			await inviteTeamMember({ ...data, team_id: currentTeam.id });
 			toast.success("Invitación enviada", {
 				description: `Se ha enviado una invitación a ${data.email}.`,
 			});
