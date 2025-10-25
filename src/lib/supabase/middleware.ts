@@ -41,10 +41,10 @@ export async function updateSession(request: NextRequest) {
 
 	// Check if user has a subscription for dashboard access
 	if (user && request.nextUrl.pathname.startsWith("/dashboard")) {
-		const { data: profile } = await supabase.from("profiles").select("subscription_status, plan_id").eq("id", user.id).single();
+		const { data: profile } = await supabase.from("profiles").select(`team:team_id(*)`).eq("id", user.id).single();
 
 		// Redirect to plan selection if no active subscription
-		if (!profile?.subscription_status || profile.subscription_status !== "active") {
+		if (!profile?.team?.stripe_subscription_status || profile.team.stripe_subscription_status !== "active") {
 			if (request.nextUrl.pathname !== "/select-plan") {
 				const url = request.nextUrl.clone();
 				url.pathname = "/select-plan";
