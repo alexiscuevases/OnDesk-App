@@ -1,161 +1,154 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-import type { AgentInput } from "@/lib/validations/agent"
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { AgentInput } from "@/lib/validations/agent";
 
 export interface Agent {
-  id: string
-  name: string
-  description: string | null
-  type: string
-  model: string
-  system_prompt: string
-  temperature: number
-  max_tokens: number
-  status: string
-  avatar_url: string | null
-  created_at: string
-  updated_at: string
-  user_id: string
+	id: string;
+	name: string;
+	description: string | null;
+	type: string;
+	model: string;
+	system_prompt: string;
+	temperature: number;
+	max_tokens: number;
+	status: string;
+	avatar_url: string | null;
+	created_at: string;
+	updated_at: string;
+	user_id: string;
 }
 
 export function useAgents() {
-  const [agents, setAgents] = useState<Agent[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+	const [agents, setAgents] = useState<Agent[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const supabase = createClient();
 
-  const fetchAgents = async () => {
-    setIsLoading(true)
-    setError(null)
+	const fetchAgents = async () => {
+		setIsLoading(true);
+		setError(null);
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      const { data, error: fetchError } = await supabase
-        .from("agents")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+			if (profileError) throw profileError;
 
-      if (fetchError) throw fetchError
+			const { data, error: fetchError } = await supabase.from("agents").select("*").eq("team_id", user.id).order("created_at", { ascending: false });
 
-      setAgents(data || [])
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch agents")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+			if (fetchError) throw fetchError;
 
-  const createAgent = async (input: AgentInput) => {
-    setError(null)
+			setAgents(data || []);
+		} catch (err: any) {
+			setError(err.message || "Failed to fetch agents");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const createAgent = async (input: AgentInput) => {
+		setError(null);
 
-      const { data, error: createError } = await supabase
-        .from("agents")
-        .insert({
-          name: input.name,
-          description: input.description,
-          type: input.type,
-          model: input.model,
-          system_prompt: input.systemPrompt,
-          temperature: input.temperature,
-          max_tokens: input.maxTokens,
-          status: input.status,
-          user_id: user.id,
-        })
-        .select()
-        .single()
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      if (createError) throw createError
+			const { data, error: createError } = await supabase
+				.from("agents")
+				.insert({
+					name: input.name,
+					description: input.description,
+					type: input.type,
+					model: input.model,
+					system_prompt: input.systemPrompt,
+					temperature: input.temperature,
+					max_tokens: input.maxTokens,
+					status: input.status,
+					user_id: user.id,
+				})
+				.select()
+				.single();
 
-      await fetchAgents()
-      return data
-    } catch (err: any) {
-      setError(err.message || "Failed to create agent")
-      throw err
-    }
-  }
+			if (createError) throw createError;
 
-  const updateAgent = async (id: string, input: Partial<AgentInput>) => {
-    setError(null)
+			await fetchAgents();
+			return data;
+		} catch (err: any) {
+			setError(err.message || "Failed to create agent");
+			throw err;
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const updateAgent = async (id: string, input: Partial<AgentInput>) => {
+		setError(null);
 
-      const updateData: any = {}
-      if (input.name) updateData.name = input.name
-      if (input.description !== undefined) updateData.description = input.description
-      if (input.type) updateData.type = input.type
-      if (input.model) updateData.model = input.model
-      if (input.systemPrompt) updateData.system_prompt = input.systemPrompt
-      if (input.temperature !== undefined) updateData.temperature = input.temperature
-      if (input.maxTokens) updateData.max_tokens = input.maxTokens
-      if (input.status) updateData.status = input.status
-      updateData.updated_at = new Date().toISOString()
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      const { data, error: updateError } = await supabase
-        .from("agents")
-        .update(updateData)
-        .eq("id", id)
-        .eq("user_id", user.id)
-        .select()
-        .single()
+			const updateData: any = {};
+			if (input.name) updateData.name = input.name;
+			if (input.description !== undefined) updateData.description = input.description;
+			if (input.type) updateData.type = input.type;
+			if (input.model) updateData.model = input.model;
+			if (input.systemPrompt) updateData.system_prompt = input.systemPrompt;
+			if (input.temperature !== undefined) updateData.temperature = input.temperature;
+			if (input.maxTokens) updateData.max_tokens = input.maxTokens;
+			if (input.status) updateData.status = input.status;
+			updateData.updated_at = new Date().toISOString();
 
-      if (updateError) throw updateError
+			const { data, error: updateError } = await supabase.from("agents").update(updateData).eq("id", id).eq("user_id", user.id).select().single();
 
-      await fetchAgents()
-      return data
-    } catch (err: any) {
-      setError(err.message || "Failed to update agent")
-      throw err
-    }
-  }
+			if (updateError) throw updateError;
 
-  const deleteAgent = async (id: string) => {
-    setError(null)
+			await fetchAgents();
+			return data;
+		} catch (err: any) {
+			setError(err.message || "Failed to update agent");
+			throw err;
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const deleteAgent = async (id: string) => {
+		setError(null);
 
-      const { error: deleteError } = await supabase.from("agents").delete().eq("id", id).eq("user_id", user.id)
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      if (deleteError) throw deleteError
+			const { error: deleteError } = await supabase.from("agents").delete().eq("id", id).eq("user_id", user.id);
 
-      await fetchAgents()
-    } catch (err: any) {
-      setError(err.message || "Failed to delete agent")
-      throw err
-    }
-  }
+			if (deleteError) throw deleteError;
 
-  useEffect(() => {
-    fetchAgents()
-  }, [])
+			await fetchAgents();
+		} catch (err: any) {
+			setError(err.message || "Failed to delete agent");
+			throw err;
+		}
+	};
 
-  return {
-    agents,
-    isLoading,
-    error,
-    fetchAgents,
-    createAgent,
-    updateAgent,
-    deleteAgent,
-  }
+	useEffect(() => {
+		fetchAgents();
+	}, []);
+
+	return {
+		agents,
+		isLoading,
+		error,
+		fetchAgents,
+		createAgent,
+		updateAgent,
+		deleteAgent,
+	};
 }

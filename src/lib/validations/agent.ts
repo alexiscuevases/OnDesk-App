@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const agentSchema = z.object({
-	name: z.string().min(1, "Name is required").max(100),
+	team_id: z.string(),
+	name: z.string().min(1, "Name is required"),
 	description: z.string().max(500).optional(),
 	avatar_url: z.string().optional(),
 	type: z.enum(["sales", "support", "general"]),
@@ -12,4 +13,8 @@ export const agentSchema = z.object({
 	status: z.enum(["active", "inactive", "training"]).default("active"),
 });
 
-export type AgentInput = z.infer<typeof agentSchema>;
+export type AgentInput = z.infer<typeof agentSchema> & {
+	id: string;
+	created_at: string;
+	updated_at: string;
+};

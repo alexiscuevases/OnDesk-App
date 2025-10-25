@@ -1,10 +1,15 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const connectionSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  type: z.enum(["whatsapp", "website", "sms", "email"]),
-  config: z.record(z.any()),
-  status: z.enum(["active", "inactive"]).default("active"),
-})
+	team_id: z.string(),
+	name: z.string().min(1, "Name is required"),
+	type: z.enum(["whatsapp", "website", "sms", "email"]),
+	status: z.enum(["connected", "disconnected"]).default("disconnected"),
+	config: z.record(z.any()),
+});
 
-export type ConnectionInput = z.infer<typeof connectionSchema>
+export type ConnectionInput = z.infer<typeof connectionSchema> & {
+	id: string;
+	created_at: string;
+	updated_at: string;
+};
