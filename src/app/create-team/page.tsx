@@ -58,11 +58,11 @@ export default function CreateTeamPage() {
 			// Crear el team member para el owner
 			const { error: memberError } = await supabase.from("team_members").insert({
 				team_id: team.id,
+				invited_by: user.id,
 				user_id: user.id,
 				email: user.email!,
 				role: "owner",
 				status: "active",
-				invited_by: user.id,
 			});
 
 			if (memberError) throw memberError;
@@ -70,13 +70,8 @@ export default function CreateTeamPage() {
 			// Actualizar el profile para seleccionar el nuevo team
 			await supabase.from("profiles").update({ team_id: team.id }).eq("id", user.id);
 
-			// Si viene del dashboard, regresar al dashboard
-			if (fromDashboard) {
-				router.push("/dashboard");
-			} else {
-				// Si es el primer team, ir a select-plan
-				router.push(`/select-plan?team_id=${team.id}`);
-			}
+			// Regresar al dashboard
+			router.push("/dashboard");
 		} catch (err: any) {
 			console.error("Error creando team:", err);
 			if (err.errors) {
