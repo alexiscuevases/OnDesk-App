@@ -63,6 +63,7 @@ export function useAgents() {
 			const { data, error: createError } = await supabase
 				.from("agents")
 				.insert({
+					team_id: input.team_id,
 					name: input.name,
 					description: input.description,
 					type: input.type,

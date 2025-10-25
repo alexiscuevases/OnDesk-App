@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Loader2 } from "lucide-react";
 import { useAgents } from "@/hooks/use-agents";
+import { useTeam } from "@/hooks/use-team";
 import { toast } from "sonner";
 import { agentSchema, type AgentInput } from "@/lib/validations/agent";
 
@@ -18,17 +19,12 @@ export function CreateAgentDialog() {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { createAgent } = useAgents();
+	const { currentTeam } = useTeam();
 
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-		reset,
-		setValue,
-		watch,
-	} = useForm<AgentInput>({
+	const form = useForm<AgentInput>({
 		resolver: zodResolver(agentSchema),
 		defaultValues: {
+			team_id: "",
 			name: "",
 			description: "",
 			avatar_url: "",
@@ -41,7 +37,29 @@ export function CreateAgentDialog() {
 		},
 	});
 
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+		setValue,
+		watch,
+	} = form;
+
+	useEffect(() => {
+		if (currentTeam?.id) {
+			setValue("team_id", currentTeam.id);
+		}
+	}, [currentTeam, setValue]);
+
 	const onSubmit = async (data: AgentInput) => {
+		if (!currentTeam?.id) {
+			toast.error("Error", {
+				description: "Debes seleccionar un equipo antes de crear un agente",
+			});
+			return;
+		}
+
 		setIsLoading(true);
 		try {
 			await createAgent(data);
@@ -86,7 +104,7 @@ export function CreateAgentDialog() {
 						</div>
 						<div className="grid gap-2">
 							<Label htmlFor="type">Tipo de Agente</Label>
-							<Select value={watch("type")} onValueChange={(value) => setValue("type", value)}>
+							<Select value={watch("type")} onValueChange={(value) => setValue("type", value as AgentInput["type"])}>
 								<SelectTrigger id="type">
 									<SelectValue placeholder="Selecciona el tipo de agente" />
 								</SelectTrigger>
@@ -113,7 +131,7 @@ export function CreateAgentDialog() {
 						</div>
 						<div className="grid gap-2">
 							<Label htmlFor="model">Modelo de IA</Label>
-							<Select value={watch("model")} onValueChange={(value) => setValue("model", value)}>
+							<Select value={watch("model")} onValueChange={(value) => setValue("model", value as AgentInput["model"])}>
 								<SelectTrigger id="model">
 									<SelectValue placeholder="Selecciona el modelo de IA" />
 								</SelectTrigger>
