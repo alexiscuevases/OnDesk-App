@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
-import { PRODUCTS } from "@/lib/products";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { startCheckoutSession, verifyCheckoutSession } from "@/actions/stripe";
 import { useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { platformConfigs } from "@/configs/platform";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -121,7 +121,7 @@ export default function SelectPlanPage() {
 				)}
 
 				<div className="grid gap-8 md:grid-cols-3">
-					{PRODUCTS.map((product) => (
+					{platformConfigs.plans.map((product) => (
 						<Card key={product.id} className={`relative ${product.popular ? "border-accent shadow-lg" : ""}`}>
 							{product.popular && (
 								<div className="absolute -top-4 left-1/2 -translate-x-1/2">

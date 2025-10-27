@@ -22,9 +22,4 @@ export const inviteTeamMemberSchema = z.object({
 
 export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 export type InviteTeamMemberInput = z.infer<typeof inviteTeamMemberSchema>;
-
-export type TeamInput = z.infer<typeof teamSchema> & {
-	id: string;
-	created_at: string;
-	updated_at: string;
-};
+export type TeamInput = z.infer<typeof teamSchema>;

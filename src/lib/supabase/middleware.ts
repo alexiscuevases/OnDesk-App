@@ -2,8 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-	// Skip for api
-	if (request.nextUrl.pathname.startsWith("/api")) return NextResponse.next();
+	// Allow public routes
+	const publicRoutes = ["/about", "/api", "/auth", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
+	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
+	if (isPublicRoute) return NextResponse.next();
 
 	let supabaseResponse = NextResponse.next({
 		request,
@@ -28,19 +30,15 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	// Allow public routes
-	const publicRoutes = ["/about", "/auth", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
-	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
-
 	// Redirect to sign-in if not authenticated and trying to access protected route
-	if (!user && !isPublicRoute && !request.nextUrl.pathname.startsWith("/create-team") && !request.nextUrl.pathname.startsWith("/select-plan")) {
+	if (!user) {
 		const url = request.nextUrl.clone();
 		url.pathname = "/auth/sign-in";
 		return NextResponse.redirect(url);
 	}
 
 	// Check if user has a team and subscription for dashboard access
-	if (user && (request.nextUrl.pathname.startsWith("/dashboard") || request.nextUrl.pathname === "/")) {
+	if (request.nextUrl.pathname.startsWith("/dashboard")) {
 		// Obtener el profile del usuario para ver qué team tiene seleccionado
 		const { data: profile } = await supabase.from("profiles").select("team_id").eq("id", user.id).single();
 

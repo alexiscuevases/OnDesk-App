@@ -9,8 +9,4 @@ export const teamMemberSchema = z.object({
 	status: z.enum(["active", "inactive", "pending"]),
 });
 
-export type TeamMemberInput = z.infer<typeof teamMemberSchema> & {
-	id: string;
-	created_at: string;
-	updated_at: string;
-};
+export type TeamMemberInput = z.infer<typeof teamMemberSchema>;

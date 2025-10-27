@@ -1,11 +1,11 @@
 "use server";
 
+import { platformConfigs } from "@/configs/platform";
 import { stripe } from "@/lib/stripe";
-import { PRODUCTS } from "@/lib/products";
 import { createClient } from "@/lib/supabase/server";
 
 export async function startCheckoutSession(productId: string, teamId: string) {
-	const product = PRODUCTS.find((p) => p.id === productId);
+	const product = platformConfigs.plans.find((p) => p.id === productId);
 	if (!product) throw new Error(`Product with id "${productId}" not found`);
 
 	const supabase = await createClient();
