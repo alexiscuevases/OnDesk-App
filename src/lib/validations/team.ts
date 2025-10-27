@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-export const createTeamSchema = z.object({
-	name: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100, "El nombre no puede exceder 100 caracteres"),
-	description: z.string().max(500, "La descripción no puede exceder 500 caracteres").optional(),
-});
-
 export const teamSchema = z.object({
 	owner_id: z.string(),
 	name: z.string().min(1, "Name is required"),
@@ -14,12 +9,23 @@ export const teamSchema = z.object({
 	plan: z.string().nullable().optional(),
 });
 
+export type Team = z.infer<typeof teamSchema> & {
+	id: string;
+	created_at: string;
+	updated_at: string;
+};
+
+export const createTeamSchema = z.object({
+	name: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100, "El nombre no puede exceder 100 caracteres"),
+	description: z.string().max(500, "La descripción no puede exceder 500 caracteres").optional(),
+});
+
+export type CreateTeamInput = z.infer<typeof createTeamSchema>;
+
 export const inviteTeamMemberSchema = z.object({
 	email: z.string().email("Email inválido"),
 	role: z.enum(["admin", "member", "viewer"]),
 	team_id: z.string(),
 });
 
-export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 export type InviteTeamMemberInput = z.infer<typeof inviteTeamMemberSchema>;
-export type TeamInput = z.infer<typeof teamSchema>;

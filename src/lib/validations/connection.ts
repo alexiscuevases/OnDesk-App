@@ -8,4 +8,8 @@ export const connectionSchema = z.object({
 	config: z.record(z.any()),
 });
 
-export type ConnectionInput = z.infer<typeof connectionSchema>;
+export type Connection = z.infer<typeof connectionSchema> & {
+	id: string;
+	created_at: string;
+	updated_at: string;
+};

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Team } from "./team";
 
 export const teamMemberSchema = z.object({
 	team_id: z.string(),
@@ -9,4 +10,9 @@ export const teamMemberSchema = z.object({
 	status: z.enum(["active", "inactive", "pending"]),
 });
 
-export type TeamMemberInput = z.infer<typeof teamMemberSchema>;
+export type TeamMember = z.infer<typeof teamMemberSchema> & {
+	id: string;
+	teams?: Team;
+	created_at: string;
+	updated_at: string;
+};

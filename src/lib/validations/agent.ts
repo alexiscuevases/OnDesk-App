@@ -13,4 +13,8 @@ export const agentSchema = z.object({
 	status: z.enum(["active", "inactive", "training"]),
 });
 
-export type AgentInput = z.infer<typeof agentSchema>;
+export type Agent = z.infer<typeof agentSchema> & {
+	id: string;
+	created_at: string;
+	updated_at: string;
+};

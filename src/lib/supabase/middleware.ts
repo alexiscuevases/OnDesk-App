@@ -1,5 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { TeamMember } from "../validations/team_member";
+import { Team } from "../validations/team";
 
 export async function updateSession(request: NextRequest) {
 	// Allow public routes
@@ -45,9 +47,9 @@ export async function updateSession(request: NextRequest) {
 		// Si no tiene un team seleccionado, verificar si tiene algún team
 		if (!profile?.team_id) {
 			// Verificar si el usuario pertenece a algún team
-			const { data: teamMembers } = await supabase
+			const { data: teamMembers }: { data: TeamMember[] | null } = await supabase
 				.from("team_members")
-				.select("team_id, teams:team_id(*)")
+				.select("*, teams:team_id(*)")
 				.eq("user_id", user.id)
 				.eq("status", "active")
 				.limit(1);
@@ -61,7 +63,7 @@ export async function updateSession(request: NextRequest) {
 				}
 			} else {
 				// Si tiene teams pero no tiene ninguno seleccionado, seleccionar el primero automáticamente
-				const firstTeam = teamMembers[0].teams;
+				const firstTeam = teamMembers[0].teams as Team;
 				await supabase.from("profiles").update({ team_id: firstTeam.id }).eq("id", user.id);
 
 				// Redirigir según el estado de la suscripción del team
