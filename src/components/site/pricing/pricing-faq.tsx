@@ -1,4 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { platformConfigs } from "@/configs/platform";
 
 const faqs = [
 	{
@@ -15,7 +16,7 @@ const faqs = [
 	},
 	{
 		question: "Do you offer refunds?",
-		answer: "Yes, we offer a 30-day money-back guarantee. If you're not satisfied with AgentHub, contact us for a full refund.",
+		answer: `Yes, we offer a 30-day money-back guarantee. If you're not satisfied with ${platformConfigs.name}, contact us for a full refund.`,
 	},
 	{
 		question: "Can I cancel my subscription anytime?",

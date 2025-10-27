@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { platformConfigs } from "@/configs/platform";
 
 const blogPosts = [
 	{
@@ -47,7 +48,7 @@ const blogPosts = [
 	{
 		id: 5,
 		title: "Case Study: How TechCorp Increased Sales by 40%",
-		excerpt: "See how one company used AgentHub to transform their customer engagement and drive revenue growth.",
+		excerpt: `See how one company used ${platformConfigs.name} to transform their customer engagement and drive revenue growth.`,
 		category: "Case Studies",
 		date: "Jan 5, 2025",
 		readTime: "10 min read",
@@ -73,7 +74,7 @@ export default function BlogPage() {
 				<section className="container py-16 md:py-24">
 					<div className="mx-auto max-w-3xl text-center">
 						<h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl text-balance">
-							AgentHub <span className="text-primary">Blog</span>
+							{platformConfigs.name} <span className="text-primary">Blog</span>
 						</h1>
 						<p className="mt-6 text-lg text-muted-foreground leading-relaxed">
 							Insights, tutorials, and best practices for building exceptional AI-powered customer experiences.

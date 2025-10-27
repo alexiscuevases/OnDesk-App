@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { platformConfigs } from "@/configs/platform";
 
 export default function ContactPage() {
 	return (
@@ -37,8 +38,11 @@ export default function ContactPage() {
 										</div>
 										<div>
 											<h3 className="font-semibold mb-1">Email</h3>
-											<p className="text-sm text-muted-foreground">support@agenthub.com</p>
-											<p className="text-sm text-muted-foreground">sales@agenthub.com</p>
+											{Object.values(platformConfigs.mails).map((mail, index) => (
+												<p key={index} className="text-sm text-muted-foreground">
+													{mail}
+												</p>
+											))}
 										</div>
 									</div>
 								</Card>

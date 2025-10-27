@@ -16,6 +16,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { TeamSwitcher } from "./team-switcher";
+import { platformConfigs } from "@/configs/platform";
 
 const mainNavItems = [
 	{ title: "Home", href: "/dashboard", icon: Home },
@@ -41,7 +42,7 @@ export function DashboardSidebar() {
 					<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
 						<Bot className="h-5 w-5 text-sidebar-primary-foreground" />
 					</div>
-					<span className="text-lg font-semibold">AgentHub</span>
+					<span className="text-lg font-semibold">{platformConfigs.name}</span>
 				</Link>
 			</SidebarHeader>
 

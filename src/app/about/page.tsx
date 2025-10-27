@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Bot, Target, Users, Zap } from "lucide-react";
 import Link from "next/link";
+import { platformConfigs } from "@/configs/platform";
 
 export default function AboutPage() {
 	return (
@@ -17,7 +18,8 @@ export default function AboutPage() {
 							Building the Future of <span className="text-primary">Customer Engagement</span>
 						</h1>
 						<p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-							AgentHub empowers businesses to create intelligent AI agents that provide exceptional customer experiences across every channel.
+							{platformConfigs.name} empowers businesses to create intelligent AI agents that provide exceptional customer experiences across
+							every channel.
 						</p>
 					</div>
 				</section>
@@ -90,7 +92,7 @@ export default function AboutPage() {
 						<div className="mx-auto max-w-3xl text-center">
 							<h2 className="text-3xl font-bold tracking-tight mb-6">Ready to Get Started?</h2>
 							<p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-								Join thousands of businesses already using AgentHub to transform their customer engagement.
+								Join thousands of businesses already using {platformConfigs.name} to transform their customer engagement.
 							</p>
 							<div className="flex flex-col sm:flex-row gap-4 justify-center">
 								<Button size="lg" asChild>

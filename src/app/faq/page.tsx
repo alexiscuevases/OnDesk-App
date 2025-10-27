@@ -5,22 +5,23 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageCircle, Mail } from "lucide-react";
 import Link from "next/link";
+import { platformConfigs } from "@/configs/platform";
 
 const faqCategories = [
 	{
 		category: "Getting Started",
 		questions: [
 			{
-				question: "What is AgentHub?",
-				answer: "AgentHub is an AI-powered customer engagement platform that allows you to create, deploy, and manage intelligent AI agents that interact with your customers across multiple channels including WhatsApp, website chat widgets, and more. Our platform makes it easy to automate customer support, sales, and engagement without requiring technical expertise.",
+				question: `What is ${platformConfigs.name}?`,
+				answer: `${platformConfigs.name} is an AI-powered customer engagement platform that allows you to create, deploy, and manage intelligent AI agents that interact with your customers across multiple channels including WhatsApp, website chat widgets, and more. Our platform makes it easy to automate customer support, sales, and engagement without requiring technical expertise.`,
 			},
 			{
 				question: "How do I create my first AI agent?",
 				answer: "Creating your first AI agent is simple! After signing up, navigate to the Agents section in your dashboard and click 'Create Agent'. You'll be guided through a step-by-step process where you can name your agent, define its purpose, customize its personality with prompts, and choose which AI model to use. Once created, you can immediately start testing and deploying it to your preferred channels.",
 			},
 			{
-				question: "Do I need coding knowledge to use AgentHub?",
-				answer: "No coding knowledge is required! AgentHub is designed to be user-friendly for everyone. Our intuitive interface allows you to create and customize AI agents using simple forms and prompts. However, if you're a developer, we also offer advanced features and API access for deeper customization.",
+				question: `Do I need coding knowledge to use ${platformConfigs.name}?`,
+				answer: `No coding knowledge is required! ${platformConfigs.name} is designed to be user-friendly for everyone. Our intuitive interface allows you to create and customize AI agents using simple forms and prompts. However, if you're a developer, we also offer advanced features and API access for deeper customization.`,
 			},
 			{
 				question: "How long does it take to set up?",
@@ -33,7 +34,7 @@ const faqCategories = [
 		questions: [
 			{
 				question: "What channels can I connect my AI agents to?",
-				answer: "AgentHub supports multiple channels including WhatsApp Business, website chat widgets, SMS, and email. You can deploy the same agent across all channels or create specialized agents for different platforms. We're constantly adding new channel integrations based on customer feedback.",
+				answer: `${platformConfigs.name} supports multiple channels including WhatsApp Business, website chat widgets, SMS, and email. You can deploy the same agent across all channels or create specialized agents for different platforms. We're constantly adding new channel integrations based on customer feedback.`,
 			},
 			{
 				question: "Can I customize my AI agent's personality and responses?",
@@ -44,7 +45,7 @@ const faqCategories = [
 				answer: "Your AI agents can handle unlimited simultaneous conversations. Unlike human agents who can only manage a few conversations at once, AI agents can engage with thousands of customers simultaneously without any degradation in response quality or speed.",
 			},
 			{
-				question: "Does AgentHub support multiple languages?",
+				question: `Does ${platformConfigs.name} support multiple languages?`,
 				answer: "Yes! Our AI agents support over 50 languages and can automatically detect and respond in the customer's preferred language. This makes it easy to provide global customer support without hiring multilingual staff.",
 			},
 		],
@@ -79,7 +80,7 @@ const faqCategories = [
 			},
 			{
 				question: "Who has access to my conversation data?",
-				answer: "Only you and your authorized team members have access to your conversation data. AgentHub employees do not access your data unless you explicitly grant permission for support purposes. We never sell or share your data with third parties. You maintain full ownership of all your data.",
+				answer: `Only you and your authorized team members have access to your conversation data. ${platformConfigs.name} employees do not access your data unless you explicitly grant permission for support purposes. We never sell or share your data with third parties. You maintain full ownership of all your data.`,
 			},
 			{
 				question: "Can I export my data?",
@@ -108,7 +109,7 @@ const faqCategories = [
 			},
 			{
 				question: "Do you have an API for custom integrations?",
-				answer: "Yes, we offer a comprehensive REST API that allows you to integrate AgentHub with your existing systems. You can programmatically create agents, manage conversations, access analytics, and more. Full API documentation is available in your dashboard. API access is included in Professional and Enterprise plans.",
+				answer: `Yes, we offer a comprehensive REST API that allows you to integrate ${platformConfigs.name} with your existing systems. You can programmatically create agents, manage conversations, access analytics, and more. Full API documentation is available in your dashboard. API access is included in Professional and Enterprise plans.`,
 			},
 		],
 	},
@@ -126,7 +127,7 @@ export default function FAQPage() {
 							Frequently Asked <span className="text-primary">Questions</span>
 						</h1>
 						<p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-							Find answers to common questions about AgentHub, our features, pricing, and more.
+							Find answers to common questions about {platformConfigs.name}, our features, pricing, and more.
 						</p>
 					</div>
 				</section>

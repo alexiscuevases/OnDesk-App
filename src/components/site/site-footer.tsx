@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Bot } from "lucide-react";
+import { platformConfigs } from "@/configs/platform";
 
 export function SiteFooter() {
 	return (
@@ -12,7 +13,7 @@ export function SiteFooter() {
 							<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
 								<Bot className="h-5 w-5 text-primary-foreground" />
 							</div>
-							<span className="text-xl font-semibold">AgentHub</span>
+							<span className="text-xl font-semibold">{platformConfigs.name}</span>
 						</Link>
 						<p className="text-sm text-muted-foreground leading-relaxed">AI-powered customer engagement platform for modern businesses.</p>
 					</div>
@@ -85,7 +86,9 @@ export function SiteFooter() {
 				</div>
 
 				<div className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-					<p>&copy; {new Date().getFullYear()} AgentHub. All rights reserved.</p>
+					<p>
+						&copy; {new Date().getFullYear()} {platformConfigs.name}. All rights reserved.
+					</p>
 				</div>
 			</div>
 		</footer>

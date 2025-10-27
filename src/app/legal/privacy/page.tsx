@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
+import { platformConfigs } from "@/configs/platform";
 
 export default function PrivacyPage() {
 	return (
@@ -54,7 +55,7 @@ export default function PrivacyPage() {
 								<li>With your consent or at your direction</li>
 								<li>With service providers who perform services on our behalf</li>
 								<li>To comply with legal obligations</li>
-								<li>To protect the rights and safety of AgentHub and our users</li>
+								<li>To protect the rights and safety of {platformConfigs.name} and our users</li>
 								<li>In connection with a merger, acquisition, or sale of assets</li>
 							</ul>
 						</section>
@@ -107,8 +108,8 @@ export default function PrivacyPage() {
 						<section className="mb-8">
 							<h2 className="text-2xl font-semibold mb-4">10. Contact Us</h2>
 							<p className="text-muted-foreground leading-relaxed">
-								If you have any questions about this Privacy Policy, please contact us at privacy@agenthub.com or write to us at our mailing
-								address.
+								If you have any questions about this Privacy Policy, please contact us at {platformConfigs.mails.legal} or write to us at our
+								mailing address.
 							</p>
 						</section>
 					</div>

@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { platformConfigs } from "@/configs/platform";
 
 // Mock data - in production, this would come from your backend
 const blogPosts = {
@@ -54,7 +55,7 @@ const blogPosts = {
       <p>While AI agents are powerful, they work best as part of a hybrid approach. The most successful implementations use AI to handle routine queries and data collection, freeing human agents to focus on complex issues that require empathy and creative problem-solving.</p>
 
       <h2>Getting Started</h2>
-      <p>Implementing AI agents doesn't have to be complicated. Modern platforms like AgentHub make it easy to create, train, and deploy AI agents across multiple channels—from WhatsApp to your website—without requiring technical expertise.</p>
+      <p>Implementing AI agents doesn't have to be complicated. Modern platforms like ${platformConfigs.name} make it easy to create, train, and deploy AI agents across multiple channels—from WhatsApp to your website—without requiring technical expertise.</p>
 
       <p>The future of customer service is here, and it's powered by AI. The question isn't whether to adopt AI agents, but how quickly you can implement them to stay competitive.</p>
     `,
@@ -79,7 +80,7 @@ const blogPosts = {
       <p>With over 2 billion active users, WhatsApp offers unparalleled reach. More importantly, it's where your customers already are, making it the perfect channel for proactive customer service.</p>
 
       <h2>Setting Up Your Integration</h2>
-      <p>Getting started with WhatsApp integration is straightforward with AgentHub. Here's what you need to know...</p>
+      <p>Getting started with WhatsApp integration is straightforward with ${platformConfigs.name}. Here's what you need to know...</p>
     `,
 	},
 };

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { platformConfigs } from "@/configs/platform";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
@@ -11,9 +12,9 @@ export function HeroSection() {
 			<div className="container">
 				<div className="mx-auto max-w-4xl text-center">
 					{/* Badge */}
-					<div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm">
-						<Sparkles className="h-4 w-4 text-primary" />
-						<span className="text-muted-foreground">AI-Powered Customer Engagement</span>
+					<div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent-foreground bg-accent px-4 py-1.5 text-sm">
+						<Sparkles className="h-4 w-4 text-accent-foreground" />
+						<span className="text-accent-foreground">AI-Powered Customer Engagement</span>
 					</div>
 
 					{/* Heading */}
@@ -48,7 +49,7 @@ export function HeroSection() {
 				<div className="mt-16 mx-auto max-w-5xl">
 					<img
 						src="/modern-ai-chatbot-dashboard-interface-with-dark-th.jpg"
-						alt="AgentHub Dashboard Preview"
+						alt={`${platformConfigs.name} Dashboard Preview`}
 						className="rounded-4xl shadow-2xl w-full"
 					/>
 				</div>

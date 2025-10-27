@@ -10,6 +10,7 @@ interface Plan {
 interface PlatformConfigs {
 	name: string;
 	plans: Plan[];
+	mails: any;
 }
 
 export const platformConfigs: PlatformConfigs = {
@@ -59,4 +60,9 @@ export const platformConfigs: PlatformConfigs = {
 			],
 		},
 	],
+	mails: {
+		support: "support@ondesk.cc",
+		sales: "sales@ondesk.cc",
+		legal: "legal@ondesk.cc",
+	},
 };

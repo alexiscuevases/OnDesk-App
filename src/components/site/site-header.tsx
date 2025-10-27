@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Bot } from "lucide-react";
+import { platformConfigs } from "@/configs/platform";
 
 export function SiteHeader() {
 	return (
@@ -13,7 +14,7 @@ export function SiteHeader() {
 						<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
 							<Bot className="h-5 w-5 text-primary-foreground" />
 						</div>
-						<span className="text-xl font-semibold">AgentHub</span>
+						<span className="text-xl font-semibold">{platformConfigs.name}</span>
 					</Link>
 				</div>
 
