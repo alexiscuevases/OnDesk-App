@@ -38,8 +38,8 @@ export default function ContactPage() {
 										</div>
 										<div>
 											<h3 className="font-semibold mb-1">Email</h3>
-											{Object.values(platformConfigs.mails).map((mail, index) => (
-												<p key={index} className="text-sm text-muted-foreground">
+											{Object.entries(platformConfigs.mails).map(([key, mail]) => (
+												<p key={key} className="text-sm text-muted-foreground">
 													{mail}
 												</p>
 											))}
