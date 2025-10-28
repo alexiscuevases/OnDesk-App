@@ -42,7 +42,7 @@ export function useAuth() {
 				email: data.email,
 				password: data.password,
 				options: {
-					emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/select-plan`,
+					emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${process.env.NEXT_PUBLIC_SITE_URL}/select-plan`,
 					data: {
 						full_name: data.fullName,
 						company_name: data.companyName,
@@ -52,7 +52,7 @@ export function useAuth() {
 
 			if (authError) throw authError;
 
-			// Show success message - user needs to confirm email
+			// Show success message
 			router.push("/auth/sign-up/success");
 		} catch (err: any) {
 			setError(err.message || "An error occurred during sign up");

@@ -19,6 +19,7 @@ export type TeamMember = z.infer<typeof teamMemberSchema> & {
 
 export const inviteTeamMemberSchema = z.object({
 	team_id: teamMemberSchema.shape.team_id,
+	invited_by: teamMemberSchema.shape.invited_by,
 	email: teamMemberSchema.shape.email,
 	role: teamMemberSchema.shape.role,
 });

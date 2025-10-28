@@ -1,146 +1,132 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-import type { ConnectionInput } from "@/lib/validations/connection"
-
-export interface Connection {
-  id: string
-  name: string
-  type: string
-  config: any
-  status: string
-  user_id: string
-  created_at: string
-  updated_at: string
-}
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { Connection, CreateConnectionInput } from "@/lib/validations/connection";
 
 export function useConnections() {
-  const [connections, setConnections] = useState<Connection[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+	const [connections, setConnections] = useState<Connection[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const supabase = createClient();
 
-  const fetchConnections = async () => {
-    setIsLoading(true)
-    setError(null)
+	const fetchConnections = async () => {
+		setIsLoading(true);
+		setError(null);
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      const { data, error: fetchError } = await supabase
-        .from("connections")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+			if (profileError) throw profileError;
 
-      if (fetchError) throw fetchError
+			const { data, error: fetchError } = await supabase
+				.from("connections")
+				.select("*")
+				.eq("team_id", profile.team_id)
+				.order("created_at", { ascending: false });
 
-      setConnections(data || [])
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch connections")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+			if (fetchError) throw fetchError;
 
-  const createConnection = async (input: ConnectionInput) => {
-    setError(null)
+			setConnections(data || []);
+		} catch (err: any) {
+			setError(err.message || "Failed to fetch connections");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const createConnection = async (input: CreateConnectionInput) => {
+		setError(null);
 
-      const { data, error: createError } = await supabase
-        .from("connections")
-        .insert({
-          name: input.name,
-          type: input.type,
-          config: input.config,
-          status: input.status,
-          user_id: user.id,
-        })
-        .select()
-        .single()
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      if (createError) throw createError
+			const { data, error: createError } = await supabase
+				.from("connections")
+				.insert({
+					team_id: input.team_id,
+					name: input.name,
+					type: input.type,
+					status: input.status,
+					config: input.config,
+				})
+				.select()
+				.single();
 
-      await fetchConnections()
-      return data
-    } catch (err: any) {
-      setError(err.message || "Failed to create connection")
-      throw err
-    }
-  }
+			if (createError) throw createError;
 
-  const updateConnection = async (id: string, input: Partial<ConnectionInput>) => {
-    setError(null)
+			await fetchConnections();
+			return data;
+		} catch (err: any) {
+			setError(err.message || "Failed to create connection");
+			throw err;
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const updateConnection = async (id: string, input: Partial<Connection>) => {
+		setError(null);
 
-      const updateData: any = { updated_at: new Date().toISOString() }
-      if (input.name) updateData.name = input.name
-      if (input.config) updateData.config = input.config
-      if (input.status) updateData.status = input.status
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      const { data, error: updateError } = await supabase
-        .from("connections")
-        .update(updateData)
-        .eq("id", id)
-        .eq("user_id", user.id)
-        .select()
-        .single()
+			const updateData: any = {};
+			if (input.name) updateData.name = input.name;
+			if (input.status) updateData.status = input.status;
+			if (input.config) updateData.config = input.config;
 
-      if (updateError) throw updateError
+			const { data, error: updateError } = await supabase.from("connections").update(updateData).eq("id", id).select().single();
 
-      await fetchConnections()
-      return data
-    } catch (err: any) {
-      setError(err.message || "Failed to update connection")
-      throw err
-    }
-  }
+			if (updateError) throw updateError;
 
-  const deleteConnection = async (id: string) => {
-    setError(null)
+			await fetchConnections();
+			return data;
+		} catch (err: any) {
+			setError(err.message || "Failed to update connection");
+			throw err;
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const deleteConnection = async (id: string) => {
+		setError(null);
 
-      const { error: deleteError } = await supabase.from("connections").delete().eq("id", id).eq("user_id", user.id)
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      if (deleteError) throw deleteError
+			const { error: deleteError } = await supabase.from("connections").delete().eq("id", id);
 
-      await fetchConnections()
-    } catch (err: any) {
-      setError(err.message || "Failed to delete connection")
-      throw err
-    }
-  }
+			if (deleteError) throw deleteError;
 
-  useEffect(() => {
-    fetchConnections()
-  }, [])
+			await fetchConnections();
+		} catch (err: any) {
+			setError(err.message || "Failed to delete connection");
+			throw err;
+		}
+	};
 
-  return {
-    connections,
-    isLoading,
-    error,
-    fetchConnections,
-    createConnection,
-    updateConnection,
-    deleteConnection,
-  }
+	useEffect(() => {
+		fetchConnections();
+	}, []);
+
+	return {
+		connections,
+		isLoading,
+		error,
+		fetchConnections,
+		createConnection,
+		updateConnection,
+		deleteConnection,
+	};
 }

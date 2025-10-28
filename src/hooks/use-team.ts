@@ -2,31 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { InviteTeamMemberInput, CreateTeamInput } from "@/lib/validations/team";
-
-export interface TeamMember {
-	id: string;
-	team_id: string;
-	email: string;
-	role: string;
-	status: string;
-	user_id: string | null;
-	invited_by: string;
-	created_at: string;
-	updated_at: string;
-}
-
-export interface Team {
-	id: string;
-	owner_id: string;
-	name: string;
-	description: string | null;
-	stripe_subscription_id: string | null;
-	stripe_subscription_status: string | null;
-	plan: string | null;
-	created_at: string;
-	updated_at: string;
-}
+import { InviteTeamMemberInput, TeamMember } from "@/lib/validations/team_member";
+import { CreateTeamInput, Team } from "@/lib/validations/team";
 
 export function useTeam() {
 	const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -46,15 +23,11 @@ export function useTeam() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			// Obtener el team_id del profile del usuario
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("team_id").eq("id", user.id).single();
-
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
 			if (profileError) throw profileError;
 
 			if (profile?.team_id) {
-				// Obtener los detalles del team seleccionado
 				const { data: team, error: teamError } = await supabase.from("teams").select("*").eq("id", profile.team_id).single();
-
 				if (teamError) throw teamError;
 
 				setCurrentTeam(team);
@@ -80,13 +53,7 @@ export function useTeam() {
 			// Obtener todos los teams donde el usuario es miembro
 			const { data: teamMembers, error: membersError } = await supabase
 				.from("team_members")
-				.select(
-					`
-          team_id,
-          role,
-          teams:team_id (*)
-        `
-				)
+				.select("*,teams:team_id(*)")
 				.eq("user_id", user.id)
 				.eq("status", "active");
 
@@ -110,13 +77,8 @@ export function useTeam() {
 			if (!user) throw new Error("Not authenticated");
 
 			let query = supabase.from("team_members").select("*").order("created_at", { ascending: false });
-
-			if (teamId) {
-				query = query.eq("team_id", teamId);
-			} else if (currentTeam) {
-				query = query.eq("team_id", currentTeam.id);
-			}
-
+			if (teamId) query = query.eq("team_id", teamId);
+			else if (currentTeam) query = query.eq("team_id", currentTeam.id);
 			const { data, error: fetchError } = await query;
 
 			if (fetchError) throw fetchError;
@@ -154,13 +116,12 @@ export function useTeam() {
 			// Crear el team member para el owner
 			const { error: memberError } = await supabase.from("team_members").insert({
 				team_id: team.id,
+				invited_by: user.id,
 				user_id: user.id,
 				email: user.email!,
 				role: "owner",
 				status: "active",
-				invited_by: user.id,
 			});
-
 			if (memberError) throw memberError;
 
 			// Actualizar el profile para seleccionar el nuevo team
@@ -197,7 +158,6 @@ export function useTeam() {
 
 			// Actualizar el team_id en el profile
 			const { error: updateError } = await supabase.from("profiles").update({ team_id: teamId }).eq("id", user.id);
-
 			if (updateError) throw updateError;
 
 			// Actualizar el estado local
@@ -221,11 +181,10 @@ export function useTeam() {
 			const { data, error: createError } = await supabase
 				.from("team_members")
 				.insert({
+					invited_by: user.id,
 					team_id: input.team_id,
 					email: input.email,
 					role: input.role,
-					status: "pending",
-					invited_by: user.id,
 				})
 				.select()
 				.single();
@@ -249,12 +208,7 @@ export function useTeam() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data, error: updateError } = await supabase
-				.from("team_members")
-				.update({ role, updated_at: new Date().toISOString() })
-				.eq("id", id)
-				.select()
-				.single();
+			const { data, error: updateError } = await supabase.from("team_members").update({ role }).eq("id", id).select().single();
 
 			if (updateError) throw updateError;
 

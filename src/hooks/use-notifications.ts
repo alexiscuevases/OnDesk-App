@@ -1,113 +1,100 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-
-export interface Notification {
-  id: string
-  type: string
-  title: string
-  message: string
-  link: string | null
-  read: boolean
-  user_id: string
-  created_at: string
-}
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export function useNotifications() {
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+	const [notifications, setNotifications] = useState<Notificationa[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const supabase = createClient();
 
-  const fetchNotifications = async () => {
-    setIsLoading(true)
-    setError(null)
+	const fetchNotifications = async () => {
+		setIsLoading(true);
+		setError(null);
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      const { data, error: fetchError } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(50)
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+			if (profileError) throw profileError;
 
-      if (fetchError) throw fetchError
+			const { data, error: fetchError } = await supabase
+				.from("notifications")
+				.select("*")
+				.eq("team_id", profile.team_id)
+				.order("created_at", { ascending: false })
+				.limit(50);
 
-      setNotifications(data || [])
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch notifications")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+			if (fetchError) throw fetchError;
 
-  const markAsRead = async (id: string) => {
-    setError(null)
+			setNotifications(data || []);
+		} catch (err: any) {
+			setError(err.message || "Failed to fetch notifications");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const markAsRead = async (id: string) => {
+		setError(null);
 
-      const { error: updateError } = await supabase
-        .from("notifications")
-        .update({ read: true })
-        .eq("id", id)
-        .eq("user_id", user.id)
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      if (updateError) throw updateError
+			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("id", id);
 
-      await fetchNotifications()
-    } catch (err: any) {
-      setError(err.message || "Failed to mark notification as read")
-      throw err
-    }
-  }
+			if (updateError) throw updateError;
 
-  const markAllAsRead = async () => {
-    setError(null)
+			await fetchNotifications();
+		} catch (err: any) {
+			setError(err.message || "Failed to mark notification as read");
+			throw err;
+		}
+	};
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error("Not authenticated")
+	const markAllAsRead = async () => {
+		setError(null);
 
-      const { error: updateError } = await supabase
-        .from("notifications")
-        .update({ read: true })
-        .eq("user_id", user.id)
-        .eq("read", false)
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
 
-      if (updateError) throw updateError
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+			if (profileError) throw profileError;
 
-      await fetchNotifications()
-    } catch (err: any) {
-      setError(err.message || "Failed to mark all notifications as read")
-      throw err
-    }
-  }
+			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("team_id", profile.team_id).eq("read", false);
 
-  const unreadCount = notifications.filter((n) => !n.read).length
+			if (updateError) throw updateError;
 
-  useEffect(() => {
-    fetchNotifications()
-  }, [])
+			await fetchNotifications();
+		} catch (err: any) {
+			setError(err.message || "Failed to mark all notifications as read");
+			throw err;
+		}
+	};
 
-  return {
-    notifications,
-    unreadCount,
-    isLoading,
-    error,
-    fetchNotifications,
-    markAsRead,
-    markAllAsRead,
-  }
+	const unreadCount = notifications.filter((n) => !n.read).length;
+
+	useEffect(() => {
+		fetchNotifications();
+	}, []);
+
+	return {
+		notifications,
+		unreadCount,
+		isLoading,
+		error,
+		fetchNotifications,
+		markAsRead,
+		markAllAsRead,
+	};
 }

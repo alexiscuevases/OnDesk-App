@@ -18,3 +18,18 @@ export type Agent = z.infer<typeof agentSchema> & {
 	created_at: string;
 	updated_at: string;
 };
+
+export const createAgentSchema = z.object({
+	team_id: agentSchema.shape.team_id,
+	avatar_url: agentSchema.shape.avatar_url,
+	name: agentSchema.shape.name,
+	description: agentSchema.shape.description,
+	type: agentSchema.shape.description,
+	model: agentSchema.shape.model,
+	systemPrompt: agentSchema.shape.systemPrompt,
+	temperature: agentSchema.shape.temperature,
+	maxTokens: agentSchema.shape.maxTokens,
+	status: agentSchema.shape.status,
+});
+
+export type CreateAgentInput = z.infer<typeof createAgentSchema>;

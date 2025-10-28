@@ -13,3 +13,13 @@ export type Connection = z.infer<typeof connectionSchema> & {
 	created_at: string;
 	updated_at: string;
 };
+
+export const createConnectionSchema = z.object({
+	team_id: connectionSchema.shape.team_id,
+	name: connectionSchema.shape.name,
+	type: connectionSchema.shape.type,
+	status: connectionSchema.shape.status,
+	config: connectionSchema.shape.config,
+});
+
+export type CreateConnectionInput = z.infer<typeof createConnectionSchema>;
