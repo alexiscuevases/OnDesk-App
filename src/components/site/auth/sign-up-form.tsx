@@ -24,9 +24,8 @@ export function SignUpForm() {
 	});
 
 	async function onSubmit(data: SignUpInput) {
-		if (!agreedToTerms) {
-			return;
-		}
+		if (!agreedToTerms) return;
+
 		try {
 			await signUp(data);
 		} catch (err) {
