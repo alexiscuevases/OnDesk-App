@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Loader2 } from "lucide-react";
 import { useAgents } from "@/hooks/use-agents";
 import { toast } from "sonner";
-import { Agent, agentSchema, CreateAgentInput } from "@/lib/validations/agent";
+import { Agent, agentSchema, UpdateAgentInput } from "@/lib/validations/agent";
 
 interface ConfigureAgentDialogProps {
 	open: boolean;
@@ -34,16 +34,16 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 		setValue,
 		watch,
 		reset,
-	} = useForm<Partial<Agent>>({
+	} = useForm<UpdateAgentInput>({
 		resolver: zodResolver(agentSchema),
 		defaultValues: {
 			name: agent.name,
 			description: agent.description || "",
 			type: agent.type,
 			model: agent.model,
-			systemPrompt: agent.system_prompt,
+			system_prompt: agent.system_prompt,
 			temperature: agent.temperature,
-			maxTokens: agent.max_tokens,
+			max_tokens: agent.max_tokens,
 			status: agent.status,
 		},
 	});
@@ -55,15 +55,15 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 			description: agent.description || "",
 			type: agent.type,
 			model: agent.model,
-			systemPrompt: agent.system_prompt,
+			system_prompt: agent.system_prompt,
 			temperature: agent.temperature,
-			maxTokens: agent.max_tokens,
+			max_tokens: agent.max_tokens,
 			status: agent.status,
 		});
 		setTemperature(agent.temperature);
 	}, [agent, reset]);
 
-	const onSubmit = async (data: AgentInput) => {
+	const onSubmit = async (data: UpdateAgentInput) => {
 		setIsLoading(true);
 		try {
 			await updateAgent(agent.id, data);
@@ -151,10 +151,10 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 									id="edit-prompt"
 									placeholder="Eres un agente de soporte al cliente útil..."
 									className="min-h-[200px]"
-									{...register("systemPrompt")}
+									{...register("system_prompt")}
 								/>
 								<p className="text-xs text-muted-foreground">Este prompt define la personalidad, conocimiento y comportamiento de tu agente</p>
-								{errors.systemPrompt && <p className="text-xs text-destructive">{errors.systemPrompt.message}</p>}
+								{errors.system_prompt && <p className="text-xs text-destructive">{errors.system_prompt.message}</p>}
 							</div>
 						</TabsContent>
 
@@ -187,9 +187,9 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 							</div>
 							<div className="grid gap-2">
 								<Label htmlFor="edit-max-tokens">Longitud Máxima de Respuesta</Label>
-								<Input id="edit-max-tokens" type="number" {...register("maxTokens", { valueAsNumber: true })} />
+								<Input id="edit-max-tokens" type="number" {...register("max_tokens", { valueAsNumber: true })} />
 								<p className="text-xs text-muted-foreground">Número máximo de tokens en la respuesta</p>
-								{errors.maxTokens && <p className="text-xs text-destructive">{errors.maxTokens.message}</p>}
+								{errors.max_tokens && <p className="text-xs text-destructive">{errors.max_tokens.message}</p>}
 							</div>
 						</TabsContent>
 					</Tabs>

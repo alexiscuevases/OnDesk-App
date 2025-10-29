@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
 import { useTeam } from "@/hooks/use-team";
 import { toast } from "sonner";
+import { TeamMember } from "@/lib/validations/team_member";
 
 interface ChangeRoleDialogProps {
 	children: React.ReactNode;

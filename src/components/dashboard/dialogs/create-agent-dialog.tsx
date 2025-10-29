@@ -30,9 +30,9 @@ export function CreateAgentDialog() {
 			avatar_url: "",
 			type: "support",
 			model: "gpt-4",
-			systemPrompt: "",
+			system_prompt: "",
 			temperature: 0.7,
-			maxTokens: 1000,
+			max_tokens: 1000,
 			status: "active",
 		},
 	});
@@ -119,15 +119,15 @@ export function CreateAgentDialog() {
 							{errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
 						</div>
 						<div className="grid gap-2">
-							<Label htmlFor="systemPrompt">Prompt del Sistema</Label>
+							<Label htmlFor="system_prompt">Prompt del Sistema</Label>
 							<Textarea
-								id="systemPrompt"
+								id="system_prompt"
 								placeholder="Eres un agente de soporte al cliente útil. Tu objetivo es..."
 								className="min-h-[120px]"
-								{...register("systemPrompt")}
+								{...register("system_prompt")}
 							/>
 							<p className="text-xs text-muted-foreground">Este prompt define la personalidad, conocimiento y comportamiento de tu agente</p>
-							{errors.systemPrompt && <p className="text-xs text-destructive">{errors.systemPrompt.message}</p>}
+							{errors.system_prompt && <p className="text-xs text-destructive">{errors.system_prompt.message}</p>}
 						</div>
 						<div className="grid gap-2">
 							<Label htmlFor="model">Modelo de IA</Label>

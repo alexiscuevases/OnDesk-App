@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { platformConfigs } from "@/configs/platform";
 
 interface ChangePlanDialogProps {
 	children: React.ReactNode;
@@ -14,28 +15,6 @@ interface ChangePlanDialogProps {
 export function ChangePlanDialog({ children }: ChangePlanDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [selectedPlan, setSelectedPlan] = useState("professional");
-
-	const plans = [
-		{
-			id: "starter",
-			name: "Starter",
-			price: "$29",
-			features: ["1,000 conversations/mo", "2 agents", "Basic analytics", "Email support"],
-		},
-		{
-			id: "professional",
-			name: "Professional",
-			price: "$99",
-			features: ["10,000 conversations/mo", "10 agents", "Advanced analytics", "Priority support", "Custom branding"],
-			popular: true,
-		},
-		{
-			id: "enterprise",
-			name: "Enterprise",
-			price: "Custom",
-			features: ["Unlimited conversations", "Unlimited agents", "Custom integrations", "Dedicated support", "SLA guarantee"],
-		},
-	];
 
 	const handleSubmit = () => {
 		// Handle plan change logic here
@@ -52,7 +31,7 @@ export function ChangePlanDialog({ children }: ChangePlanDialogProps) {
 				</DialogHeader>
 
 				<div className="grid gap-4 py-4 md:grid-cols-3">
-					{plans.map((plan) => (
+					{platformConfigs.plans.map((plan) => (
 						<Card
 							key={plan.id}
 							className={`cursor-pointer transition-all ${selectedPlan === plan.id ? "ring-2 ring-primary" : "hover:border-primary/50"}`}
@@ -67,8 +46,8 @@ export function ChangePlanDialog({ children }: ChangePlanDialogProps) {
 											</Badge>
 										)}
 									</div>
-									<p className="text-2xl font-bold">{plan.price}</p>
-									{plan.id !== "enterprise" && <p className="text-xs text-muted-foreground">per month</p>}
+									<p className="text-2xl font-bold">${plan.priceInCents / 100}</p>
+									<p className="text-xs text-muted-foreground">per month</p>
 								</div>
 
 								<ul className="space-y-2">
