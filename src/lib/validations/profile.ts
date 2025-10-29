@@ -4,7 +4,8 @@ export const profileSchema = z.object({
 	stripe_customer_id: z.string().optional(),
 	team_id: z.string().optional(),
 	avatar_url: z.string().optional(),
-	full_name: z.string().min(1, "'Full Name' is required"),
+	email: z.string().email("Invalid email address"),
+	full_name: z.string().min(2, "'Full name' must be at least 2 characters"),
 	company_name: z.string().optional(),
 });
 

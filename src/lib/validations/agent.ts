@@ -7,9 +7,9 @@ export const agentSchema = z.object({
 	description: z.string().optional(),
 	type: z.enum(["sales", "support", "general"]),
 	model: z.enum(["gpt-4"]),
-	systemPrompt: z.string().min(10, "System prompt must be at least 10 characters"),
+	system_prompt: z.string().min(10, "System prompt must be at least 10 characters"),
 	temperature: z.number().min(0).max(2).default(0.7),
-	maxTokens: z.number().min(100).max(4000).default(1000),
+	max_tokens: z.number().min(100).max(4000).default(1000),
 	status: z.enum(["active", "inactive", "training"]),
 });
 
@@ -26,9 +26,9 @@ export const createAgentSchema = z.object({
 	description: agentSchema.shape.description,
 	type: agentSchema.shape.description,
 	model: agentSchema.shape.model,
-	systemPrompt: agentSchema.shape.systemPrompt,
+	system_prompt: agentSchema.shape.system_prompt,
 	temperature: agentSchema.shape.temperature,
-	maxTokens: agentSchema.shape.maxTokens,
+	max_tokens: agentSchema.shape.max_tokens,
 	status: agentSchema.shape.status,
 });
 
