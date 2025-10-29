@@ -43,9 +43,9 @@ export function SignUpForm() {
 			)}
 
 			<div className="space-y-2">
-				<Label htmlFor="fullName">Full Name</Label>
-				<Input id="fullName" type="text" placeholder="John Doe" disabled={isLoading} {...register("fullName")} />
-				{errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
+				<Label htmlFor="full_name">Full Name</Label>
+				<Input id="full_name" type="text" placeholder="John Doe" disabled={isLoading} {...register("full_name")} />
+				{errors.full_name && <p className="text-sm text-destructive">{errors.full_name.message}</p>}
 			</div>
 
 			<div className="space-y-2">
@@ -55,8 +55,8 @@ export function SignUpForm() {
 			</div>
 
 			<div className="space-y-2">
-				<Label htmlFor="companyName">Company Name (Optional)</Label>
-				<Input id="companyName" type="text" placeholder="Acme Inc." disabled={isLoading} {...register("companyName")} />
+				<Label htmlFor="company_name">Company Name (Optional)</Label>
+				<Input id="company_name" type="text" placeholder="Acme Inc." disabled={isLoading} {...register("company_name")} />
 			</div>
 
 			<div className="space-y-2">
@@ -66,9 +66,9 @@ export function SignUpForm() {
 			</div>
 
 			<div className="space-y-2">
-				<Label htmlFor="confirmPassword">Confirm Password</Label>
-				<Input id="confirmPassword" type="password" placeholder="Confirm your password" disabled={isLoading} {...register("confirmPassword")} />
-				{errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
+				<Label htmlFor="confirm_password">Confirm Password</Label>
+				<Input id="confirm_password" type="password" placeholder="Confirm your password" disabled={isLoading} {...register("confirm_password")} />
+				{errors.confirm_password && <p className="text-sm text-destructive">{errors.confirm_password.message}</p>}
 			</div>
 
 			<div className="flex items-start space-x-2">

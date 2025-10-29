@@ -4,16 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-
-type Profile = {
-	id: string;
-	full_name: string | null;
-	company_name: string | null;
-	team_id: string | null;
-	created_at?: string;
-	updated_at?: string;
-	// 🔹 agrega los campos que tenga tu tabla profiles
-};
+import { Profile } from "@/lib/validations/profile";
 
 type AuthContextType = {
 	user: User | null;
@@ -43,17 +34,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		try {
 			const {
 				data: { user },
-				error: userError,
 			} = await supabase.auth.getUser();
-			if (userError) throw userError;
+			if (!user) throw new Error("Not authenticated");
 
 			setUser(user);
 
 			if (user) {
-				const { data: profileData, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+				const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
+					.from("profiles")
+					.select("*")
+					.eq("id", user.id)
+					.single();
+				if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-				if (profileError) throw profileError;
-				setProfile(profileData);
+				setProfile(profile);
 			} else {
 				setProfile(null);
 			}

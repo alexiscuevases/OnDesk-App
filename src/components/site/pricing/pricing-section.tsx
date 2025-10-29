@@ -1,57 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AppConfigs } from "@/configs/app";
+import { platformConfigs } from "@/configs/platform";
 import { Check } from "lucide-react";
 import Link from "next/link";
-
-const plans = [
-	{
-		name: "Starter",
-		price: "$29",
-		description: "Perfect for small businesses getting started with AI agents",
-		features: ["1 AI Agent", "1,000 conversations/month", "WhatsApp integration", "Website chat widget", "Basic analytics", "Email support"],
-		cta: "Start Free Trial",
-		href: "/auth/sign-up?plan=starter",
-		popular: false,
-	},
-	{
-		name: "Professional",
-		price: "$99",
-		description: "For growing businesses that need more power and flexibility",
-		features: [
-			"5 AI Agents",
-			"10,000 conversations/month",
-			"WhatsApp integration",
-			"Website chat widget",
-			"Advanced analytics",
-			"Custom prompts",
-			"Team collaboration (5 seats)",
-			"Priority support",
-		],
-		cta: "Start Free Trial",
-		href: "/auth/sign-up?plan=professional",
-		popular: true,
-	},
-	{
-		name: "Enterprise",
-		price: "Custom",
-		description: "For large organizations with custom requirements",
-		features: [
-			"Unlimited AI Agents",
-			"Unlimited conversations",
-			"WhatsApp integration",
-			"Website chat widget",
-			"Advanced analytics & reporting",
-			"Custom integrations",
-			"Unlimited team seats",
-			"Dedicated account manager",
-			"SLA guarantee",
-			"Custom training",
-		],
-		cta: "Contact Sales",
-		href: "/contact",
-		popular: false,
-	},
-];
 
 export function PricingSection() {
 	return (
@@ -67,7 +19,7 @@ export function PricingSection() {
 
 				{/* Pricing Cards */}
 				<div className="grid gap-8 lg:grid-cols-3 max-w-6xl mx-auto">
-					{plans.map((plan, index) => (
+					{platformConfigs.plans.map((plan, index) => (
 						<Card key={index} className={`relative flex flex-col ${plan.popular ? "border-primary shadow-lg scale-105" : "border-border"}`}>
 							{plan.popular && (
 								<div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -81,8 +33,8 @@ export function PricingSection() {
 								<CardTitle className="text-2xl">{plan.name}</CardTitle>
 								<CardDescription className="text-base leading-relaxed">{plan.description}</CardDescription>
 								<div className="mt-4">
-									<span className="text-4xl font-bold">{plan.price}</span>
-									{plan.price !== "Custom" && <span className="text-muted-foreground">/month</span>}
+									<span className="text-4xl font-bold">${plan.priceInCents / 100}</span>
+									<span className="text-muted-foreground">/month</span>
 								</div>
 							</CardHeader>
 
@@ -99,7 +51,7 @@ export function PricingSection() {
 
 							<CardFooter>
 								<Button className="w-full" variant={plan.popular ? "default" : "outline"} size="lg" asChild>
-									<Link href={plan.href}>{plan.cta}</Link>
+									<Link href={`${AppConfigs.url}/auth/sign-up?plan_id=${plan.id}`}>Start Free Trial</Link>
 								</Button>
 							</CardFooter>
 						</Card>
