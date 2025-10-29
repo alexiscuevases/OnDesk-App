@@ -23,3 +23,5 @@ export const createConnectionSchema = z.object({
 });
 
 export type CreateConnectionInput = z.infer<typeof createConnectionSchema>;
+
+export type UpdateConnectionInput = Partial<Connection>;

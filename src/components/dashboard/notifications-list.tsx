@@ -106,7 +106,7 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 									<div className="flex items-start justify-between gap-2">
 										<div>
 											<p className="font-medium text-sm">{notification.title}</p>
-											<p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+											<p className="text-sm text-muted-foreground mt-1">{notification.content}</p>
 										</div>
 										{!notification.read && (
 											<Badge variant="default" className="text-xs">

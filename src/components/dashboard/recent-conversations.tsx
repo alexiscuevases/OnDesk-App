@@ -63,7 +63,7 @@ export function RecentConversations() {
 								{conversation.channel}
 							</Badge>
 							<Badge
-								variant={conversation.status === "active" ? "default" : conversation.status === "resolved" ? "secondary" : "outline"}
+								variant={conversation.status === "open" ? "default" : conversation.status === "resolved" ? "secondary" : "outline"}
 								className="text-xs">
 								{conversation.status}
 							</Badge>

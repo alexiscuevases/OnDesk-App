@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { useTeam } from "@/hooks/use-team";
 import { toast } from "sonner";
-import { inviteTeamMemberSchema, type InviteTeamMemberInput } from "@/lib/validations/team";
+import { InviteTeamMemberInput, inviteTeamMemberSchema } from "@/lib/validations/team_member";
 
 export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);

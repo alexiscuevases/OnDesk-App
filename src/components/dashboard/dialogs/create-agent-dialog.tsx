@@ -13,7 +13,7 @@ import { Plus, Loader2 } from "lucide-react";
 import { useAgents } from "@/hooks/use-agents";
 import { useTeam } from "@/hooks/use-team";
 import { toast } from "sonner";
-import { agentSchema, type AgentInput } from "@/lib/validations/agent";
+import { CreateAgentInput, createAgentSchema } from "@/lib/validations/agent";
 
 export function CreateAgentDialog() {
 	const [open, setOpen] = useState(false);
@@ -21,8 +21,8 @@ export function CreateAgentDialog() {
 	const { createAgent } = useAgents();
 	const { currentTeam } = useTeam();
 
-	const form = useForm<AgentInput>({
-		resolver: zodResolver(agentSchema),
+	const form = useForm<CreateAgentInput>({
+		resolver: zodResolver(createAgentSchema),
 		defaultValues: {
 			team_id: "",
 			name: "",
@@ -52,7 +52,7 @@ export function CreateAgentDialog() {
 		}
 	}, [currentTeam, setValue]);
 
-	const onSubmit = async (data: AgentInput) => {
+	const onSubmit = async (data: CreateAgentInput) => {
 		if (!currentTeam?.id) {
 			toast.error("Error", {
 				description: "Debes seleccionar un equipo antes de crear un agente",
@@ -104,7 +104,7 @@ export function CreateAgentDialog() {
 						</div>
 						<div className="grid gap-2">
 							<Label htmlFor="type">Tipo de Agente</Label>
-							<Select value={watch("type")} onValueChange={(value) => setValue("type", value as AgentInput["type"])}>
+							<Select value={watch("type")} onValueChange={(value) => setValue("type", value as CreateAgentInput["type"])}>
 								<SelectTrigger id="type">
 									<SelectValue placeholder="Selecciona el tipo de agente" />
 								</SelectTrigger>
@@ -131,7 +131,7 @@ export function CreateAgentDialog() {
 						</div>
 						<div className="grid gap-2">
 							<Label htmlFor="model">Modelo de IA</Label>
-							<Select value={watch("model")} onValueChange={(value) => setValue("model", value as AgentInput["model"])}>
+							<Select value={watch("model")} onValueChange={(value) => setValue("model", value as CreateAgentInput["model"])}>
 								<SelectTrigger id="model">
 									<SelectValue placeholder="Selecciona el modelo de IA" />
 								</SelectTrigger>

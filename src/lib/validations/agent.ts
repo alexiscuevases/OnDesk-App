@@ -33,3 +33,5 @@ export const createAgentSchema = z.object({
 });
 
 export type CreateAgentInput = z.infer<typeof createAgentSchema>;
+
+export type UpdateAgentInput = Partial<Agent>;

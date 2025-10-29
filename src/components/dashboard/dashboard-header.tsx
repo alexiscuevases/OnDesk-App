@@ -117,7 +117,7 @@ export function DashboardHeader() {
 														</Badge>
 													)}
 												</div>
-												<p className="text-xs text-muted-foreground">{notification.message}</p>
+												<p className="text-xs text-muted-foreground">{notification.content}</p>
 												<span className="text-xs text-muted-foreground">
 													{formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}
 												</span>

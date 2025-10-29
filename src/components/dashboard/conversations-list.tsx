@@ -83,7 +83,7 @@ export function ConversationsList() {
 									<div className="flex-1 min-w-0">
 										<div className="flex items-center gap-2">
 											<h3 className="font-semibold text-sm">{conversation.customer_name}</h3>
-											{conversation.status === "active" && (
+											{conversation.status === "open" && (
 												<Badge variant="default" className="h-5 px-1.5 text-xs">
 													Nuevo
 												</Badge>
@@ -114,7 +114,7 @@ export function ConversationsList() {
 										<span>{formatDistanceToNow(new Date(conversation.created_at), { addSuffix: true, locale: es })}</span>
 									</div>
 									<Badge
-										variant={conversation.status === "active" ? "default" : conversation.status === "resolved" ? "secondary" : "outline"}
+										variant={conversation.status === "open" ? "default" : conversation.status === "resolved" ? "secondary" : "outline"}
 										className="text-xs">
 										{conversation.status}
 									</Badge>
@@ -122,11 +122,6 @@ export function ConversationsList() {
 							</div>
 						</CardHeader>
 						<CardContent className="pt-0">
-							{conversation.sentiment && (
-								<p className="text-sm text-muted-foreground mb-3">
-									Sentimiento: <span className="capitalize">{conversation.sentiment}</span>
-								</p>
-							)}
 							<div className="flex items-center gap-2">
 								<Button variant="outline" size="sm" asChild>
 									<Link href={`/dashboard/conversations/${conversation.id}`}>

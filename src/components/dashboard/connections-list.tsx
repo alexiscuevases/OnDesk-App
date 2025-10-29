@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle, Globe, Smartphone, Mail, Check, Plus, Loader2, Plug } from "lucide-react";
+import { MessageCircle, Globe, Smartphone, Mail, Check, Plus, Plug } from "lucide-react";
 import { ConnectIntegrationDialog } from "./dialogs/connect-integration-dialog";
 import { ManageIntegrationDialog } from "./dialogs/manage-integration-dialog";
 import { useConnections } from "@/hooks/use-connections";

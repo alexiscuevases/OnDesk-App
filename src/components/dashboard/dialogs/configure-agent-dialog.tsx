@@ -12,9 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Loader2 } from "lucide-react";
-import { useAgents, type Agent } from "@/hooks/use-agents";
+import { useAgents } from "@/hooks/use-agents";
 import { toast } from "sonner";
-import { agentSchema, type AgentInput } from "@/lib/validations/agent";
+import { Agent, agentSchema, CreateAgentInput } from "@/lib/validations/agent";
 
 interface ConfigureAgentDialogProps {
 	open: boolean;
@@ -34,7 +34,7 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 		setValue,
 		watch,
 		reset,
-	} = useForm<AgentInput>({
+	} = useForm<Partial<Agent>>({
 		resolver: zodResolver(agentSchema),
 		defaultValues: {
 			name: agent.name,

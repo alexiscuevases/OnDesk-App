@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { useConnections } from "@/hooks/use-connections";
 import { toast } from "sonner";
-import { connectionSchema, type ConnectionInput } from "@/lib/validations/connection";
+import { CreateConnectionInput } from "@/lib/validations/connection";
 
 interface ConnectIntegrationDialogProps {
 	children: React.ReactNode;
@@ -62,11 +61,11 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 				config.password = data.password;
 			}
 
-			const connectionData: ConnectionInput = {
+			const connectionData: CreateConnectionInput = {
 				name: data.name || integration.name,
 				type: integration.id,
 				config,
-				status: "active",
+				status: "connected",
 			};
 
 			await createConnection(connectionData);
