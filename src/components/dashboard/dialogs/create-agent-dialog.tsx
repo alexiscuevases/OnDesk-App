@@ -21,15 +21,6 @@ export function CreateAgentDialog() {
 	const { createAgent } = useAgents();
 	const { currentTeam } = useTeam();
 
-	const form = useForm<CreateAgentInput>({
-		resolver: zodResolver(createAgentSchema),
-		defaultValues: {
-			model: "gpt-4",
-			status: "training",
-			type: "general",
-		},
-	});
-
 	const {
 		register,
 		handleSubmit,
@@ -37,7 +28,14 @@ export function CreateAgentDialog() {
 		reset,
 		setValue,
 		watch,
-	} = form;
+	} = useForm<CreateAgentInput>({
+		resolver: zodResolver(createAgentSchema),
+		defaultValues: {
+			model: "gpt-4",
+			status: "training",
+			type: "general",
+		},
+	});
 
 	useEffect(() => {
 		if (currentTeam?.id) setValue("team_id", currentTeam.id);

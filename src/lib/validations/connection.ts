@@ -22,7 +22,7 @@ export const baseConnectionSchema = z.object({
 	name: connectionSchema.shape.name,
 	type: connectionSchema.shape.type,
 	status: connectionSchema.shape.status,
-	config: connectionSchema.shape.config,
+	config: connectionSchema.shape.config.default({}),
 });
 
 const whatsappSchema = baseConnectionSchema.extend({

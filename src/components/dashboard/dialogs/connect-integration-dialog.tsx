@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -32,14 +32,19 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 		handleSubmit,
 		formState: { errors },
 		reset,
+		setValue,
 	} = useForm<CreateConnectionInput>({
 		resolver: zodResolver(createConnectionSchema),
 		defaultValues: {
-			team_id: currentTeam?.id,
 			name: integration.name,
 			type: integration.type,
+			config: {},
 		},
 	});
+
+	useEffect(() => {
+		if (currentTeam?.id) setValue("team_id", currentTeam.id);
+	}, [currentTeam, setValue]);
 
 	const onSubmit = async (data: CreateConnectionInput) => {
 		setIsLoading(true);
