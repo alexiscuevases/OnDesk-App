@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Loader2 } from "lucide-react";
 import { useAgents } from "@/hooks/use-agents";
 import { toast } from "sonner";
-import { Agent, agentSchema, UpdateAgentInput } from "@/lib/validations/agent";
+import { Agent, agentSchema, UpdateAgentInput, updateAgentSchema } from "@/lib/validations/agent";
 
 interface ConfigureAgentDialogProps {
 	open: boolean;
@@ -35,10 +35,12 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 		watch,
 		reset,
 	} = useForm<UpdateAgentInput>({
-		resolver: zodResolver(agentSchema),
+		resolver: zodResolver(updateAgentSchema),
 		defaultValues: {
+			team_id: agent.team_id,
+			avatar_url: agent.avatar_url || "",
 			name: agent.name,
-			description: agent.description || "",
+			description: agent.description,
 			type: agent.type,
 			model: agent.model,
 			system_prompt: agent.system_prompt,
@@ -49,10 +51,11 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 	});
 
 	useEffect(() => {
-		// Reset form cuando cambia el agente
 		reset({
+			team_id: agent.team_id,
+			avatar_url: agent.avatar_url || "",
 			name: agent.name,
-			description: agent.description || "",
+			description: agent.description,
 			type: agent.type,
 			model: agent.model,
 			system_prompt: agent.system_prompt,
@@ -115,32 +118,31 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 							</div>
 							<div className="grid gap-2">
 								<Label htmlFor="edit-type">Tipo de Agente</Label>
-								<Select value={watch("type")} onValueChange={(value) => setValue("type", value)}>
+								<Select value={watch("type")} onValueChange={(value: Agent["type"]) => setValue("type", value)}>
 									<SelectTrigger id="edit-type">
 										<SelectValue placeholder="Selecciona el tipo de agente" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="support">Soporte al Cliente</SelectItem>
 										<SelectItem value="sales">Asistente de Ventas</SelectItem>
-										<SelectItem value="technical">Soporte Técnico</SelectItem>
-										<SelectItem value="onboarding">Guía de Onboarding</SelectItem>
-										<SelectItem value="custom">Personalizado</SelectItem>
+										<SelectItem value="support">Soporte al Cliente</SelectItem>
+										<SelectItem value="general">General</SelectItem>
 									</SelectContent>
 								</Select>
 								{errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
 							</div>
 							<div className="grid gap-2">
-								<Label htmlFor="edit-status">Estado</Label>
-								<div className="flex items-center space-x-2">
-									<Switch
-										id="edit-status"
-										checked={watch("status") === "active"}
-										onCheckedChange={(checked) => setValue("status", checked ? "active" : "inactive")}
-									/>
-									<Label htmlFor="edit-status" className="font-normal">
-										El agente está activo
-									</Label>
-								</div>
+								<Label htmlFor="edit-status">Status</Label>
+								<Select value={watch("status")} onValueChange={(value: Agent["status"]) => setValue("status", value)}>
+									<SelectTrigger id="edit-status">
+										<SelectValue placeholder="Selecciona el tipo de agente" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="active">Active</SelectItem>
+										<SelectItem value="inactive">Inactive</SelectItem>
+										<SelectItem value="training">Training</SelectItem>
+									</SelectContent>
+								</Select>
+								{errors.status && <p className="text-xs text-destructive">{errors.status.message}</p>}
 							</div>
 						</TabsContent>
 
@@ -161,7 +163,7 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 						<TabsContent value="advanced" className="space-y-4 mt-4">
 							<div className="grid gap-2">
 								<Label htmlFor="edit-model">Modelo de IA</Label>
-								<Select value={watch("model")} onValueChange={(value) => setValue("model", value)}>
+								<Select value={watch("model")} onValueChange={(value: Agent["model"]) => setValue("model", value)}>
 									<SelectTrigger id="edit-model">
 										<SelectValue placeholder="Selecciona el modelo de IA" />
 									</SelectTrigger>

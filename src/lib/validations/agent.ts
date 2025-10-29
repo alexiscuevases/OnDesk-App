@@ -24,7 +24,7 @@ export const createAgentSchema = z.object({
 	avatar_url: agentSchema.shape.avatar_url,
 	name: agentSchema.shape.name,
 	description: agentSchema.shape.description,
-	type: agentSchema.shape.description,
+	type: agentSchema.shape.type,
 	model: agentSchema.shape.model,
 	system_prompt: agentSchema.shape.system_prompt,
 	temperature: agentSchema.shape.temperature.optional(),
@@ -34,4 +34,19 @@ export const createAgentSchema = z.object({
 
 export type CreateAgentInput = z.infer<typeof createAgentSchema>;
 
-export type UpdateAgentInput = Partial<Agent>;
+export const updateAgentSchema = z
+	.object({
+		team_id: agentSchema.shape.team_id,
+		avatar_url: agentSchema.shape.avatar_url,
+		name: agentSchema.shape.name,
+		description: agentSchema.shape.description,
+		type: agentSchema.shape.type,
+		model: agentSchema.shape.model,
+		system_prompt: agentSchema.shape.system_prompt,
+		temperature: agentSchema.shape.temperature,
+		max_tokens: agentSchema.shape.max_tokens,
+		status: agentSchema.shape.status,
+	})
+	.partial();
+
+export type UpdateAgentInput = z.infer<typeof updateAgentSchema>;

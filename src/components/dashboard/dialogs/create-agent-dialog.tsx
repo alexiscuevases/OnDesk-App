@@ -23,6 +23,11 @@ export function CreateAgentDialog() {
 
 	const form = useForm<CreateAgentInput>({
 		resolver: zodResolver(createAgentSchema),
+		defaultValues: {
+			model: "gpt-4",
+			status: "training",
+			type: "general",
+		},
 	});
 
 	const {
@@ -35,9 +40,7 @@ export function CreateAgentDialog() {
 	} = form;
 
 	useEffect(() => {
-		if (currentTeam?.id) {
-			setValue("team_id", currentTeam.id);
-		}
+		if (currentTeam?.id) setValue("team_id", currentTeam.id);
 	}, [currentTeam, setValue]);
 
 	const onSubmit = async (data: CreateAgentInput) => {
@@ -126,6 +129,20 @@ export function CreateAgentDialog() {
 								</SelectContent>
 							</Select>
 							{errors.model && <p className="text-xs text-destructive">{errors.model.message}</p>}
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="status">Status</Label>
+							<Select value={watch("status")} onValueChange={(value) => setValue("status", value as CreateAgentInput["status"])}>
+								<SelectTrigger id="status">
+									<SelectValue placeholder="Selecciona el estado" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="active">Active</SelectItem>
+									<SelectItem value="inactive">Inactive</SelectItem>
+									<SelectItem value="training">Training</SelectItem>
+								</SelectContent>
+							</Select>
+							{errors.status && <p className="text-xs text-destructive">{errors.status.message}</p>}
 						</div>
 					</div>
 					<DialogFooter>
