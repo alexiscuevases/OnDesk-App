@@ -9,14 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { useConnections } from "@/hooks/use-connections";
-import { toast } from "sonner";
-import { CreateConnectionInput } from "@/lib/validations/connection";
+import { Connection, CreateConnectionInput, createConnectionSchema } from "@/lib/validations/connection";
+import { useAuth } from "@/components/providers/auth-provider";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTeam } from "@/hooks/use-team";
 
 interface ConnectIntegrationDialogProps {
 	children: React.ReactNode;
 	integration: {
-		id: string;
-		name: string;
+		name: Connection["name"];
+		type: Connection["type"];
 	};
 }
 
@@ -24,60 +26,50 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { createConnection } = useConnections();
+	const { currentTeam } = useTeam();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 		reset,
-	} = useForm<any>({
+	} = useForm<CreateConnectionInput>({
+		resolver: zodResolver(createConnectionSchema),
 		defaultValues: {
+			team_id: currentTeam?.id,
 			name: integration.name,
+			type: integration.type,
 		},
 	});
 
-	const onSubmit = async (data: any) => {
+	const onSubmit = async (data: CreateConnectionInput) => {
 		setIsLoading(true);
 		try {
-			// Crear la configuración según el tipo de integración
 			const config: any = {};
 
-			if (integration.id === "whatsapp") {
+			if (integration.type === "whatsapp") {
 				config.phoneNumber = data.phoneNumber;
+				config.phoneNumberId = data.phoneNumberId;
 				config.apiKey = data.apiKey;
 				config.accountName = data.accountName;
-			} else if (integration.id === "website") {
+			} else if (integration.type === "website") {
 				config.websiteUrl = data.websiteUrl;
 				config.widgetName = data.widgetName;
 				config.welcomeMessage = data.welcomeMessage;
-			} else if (integration.id === "sms") {
-				config.phoneNumber = data.phoneNumber;
-				config.provider = data.provider;
-				config.apiKey = data.apiKey;
-			} else if (integration.id === "email") {
-				config.emailAddress = data.emailAddress;
-				config.smtpHost = data.smtpHost;
-				config.smtpPort = data.smtpPort;
-				config.password = data.password;
 			}
 
-			const connectionData: CreateConnectionInput = {
-				name: data.name || integration.name,
-				type: integration.id,
-				config,
+			await createConnection({
+				team_id: data.team_id,
+				name: data.name,
+				type: data.type,
 				status: "connected",
-			};
-
-			await createConnection(connectionData);
-			toast.success("Conexión creada", {
-				description: `${integration.name} ha sido conectado exitosamente.`,
+				config,
 			});
+
 			setOpen(false);
 			reset();
 		} catch (error: any) {
-			toast.error("Error", {
-				description: error.message || "No se pudo crear la conexión",
-			});
+			// Error is handled by useConnections hook
 		} finally {
 			setIsLoading(false);
 		}
@@ -99,17 +91,25 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 							<Input id="name" placeholder={integration.name} {...register("name")} />
 						</div>
 
-						{integration.id === "whatsapp" && (
+						{integration.type === "whatsapp" && (
 							<>
 								<div className="space-y-2">
 									<Label htmlFor="phoneNumber">Número de Teléfono</Label>
-									<Input id="phoneNumber" placeholder="+1 (555) 000-0000" {...register("phoneNumber", { required: true })} />
+									<Input id="phoneNumber" placeholder="+1234567890" {...register("phoneNumber", { required: true })} />
 									{errors.phoneNumber && <p className="text-xs text-destructive">Este campo es requerido</p>}
+									<p className="text-xs text-muted-foreground">Número de teléfono que aparece en WhatsApp Business</p>
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="apiKey">API Key de WhatsApp Business</Label>
-									<Input id="apiKey" type="password" placeholder="Ingresa tu API key" {...register("apiKey", { required: true })} />
+									<Label htmlFor="phoneNumberId">Phone Number ID</Label>
+									<Input id="phoneNumberId" placeholder="123456789012345" {...register("phoneNumberId", { required: true })} />
+									{errors.phoneNumberId && <p className="text-xs text-destructive">Este campo es requerido</p>}
+									<p className="text-xs text-muted-foreground">ID del número en Meta Business Suite</p>
+								</div>
+								<div className="space-y-2">
+									<Label htmlFor="apiKey">Access Token</Label>
+									<Input id="apiKey" type="password" placeholder="EAAxxxxxxxxxxxxx" {...register("apiKey", { required: true })} />
 									{errors.apiKey && <p className="text-xs text-destructive">Este campo es requerido</p>}
+									<p className="text-xs text-muted-foreground">Token de acceso temporal de Meta</p>
 								</div>
 								<div className="space-y-2">
 									<Label htmlFor="accountName">Nombre de la Cuenta</Label>
@@ -118,7 +118,7 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 							</>
 						)}
 
-						{integration.id === "website" && (
+						{integration.type === "website" && (
 							<>
 								<div className="space-y-2">
 									<Label htmlFor="websiteUrl">URL del Sitio Web</Label>
@@ -132,51 +132,6 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 								<div className="space-y-2">
 									<Label htmlFor="welcomeMessage">Mensaje de Bienvenida</Label>
 									<Textarea id="welcomeMessage" placeholder="¡Hola! ¿Cómo puedo ayudarte hoy?" {...register("welcomeMessage")} />
-								</div>
-							</>
-						)}
-
-						{integration.id === "sms" && (
-							<>
-								<div className="space-y-2">
-									<Label htmlFor="phoneNumber">Número de Teléfono</Label>
-									<Input id="phoneNumber" placeholder="+1 (555) 000-0000" {...register("phoneNumber", { required: true })} />
-									{errors.phoneNumber && <p className="text-xs text-destructive">Este campo es requerido</p>}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="provider">Proveedor SMS</Label>
-									<Input id="provider" placeholder="Twilio, MessageBird, etc." {...register("provider", { required: true })} />
-									{errors.provider && <p className="text-xs text-destructive">Este campo es requerido</p>}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="apiKey">API Key</Label>
-									<Input id="apiKey" type="password" placeholder="Ingresa tu API key" {...register("apiKey", { required: true })} />
-									{errors.apiKey && <p className="text-xs text-destructive">Este campo es requerido</p>}
-								</div>
-							</>
-						)}
-
-						{integration.id === "email" && (
-							<>
-								<div className="space-y-2">
-									<Label htmlFor="emailAddress">Dirección de Email</Label>
-									<Input id="emailAddress" type="email" placeholder="support@example.com" {...register("emailAddress", { required: true })} />
-									{errors.emailAddress && <p className="text-xs text-destructive">Este campo es requerido</p>}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="smtpHost">Host SMTP</Label>
-									<Input id="smtpHost" placeholder="smtp.example.com" {...register("smtpHost", { required: true })} />
-									{errors.smtpHost && <p className="text-xs text-destructive">Este campo es requerido</p>}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="smtpPort">Puerto SMTP</Label>
-									<Input id="smtpPort" placeholder="587" {...register("smtpPort", { required: true })} />
-									{errors.smtpPort && <p className="text-xs text-destructive">Este campo es requerido</p>}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="password">Contraseña</Label>
-									<Input id="password" type="password" placeholder="Ingresa la contraseña" {...register("password", { required: true })} />
-									{errors.password && <p className="text-xs text-destructive">Este campo es requerido</p>}
 								</div>
 							</>
 						)}

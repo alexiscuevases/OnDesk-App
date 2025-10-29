@@ -4,42 +4,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle, Globe, Smartphone, Mail, Check, Plus, Plug } from "lucide-react";
+import { MessageCircle, Globe, Smartphone, Mail, Check, Plus } from "lucide-react";
 import { ConnectIntegrationDialog } from "./dialogs/connect-integration-dialog";
 import { ManageIntegrationDialog } from "./dialogs/manage-integration-dialog";
 import { useConnections } from "@/hooks/use-connections";
 
 const availableIntegrations = [
 	{
-		id: "whatsapp",
+		type: "whatsapp",
 		name: "WhatsApp Business",
 		description: "Conecta tus agentes a WhatsApp para mensajería con clientes",
 		icon: MessageCircle,
 	},
 	{
-		id: "website",
+		type: "website",
 		name: "Widget de Sitio Web",
 		description: "Integra un widget de chat en tu sitio web",
 		icon: Globe,
 	},
 	{
-		id: "sms",
+		type: "sms",
 		name: "SMS",
 		description: "Envía y recibe mensajes SMS con tus agentes",
 		icon: Smartphone,
 	},
 	{
-		id: "email",
+		type: "email",
 		name: "Email",
 		description: "Maneja emails de clientes con respuestas impulsadas por IA",
 		icon: Mail,
 	},
 ];
-
-const getIntegrationIcon = (type: string) => {
-	const integration = availableIntegrations.find((i) => i.id === type.toLowerCase());
-	return integration?.icon || Plug;
-};
 
 export function ConnectionsList() {
 	const { connections, isLoading, error } = useConnections();
@@ -81,7 +76,6 @@ export function ConnectionsList() {
 		);
 	}
 
-	// Group connections by type to count
 	const connectionsByType = connections.reduce((acc, conn) => {
 		const type = conn.type.toLowerCase();
 		if (!acc[type]) acc[type] = [];
@@ -92,11 +86,11 @@ export function ConnectionsList() {
 	return (
 		<div className="grid gap-4 md:grid-cols-2">
 			{availableIntegrations.map((integration) => {
-				const connectedCount = connectionsByType[integration.id]?.length || 0;
+				const connectedCount = connectionsByType[integration.type]?.length || 0;
 				const isConnected = connectedCount > 0;
 
 				return (
-					<Card key={integration.id}>
+					<Card key={integration.type}>
 						<CardHeader>
 							<div className="flex items-start justify-between">
 								<div className="flex items-center gap-3">
@@ -126,19 +120,31 @@ export function ConnectionsList() {
 							<div className="flex gap-2">
 								{isConnected ? (
 									<>
-										<ManageIntegrationDialog integration={integration}>
+										<ManageIntegrationDialog
+											integration={{
+												name: integration.name,
+												type: integration.type,
+											}}>
 											<Button variant="outline" size="sm" className="flex-1 bg-transparent">
 												Administrar
 											</Button>
 										</ManageIntegrationDialog>
-										<ConnectIntegrationDialog integration={integration}>
+										<ConnectIntegrationDialog
+											integration={{
+												name: integration.name,
+												type: integration.type,
+											}}>
 											<Button variant="outline" size="sm">
 												<Plus className="h-4 w-4" />
 											</Button>
 										</ConnectIntegrationDialog>
 									</>
 								) : (
-									<ConnectIntegrationDialog integration={integration}>
+									<ConnectIntegrationDialog
+										integration={{
+											name: integration.name,
+											type: integration.type,
+										}}>
 										<Button size="sm" className="flex-1">
 											Conectar
 										</Button>

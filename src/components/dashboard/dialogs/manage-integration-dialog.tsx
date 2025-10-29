@@ -8,93 +8,143 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Trash2, ExternalLink } from "lucide-react";
+import { useConnections } from "@/hooks/use-connections";
+import { Connection } from "@/lib/validations/connection";
+import { toast } from "sonner";
 
 interface ManageIntegrationDialogProps {
 	children: React.ReactNode;
 	integration: {
-		id: string;
-		name: string;
-		connectedAccounts: number;
+		name: Connection["name"];
+		type: Connection["type"];
 	};
 }
 
 export function ManageIntegrationDialog({ children, integration }: ManageIntegrationDialogProps) {
 	const [open, setOpen] = useState(false);
+	const { getConnectionsByType, deleteConnection, updateConnection } = useConnections();
+	const [connections, setConnections] = useState<Connection[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
-	// Mock connected accounts data
-	const accounts = [
-		{
-			id: "1",
-			name: "Main Business Account",
-			identifier: "+1 (555) 123-4567",
-			status: "active",
-			connectedAt: "Oct 15, 2025",
-		},
-		{
-			id: "2",
-			name: "Support Line",
-			identifier: "+1 (555) 987-6543",
-			status: "active",
-			connectedAt: "Oct 18, 2025",
-		},
-	];
+	// Cargar conexiones cuando se abre el diálogo
+	const handleOpenChange = async (newOpen: boolean) => {
+		setOpen(newOpen);
+
+		if (newOpen) {
+			setIsLoading(true);
+			try {
+				const data = await getConnectionsByType(integration.id as any);
+				setConnections(data);
+			} catch (error) {
+				console.error("Error al cargar conexiones:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		}
+	};
+
+	const handleDelete = async (id: string) => {
+		if (confirm("¿Estás seguro de que deseas eliminar esta conexión?")) {
+			await deleteConnection(id);
+			// Recargar la lista
+			const data = await getConnectionsByType(integration.id as any);
+			setConnections(data);
+		}
+	};
+
+	const handleToggleStatus = async (connection: Connection) => {
+		const newStatus = connection.status === "connected" ? "disconnected" : "connected";
+		await updateConnection(connection.id, { status: newStatus as any });
+		// Recargar la lista
+		const data = await getConnectionsByType(integration.id as any);
+		setConnections(data);
+	};
+
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return date.toLocaleDateString("es-ES", {
+			day: "numeric",
+			month: "short",
+			year: "numeric",
+		});
+	};
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="sm:max-w-[600px]">
 				<DialogHeader>
-					<DialogTitle>Manage {integration.name}</DialogTitle>
-					<DialogDescription>View and manage your connected accounts</DialogDescription>
+					<DialogTitle>Gestionar {integration.name}</DialogTitle>
+					<DialogDescription>Ver y administrar tus cuentas conectadas</DialogDescription>
 				</DialogHeader>
 
 				<div className="space-y-4 py-4">
-					{accounts.map((account) => (
-						<Card key={account.id}>
-							<CardContent className="p-4">
-								<div className="flex items-start justify-between">
-									<div className="space-y-1 flex-1">
-										<div className="flex items-center gap-2">
-											<h4 className="font-medium">{account.name}</h4>
-											<Badge variant="outline" className="text-xs">
-												{account.status}
-											</Badge>
-										</div>
-										<p className="text-sm text-muted-foreground">{account.identifier}</p>
-										<p className="text-xs text-muted-foreground">Connected {account.connectedAt}</p>
-									</div>
-									<div className="flex items-center gap-2">
-										<Button variant="ghost" size="icon">
-											<ExternalLink className="h-4 w-4" />
-										</Button>
-										<Button variant="ghost" size="icon" className="text-destructive">
-											<Trash2 className="h-4 w-4" />
-										</Button>
-									</div>
-								</div>
+					{isLoading ? (
+						<p className="text-center text-muted-foreground">Cargando...</p>
+					) : connections.length === 0 ? (
+						<p className="text-center text-muted-foreground">No hay conexiones configuradas</p>
+					) : (
+						connections.map((connection) => {
+							const config = connection.config as any;
+							const identifier =
+								integration.id === "whatsapp"
+									? config.phoneNumber
+									: integration.id === "website"
+									? config.websiteUrl
+									: integration.id === "email"
+									? config.emailAddress
+									: config.phoneNumber || connection.name;
 
-								<div className="mt-4 pt-4 border-t border-border space-y-3">
-									<div className="flex items-center justify-between">
-										<Label htmlFor={`auto-reply-${account.id}`} className="text-sm">
-											Auto-reply enabled
-										</Label>
-										<Switch id={`auto-reply-${account.id}`} defaultChecked />
-									</div>
-									<div className="flex items-center justify-between">
-										<Label htmlFor={`notifications-${account.id}`} className="text-sm">
-											Notifications
-										</Label>
-										<Switch id={`notifications-${account.id}`} defaultChecked />
-									</div>
-								</div>
-							</CardContent>
-						</Card>
-					))}
+							return (
+								<Card key={connection.id}>
+									<CardContent className="p-4">
+										<div className="flex items-start justify-between">
+											<div className="space-y-1 flex-1">
+												<div className="flex items-center gap-2">
+													<h4 className="font-medium">{connection.name}</h4>
+													<Badge variant={connection.status === "connected" ? "default" : "outline"} className="text-xs">
+														{connection.status === "connected"
+															? "Conectado"
+															: connection.status === "error"
+															? "Error"
+															: "Desconectado"}
+													</Badge>
+												</div>
+												<p className="text-sm text-muted-foreground">{identifier}</p>
+												<p className="text-xs text-muted-foreground">Conectado {formatDate(connection.created_at)}</p>
+											</div>
+											<div className="flex items-center gap-2">
+												<Button variant="ghost" size="icon" onClick={() => toast.info("Funcionalidad en desarrollo")}>
+													<ExternalLink className="h-4 w-4" />
+												</Button>
+												<Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(connection.id)}>
+													<Trash2 className="h-4 w-4" />
+												</Button>
+											</div>
+										</div>
+
+										<div className="mt-4 pt-4 border-t border-border space-y-3">
+											<div className="flex items-center justify-between">
+												<Label htmlFor={`status-${connection.id}`} className="text-sm">
+													{connection.status === "connected" ? "Conectado" : "Desconectado"}
+												</Label>
+												<Switch
+													id={`status-${connection.id}`}
+													checked={connection.status === "connected"}
+													onCheckedChange={() => handleToggleStatus(connection)}
+												/>
+											</div>
+										</div>
+									</CardContent>
+								</Card>
+							);
+						})
+					)}
 				</div>
 
 				<DialogFooter>
 					<Button variant="outline" onClick={() => setOpen(false)}>
-						Close
+						Cerrar
 					</Button>
 				</DialogFooter>
 			</DialogContent>
