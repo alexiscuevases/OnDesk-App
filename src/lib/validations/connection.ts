@@ -3,7 +3,7 @@ import { z } from "zod";
 export const connectionSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
 	name: z.string().min(1, "Name is required"),
-	type: z.enum(["whatsapp", "website", "email"]),
+	type: z.enum(["whatsapp", "website"]),
 	status: z.enum(["connected", "disconnected", "error"]).default("disconnected"),
 	config: z.record(z.any(), z.any()),
 });

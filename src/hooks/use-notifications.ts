@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Notification } from "@/lib/validations/notification";
 
 export function useNotifications() {
-	const [notifications, setNotifications] = useState<Notificationa[]>([]);
+	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();

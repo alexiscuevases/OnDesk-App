@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Conversation } from "@/lib/validations/conversation";
+import { Message } from "@/lib/validations/message";
 
 export function useConversations() {
 	const [conversations, setConversations] = useState<Conversation[]>([]);
