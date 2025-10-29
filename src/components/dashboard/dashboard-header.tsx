@@ -21,11 +21,13 @@ import { es } from "date-fns/locale";
 import { useTheme } from "next-themes";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAuth } from "../providers/auth-provider";
 
 export function DashboardHeader() {
 	const { toggleSidebar } = useSidebar();
 	const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useNotifications();
 	const { setTheme } = useTheme();
+	const { signOut, profile, user } = useAuth();
 
 	// Mostrar solo las 5 notificaciones más recientes
 	const recentNotifications = notifications.slice(0, 5);
@@ -153,16 +155,16 @@ export function DashboardHeader() {
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Avatar className="h-8 w-8">
-								<AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-								<AvatarFallback>JD</AvatarFallback>
+								<AvatarImage src={profile?.avatar_url} alt="User" />
+								<AvatarFallback>{profile?.full_name?.charAt(0)}</AvatarFallback>
 							</Avatar>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="w-56">
 							<DropdownMenuLabel>
 								<div className="flex items-center gap-3">
 									<div className="flex flex-col items-start text-sm">
-										<span className="font-medium">John Doe</span>
-										<span className="text-xs text-muted-foreground">john@example.com</span>
+										<span className="font-medium">{profile?.full_name}</span>
+										<span className="text-xs text-muted-foreground">{user?.email}</span>
 									</div>
 								</div>
 							</DropdownMenuLabel>
@@ -174,7 +176,7 @@ export function DashboardHeader() {
 								<Link href="/dashboard/settings">Settings</Link>
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem variant="destructive">
+							<DropdownMenuItem variant="destructive" onClick={signOut}>
 								<LogOut className="mr-2 h-4 w-4" />
 								<span>Log out</span>
 							</DropdownMenuItem>

@@ -62,28 +62,9 @@ export function useAuth() {
 		}
 	};
 
-	const signOut = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
-			const { error } = await supabase.auth.signOut();
-			if (error) throw error;
-
-			router.push("/auth/sign-in");
-			router.refresh();
-		} catch (err: any) {
-			setError(err.message || "An error occurred during sign out");
-			throw err;
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
 	return {
 		signIn,
 		signUp,
-		signOut,
 		isLoading,
 		error,
 	};
