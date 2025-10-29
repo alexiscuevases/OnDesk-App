@@ -91,7 +91,6 @@ export function useTeam() {
 	};
 
 	const createTeam = async (input: CreateTeamInput) => {
-		setIsLoading(true);
 		setError(null);
 
 		try {
@@ -133,8 +132,6 @@ export function useTeam() {
 		} catch (err: any) {
 			setError(err.message || "Error al crear el equipo. Por favor, intenta de nuevo.");
 			throw err;
-		} finally {
-			setIsLoading(false);
 		}
 	};
 

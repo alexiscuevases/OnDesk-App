@@ -13,11 +13,13 @@ import { CreateTeamInput, createTeamSchema } from "@/lib/validations/team";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useState } from "react";
 
 export default function CreateTeamPage() {
 	const searchParams = useSearchParams();
 	const fromDashboard = searchParams.get("from") === "dashboard";
-	const { createTeam, isLoading, error } = useTeam();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { createTeam, error } = useTeam();
 	const {
 		register,
 		handleSubmit,
@@ -28,9 +30,12 @@ export default function CreateTeamPage() {
 
 	async function onSubmit(data: CreateTeamInput) {
 		try {
+			setIsLoading(true);
 			await createTeam(data);
 		} catch (err) {
 			// Error is handled by useTeam hook
+		} finally {
+			setIsLoading(false);
 		}
 	}
 
