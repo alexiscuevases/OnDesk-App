@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { signInSchema, type SignInInput } from "@/lib/validations/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function SignInForm() {
 	const { signIn, isLoading, error } = useAuth();
@@ -29,6 +30,12 @@ export function SignInForm() {
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+			{error && (
+				<Alert variant="destructive">
+					<AlertDescription>{error}</AlertDescription>
+				</Alert>
+			)}
+
 			<div className="space-y-2">
 				<Label htmlFor="email">Email</Label>
 				<Input id="email" type="email" placeholder="name@example.com" disabled={isLoading} {...register("email")} />
@@ -45,12 +52,6 @@ export function SignInForm() {
 				<Input id="password" type="password" disabled={isLoading} {...register("password")} />
 				{errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
 			</div>
-
-			{error && (
-				<div className="rounded-md bg-destructive/10 p-3">
-					<p className="text-sm text-destructive">{error}</p>
-				</div>
-			)}
 
 			<Button type="submit" className="w-full" disabled={isLoading}>
 				{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

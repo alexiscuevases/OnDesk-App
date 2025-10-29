@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { InviteTeamMemberInput, TeamMember } from "@/lib/validations/team_member";
 import { CreateTeamInput, Team } from "@/lib/validations/team";
+import { useRouter } from "next/navigation";
 
 export function useTeam() {
 	const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -11,6 +12,7 @@ export function useTeam() {
 	const [allTeams, setAllTeams] = useState<Team[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
 	const supabase = createClient();
 
 	const fetchCurrentTeam = async () => {
@@ -92,6 +94,7 @@ export function useTeam() {
 	};
 
 	const createTeam = async (input: CreateTeamInput) => {
+		setIsLoading(true);
 		setError(null);
 
 		try {
@@ -110,7 +113,6 @@ export function useTeam() {
 				})
 				.select()
 				.single();
-
 			if (teamError) throw teamError;
 
 			// Crear el team member para el owner
@@ -129,10 +131,13 @@ export function useTeam() {
 
 			setCurrentTeam(team);
 			await fetchAllTeams();
-			return team;
+
+			router.push("/dashboard");
 		} catch (err: any) {
-			setError(err.message || "Failed to create team");
+			setError(err.message || "Error al crear el equipo. Por favor, intenta de nuevo.");
 			throw err;
+		} finally {
+			setIsLoading(false);
 		}
 	};
 

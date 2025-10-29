@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function SignUpForm() {
 	const { signUp, isLoading, error } = useAuth();
@@ -35,6 +36,12 @@ export function SignUpForm() {
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+			{error && (
+				<Alert variant="destructive">
+					<AlertDescription>{error}</AlertDescription>
+				</Alert>
+			)}
+
 			<div className="space-y-2">
 				<Label htmlFor="fullName">Full Name</Label>
 				<Input id="fullName" type="text" placeholder="John Doe" disabled={isLoading} {...register("fullName")} />
@@ -77,12 +84,6 @@ export function SignUpForm() {
 					</Link>
 				</label>
 			</div>
-
-			{error && (
-				<div className="rounded-md bg-destructive/10 p-3">
-					<p className="text-sm text-destructive">{error}</p>
-				</div>
-			)}
 
 			<Button type="submit" className="w-full" disabled={isLoading || !agreedToTerms}>
 				{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

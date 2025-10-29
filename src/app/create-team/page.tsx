@@ -1,97 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Users, ArrowLeft } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { createTeamSchema } from "@/lib/validations/team";
 import Link from "next/link";
+import { useTeam } from "@/hooks/use-team";
+import { CreateTeamInput, createTeamSchema } from "@/lib/validations/team";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function CreateTeamPage() {
-	const router = useRouter();
 	const searchParams = useSearchParams();
 	const fromDashboard = searchParams.get("from") === "dashboard";
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [formData, setFormData] = useState({
-		name: "",
-		description: "",
+	const { createTeam, isLoading, error } = useTeam();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<CreateTeamInput>({
+		resolver: zodResolver(createTeamSchema),
 	});
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setError(null);
-		setIsLoading(true);
-
+	async function onSubmit(data: CreateTeamInput) {
 		try {
-			// Validar los datos del formulario
-			const validatedData = createTeamSchema.parse(formData);
-
-			const supabase = createClient();
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-
-			if (!user) {
-				throw new Error("No autenticado");
-			}
-
-			// Crear el team
-			const { data: team, error: teamError } = await supabase
-				.from("teams")
-				.insert({
-					owner_id: user.id,
-					name: validatedData.name,
-					description: validatedData.description || null,
-				})
-				.select()
-				.single();
-
-			if (teamError) throw teamError;
-
-			// Crear el team member para el owner
-			const { error: memberError } = await supabase.from("team_members").insert({
-				team_id: team.id,
-				invited_by: user.id,
-				user_id: user.id,
-				email: user.email!,
-				role: "owner",
-				status: "active",
-			});
-
-			if (memberError) throw memberError;
-
-			// Actualizar el profile para seleccionar el nuevo team
-			await supabase.from("profiles").update({ team_id: team.id }).eq("id", user.id);
-
-			// Regresar al dashboard
-			router.push("/dashboard");
-		} catch (err: any) {
-			console.error("Error creando team:", err);
-			if (err.errors) {
-				// Error de validación de Zod
-				setError(err.errors[0].message);
-			} else {
-				setError(err.message || "Error al crear el equipo. Por favor, intenta de nuevo.");
-			}
-		} finally {
-			setIsLoading(false);
+			await createTeam(data);
+		} catch (err) {
+			// Error is handled by useTeam hook
 		}
-	};
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
+	}
 
 	return (
 		<div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -118,7 +59,7 @@ export default function CreateTeamPage() {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 						{error && (
 							<Alert variant="destructive">
 								<AlertDescription>{error}</AlertDescription>
@@ -129,38 +70,26 @@ export default function CreateTeamPage() {
 							<Label htmlFor="name">
 								Nombre del equipo <span className="text-destructive">*</span>
 							</Label>
-							<Input
-								id="name"
-								name="name"
-								type="text"
-								placeholder="Ej: Mi Empresa"
-								value={formData.name}
-								onChange={handleChange}
-								disabled={isLoading}
-								required
-								maxLength={100}
-							/>
+							<Input id="name" type="text" placeholder="Ej: Mi Empresa" disabled={isLoading} {...register("name")} />
 							<p className="text-xs text-muted-foreground">El nombre de tu equipo u organización</p>
+							{errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
 						</div>
 
 						<div className="space-y-2">
 							<Label htmlFor="description">Descripción (opcional)</Label>
 							<Textarea
 								id="description"
-								name="description"
 								placeholder="Describe brevemente tu equipo o proyecto..."
-								value={formData.description}
-								onChange={handleChange}
 								disabled={isLoading}
-								maxLength={500}
-								rows={4}
+								{...register("description")}
 								className="resize-none"
 							/>
 							<p className="text-xs text-muted-foreground">Ayuda a tu equipo a entender el propósito del workspace</p>
+							{errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
 						</div>
 
 						<div className="flex flex-col gap-3 pt-4">
-							<Button type="submit" className="w-full" size="lg" disabled={isLoading || !formData.name.trim()}>
+							<Button type="submit" className="w-full" size="lg" disabled={isLoading}>
 								{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 								{fromDashboard ? "Crear equipo" : "Continuar a selección de plan"}
 							</Button>
