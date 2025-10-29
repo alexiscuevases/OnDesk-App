@@ -1,8 +1,11 @@
 "use server";
 
+import { AppConfigs } from "@/configs/app";
 import { platformConfigs } from "@/configs/platform";
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
+import { Profile } from "@/lib/validations/profile";
+import { Team } from "@/lib/validations/team";
 
 export async function startCheckoutSession(productId: string, teamId: string) {
 	const product = platformConfigs.plans.find((p) => p.id === productId);
@@ -15,11 +18,11 @@ export async function startCheckoutSession(productId: string, teamId: string) {
 	if (!user) throw new Error("Not authenticated");
 
 	// Verificar que el usuario sea el owner del team
-	const { data: team, error: teamError } = await supabase.from("teams").select("*").eq("id", teamId).eq("owner_id", user.id).single();
-	if (teamError || !team) throw new Error("Team not found or you don't have permission");
+	const { data: team }: { data: Team | null } = await supabase.from("teams").select("*").eq("id", teamId).eq("owner_id", user.id).single();
+	if (!team) throw new Error("Team not found or you don't have permission");
 
 	// Get or create Stripe customer
-	const { data: profile } = await supabase.from("profiles").select("stripe_customer_id, email").eq("id", user.id).single();
+	const { data: profile }: { data: Profile | null } = await supabase.from("profiles").select("stripe_customer_id, email").eq("id", user.id).single();
 
 	let customerId = profile?.stripe_customer_id;
 	if (!customerId) {
@@ -56,7 +59,7 @@ export async function startCheckoutSession(productId: string, teamId: string) {
 			},
 		],
 		mode: "subscription",
-		return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/select-plan?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
+		return_url: `${AppConfigs.url}/select-plan?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
 		metadata: {
 			supabase_user_id: user.id,
 			team_id: teamId,
@@ -74,12 +77,12 @@ export async function createPortalSession() {
 	} = await supabase.auth.getUser();
 	if (!user) throw new Error("Not authenticated");
 
-	const { data: profile } = await supabase.from("profiles").select("stripe_customer_id").eq("id", user.id).single();
+	const { data: profile }: { data: Profile | null } = await supabase.from("profiles").select("stripe_customer_id").eq("id", user.id).single();
 	if (!profile?.stripe_customer_id) throw new Error("No Stripe customer found");
 
 	const session = await stripe.billingPortal.sessions.create({
 		customer: profile.stripe_customer_id,
-		return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/settings`,
+		return_url: `${AppConfigs.url}/dashboard/settings`,
 	});
 
 	return session.url;
@@ -98,7 +101,7 @@ export async function verifyCheckoutSession(sessionId: string, teamId: string) {
 			if (!user) return { success: false, error: "Not authenticated" };
 
 			// Verificar que el team tenga una suscripción activa
-			const { data: team } = await supabase
+			const { data: team }: { data: Team | null } = await supabase
 				.from("teams")
 				.select("stripe_subscription_id, stripe_subscription_status")
 				.eq("id", teamId)
