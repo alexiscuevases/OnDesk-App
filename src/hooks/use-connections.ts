@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Connection, CreateConnectionInput } from "@/lib/validations/connection";
+import { Connection, CreateConnectionInput, UpdateConnectionInput } from "@/lib/validations/connection";
+import { Profile } from "@/lib/validations/profile";
 
 export function useConnections() {
 	const [connections, setConnections] = useState<Connection[]>([]);
@@ -20,15 +21,18 @@ export function useConnections() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-			if (profileError) throw profileError;
+			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", user.id)
+				.single();
+			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			const { data, error: fetchError } = await supabase
+			const { data, error: fetchError }: { data: Connection[] | null; error: any } = await supabase
 				.from("connections")
 				.select("*")
 				.eq("team_id", profile.team_id)
 				.order("created_at", { ascending: false });
-
 			if (fetchError) throw fetchError;
 
 			setConnections(data || []);
@@ -48,7 +52,7 @@ export function useConnections() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data, error: createError } = await supabase
+			const { data, error: createError }: { data: Connection | null; error: any } = await supabase
 				.from("connections")
 				.insert({
 					team_id: input.team_id,
@@ -59,7 +63,6 @@ export function useConnections() {
 				})
 				.select()
 				.single();
-
 			if (createError) throw createError;
 
 			await fetchConnections();
@@ -70,7 +73,7 @@ export function useConnections() {
 		}
 	};
 
-	const updateConnection = async (id: string, input: Partial<Connection>) => {
+	const updateConnection = async (id: string, input: UpdateConnectionInput) => {
 		setError(null);
 
 		try {
@@ -79,13 +82,17 @@ export function useConnections() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const updateData: any = {};
+			const updateData: UpdateConnectionInput = {};
 			if (input.name) updateData.name = input.name;
 			if (input.status) updateData.status = input.status;
 			if (input.config) updateData.config = input.config;
 
-			const { data, error: updateError } = await supabase.from("connections").update(updateData).eq("id", id).select().single();
-
+			const { data, error: updateError }: { data: Connection | null; error: any } = await supabase
+				.from("connections")
+				.update(updateData)
+				.eq("id", id)
+				.select()
+				.single();
 			if (updateError) throw updateError;
 
 			await fetchConnections();
@@ -106,7 +113,6 @@ export function useConnections() {
 			if (!user) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("connections").delete().eq("id", id);
-
 			if (deleteError) throw deleteError;
 
 			await fetchConnections();

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { SignInInput, SignUpInput } from "@/lib/validations/auth";
+import { AppConfigs } from "@/configs/app";
 
 export function useAuth() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,6 @@ export function useAuth() {
 				email: data.email,
 				password: data.password,
 			});
-
 			if (error) throw error;
 
 			router.push("/dashboard");
@@ -38,18 +38,17 @@ export function useAuth() {
 		setError(null);
 
 		try {
-			const { data: authData, error: authError } = await supabase.auth.signUp({
+			const { error: authError } = await supabase.auth.signUp({
 				email: data.email,
 				password: data.password,
 				options: {
-					emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${process.env.NEXT_PUBLIC_SITE_URL}/select-plan`,
+					emailRedirectTo: `${AppConfigs.url}/select-plan`,
 					data: {
-						full_name: data.fullName,
-						company_name: data.companyName,
+						full_name: data.full_name,
+						company_name: data.company_name,
 					},
 				},
 			});
-
 			if (authError) throw authError;
 
 			// Show success message

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Conversation } from "@/lib/validations/conversation";
 import { Message } from "@/lib/validations/message";
+import { Profile } from "@/lib/validations/profile";
 
 export function useConversations() {
 	const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -21,15 +22,18 @@ export function useConversations() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-			if (profileError) throw profileError;
+			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", user.id)
+				.single();
+			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			const { data, error: fetchError } = await supabase
+			const { data, error: fetchError }: { data: Conversation[] | null; error: any } = await supabase
 				.from("conversations")
 				.select("*")
 				.eq("team_id", profile.team_id)
 				.order("created_at", { ascending: false });
-
 			if (fetchError) throw fetchError;
 
 			setConversations(data || []);
@@ -42,40 +46,16 @@ export function useConversations() {
 
 	const fetchConversationMessages = async (conversationId: string) => {
 		try {
-			const { data, error: fetchError } = await supabase
+			const { data, error: fetchError }: { data: Message[] | null; error: any } = await supabase
 				.from("messages")
 				.select("*")
 				.eq("conversation_id", conversationId)
 				.order("created_at", { ascending: true });
-
 			if (fetchError) throw fetchError;
 
-			return data as Message[];
+			return data || [];
 		} catch (err: any) {
 			throw new Error(err.message || "Failed to fetch messages");
-		}
-	};
-
-	const updateConversation = async (id: string, input: Partial<Conversation>) => {
-		setError(null);
-
-		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
-
-			const updateData: any = {};
-
-			const { data, error: updateError } = await supabase.from("conversations").update(updateData).eq("id", id).select().single();
-
-			if (updateError) throw updateError;
-
-			await fetchConversations();
-			return data;
-		} catch (err: any) {
-			setError(err.message || "Failed to update conversation");
-			throw err;
 		}
 	};
 
@@ -89,7 +69,6 @@ export function useConversations() {
 			if (!user) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("conversations").delete().eq("id", id);
-
 			if (deleteError) throw deleteError;
 
 			await fetchConversations();
@@ -109,7 +88,6 @@ export function useConversations() {
 		error,
 		fetchConversations,
 		fetchConversationMessages,
-		updateConversation,
 		deleteConversation,
 	};
 }

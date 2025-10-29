@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Notification } from "@/lib/validations/notification";
+import { Profile } from "@/lib/validations/profile";
 
 export function useNotifications() {
 	const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -20,16 +21,19 @@ export function useNotifications() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-			if (profileError) throw profileError;
+			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", user.id)
+				.single();
+			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			const { data, error: fetchError } = await supabase
+			const { data, error: fetchError }: { data: Notification[] | null; error: any } = await supabase
 				.from("notifications")
 				.select("*")
 				.eq("team_id", profile.team_id)
 				.order("created_at", { ascending: false })
 				.limit(50);
-
 			if (fetchError) throw fetchError;
 
 			setNotifications(data || []);
@@ -50,7 +54,6 @@ export function useNotifications() {
 			if (!user) throw new Error("Not authenticated");
 
 			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("id", id);
-
 			if (updateError) throw updateError;
 
 			await fetchNotifications();
@@ -69,11 +72,14 @@ export function useNotifications() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-			if (profileError) throw profileError;
+			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", user.id)
+				.single();
+			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
 			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("team_id", profile.team_id).eq("read", false);
-
 			if (updateError) throw updateError;
 
 			await fetchNotifications();
