@@ -157,7 +157,7 @@ export function AgentsList() {
 								</div>
 								<div className="flex items-center gap-2 text-sm">
 									<span className="text-muted-foreground text-xs">
-										Temp: {agent.temperature} | Tokens: {agent.maxTokens}
+										Temp: {agent.temperature} | Tokens: {agent.max_tokens}
 									</span>
 								</div>
 							</div>

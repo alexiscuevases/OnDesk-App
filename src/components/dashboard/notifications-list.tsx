@@ -1,30 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bot, Users, TrendingUp, AlertCircle, CheckCircle, Clock, Bell } from "lucide-react";
+import { Clock, Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-
-const getNotificationIcon = (type: string) => {
-	switch (type.toLowerCase()) {
-		case "conversation":
-			return Bot;
-		case "alert":
-			return AlertCircle;
-		case "team":
-			return Users;
-		case "success":
-			return CheckCircle;
-		case "performance":
-			return TrendingUp;
-		default:
-			return Bell;
-	}
-};
+import { getNotificationIcon } from "@/lib/utils";
 
 interface NotificationsListProps {
 	filter: "all" | "unread";

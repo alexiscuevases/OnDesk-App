@@ -71,7 +71,7 @@ export function TeamSwitcher() {
 					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="start" className="w-[240px]">
+			<DropdownMenuContent align="start" className="w-60">
 				<DropdownMenuLabel>Equipos</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				{allTeams.map((team) => (

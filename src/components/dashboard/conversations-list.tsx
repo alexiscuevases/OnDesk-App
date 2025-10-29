@@ -1,11 +1,11 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquare, Clock, Bot } from "lucide-react";
+import { MessageSquare, Clock } from "lucide-react";
 import Link from "next/link";
 import { useConversations } from "@/hooks/use-conversations";
 import { formatDistanceToNow } from "date-fns";
