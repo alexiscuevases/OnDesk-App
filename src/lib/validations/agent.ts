@@ -27,8 +27,8 @@ export const createAgentSchema = z.object({
 	type: agentSchema.shape.description,
 	model: agentSchema.shape.model,
 	system_prompt: agentSchema.shape.system_prompt,
-	temperature: agentSchema.shape.temperature,
-	max_tokens: agentSchema.shape.max_tokens,
+	temperature: agentSchema.shape.temperature.optional(),
+	max_tokens: agentSchema.shape.max_tokens.optional(),
 	status: agentSchema.shape.status,
 });
 

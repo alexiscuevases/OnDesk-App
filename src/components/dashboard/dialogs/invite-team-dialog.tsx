@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { useTeam } from "@/hooks/use-team";
 import { toast } from "sonner";
-import { InviteTeamMemberInput, inviteTeamMemberSchema } from "@/lib/validations/team_member";
+import { InviteTeamMemberInput, inviteTeamMemberSchema, TeamMember } from "@/lib/validations/team_member";
 
 export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
@@ -29,9 +29,6 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 		watch,
 	} = useForm<InviteTeamMemberInput>({
 		resolver: zodResolver(inviteTeamMemberSchema),
-		defaultValues: {
-			role: "member",
-		},
 	});
 
 	const onSubmit = async (data: InviteTeamMemberInput) => {
@@ -78,7 +75,7 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 
 						<div className="space-y-2">
 							<Label htmlFor="invite-role">Rol</Label>
-							<Select value={watch("role")} onValueChange={(value) => setValue("role", value)}>
+							<Select value={watch("role")} onValueChange={(value: TeamMember["role"]) => setValue("role", value)}>
 								<SelectTrigger id="invite-role">
 									<SelectValue />
 								</SelectTrigger>

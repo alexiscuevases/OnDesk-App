@@ -23,18 +23,6 @@ export function CreateAgentDialog() {
 
 	const form = useForm<CreateAgentInput>({
 		resolver: zodResolver(createAgentSchema),
-		defaultValues: {
-			team_id: "",
-			name: "",
-			description: "",
-			avatar_url: "",
-			type: "support",
-			model: "gpt-4",
-			system_prompt: "",
-			temperature: 0.7,
-			max_tokens: 1000,
-			status: "active",
-		},
 	});
 
 	const {
@@ -109,11 +97,9 @@ export function CreateAgentDialog() {
 									<SelectValue placeholder="Selecciona el tipo de agente" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="support">Soporte al Cliente</SelectItem>
 									<SelectItem value="sales">Asistente de Ventas</SelectItem>
-									<SelectItem value="technical">Soporte Técnico</SelectItem>
-									<SelectItem value="onboarding">Guía de Onboarding</SelectItem>
-									<SelectItem value="custom">Personalizado</SelectItem>
+									<SelectItem value="support">Soporte al Cliente</SelectItem>
+									<SelectItem value="general">General</SelectItem>
 								</SelectContent>
 							</Select>
 							{errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
