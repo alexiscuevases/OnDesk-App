@@ -14,7 +14,10 @@ export type Connection = z.infer<typeof connectionSchema> & {
 	updated_at: string;
 };
 
-export const createConnectionSchema = z.object({
+/**
+ * Configs
+ */
+export const baseConnectionSchema = z.object({
 	team_id: connectionSchema.shape.team_id,
 	name: connectionSchema.shape.name,
 	type: connectionSchema.shape.type,
@@ -22,6 +25,39 @@ export const createConnectionSchema = z.object({
 	config: connectionSchema.shape.config,
 });
 
+const whatsappSchema = baseConnectionSchema.extend({
+	type: z.literal("whatsapp"),
+	phoneNumber: z.string().min(1, "Número de teléfono requerido"),
+	phoneNumberId: z.string().min(1, "Phone Number ID requerido"),
+	apiKey: z.string().min(1, "Access Token requerido"),
+	accountName: z.string().optional(),
+});
+
+const websiteSchema = baseConnectionSchema.extend({
+	type: z.literal("website"),
+	websiteUrl: z.string().url("Debe ser una URL válida"),
+	widgetName: z.string().optional(),
+	welcomeMessage: z.string().optional(),
+});
+
+/**
+ * Create
+ */
+export const baseCreateConnectionSchema = baseConnectionSchema;
+
+export type baseCreateConnectionInput = z.infer<typeof baseCreateConnectionSchema>;
+
+export const createConnectionSchema = z.discriminatedUnion("type", [whatsappSchema, websiteSchema]);
+
 export type CreateConnectionInput = z.infer<typeof createConnectionSchema>;
 
-export type UpdateConnectionInput = Partial<Connection>;
+/**
+ * Update
+ */
+export const baseUpdateConnectionSchema = baseConnectionSchema.partial();
+
+export type baseUpdateConnectionInput = z.infer<typeof baseUpdateConnectionSchema>;
+
+export const updateConnectionSchema = z.discriminatedUnion("type", [whatsappSchema.partial(), websiteSchema.partial()]);
+
+export type UpdateConnectionInput = z.infer<typeof updateConnectionSchema>;

@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { useConnections } from "@/hooks/use-connections";
 import { Connection, CreateConnectionInput, createConnectionSchema } from "@/lib/validations/connection";
-import { useAuth } from "@/components/providers/auth-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTeam } from "@/hooks/use-team";
 

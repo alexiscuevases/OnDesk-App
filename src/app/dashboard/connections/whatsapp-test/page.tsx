@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useConnectionManager } from "@/hooks/use-connection-manager";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
+import { useConnections } from "@/hooks/use-connections";
+import { createWhatsAppAPI } from "@/lib/whatsapp";
 
 export default function WhatsAppTestPage() {
-	const { connections, isLoading: connectionsLoading, sendWhatsAppMessage } = useConnectionManager();
+	const { connections, isLoading: connectionsLoading } = useConnections();
 	const [selectedConnection, setSelectedConnection] = useState<string>("");
 	const [to, setTo] = useState("");
 	const [message, setMessage] = useState("");
@@ -31,7 +32,11 @@ export default function WhatsAppTestPage() {
 		setIsSending(true);
 
 		try {
-			const result = await sendWhatsAppMessage(selectedConnection, to, message);
+			const whatsapp = createWhatsAppAPI(
+				"832457296620450",
+				"EAATMsydw6zgBP9XuW7NXejj5wsbiaL7tKOoM43sfjyneZCNUrZAs68ZBHdF66NZBZCtKmNRwLdbt32kwI2ODQFNS5INCiAuHoevzR4jNMDrZBIt3BSL49bpEdZB7UqbW1ZAZClAoIgyo9PhJvlustZAQlCtOoa6XPs9YZABOoG2KXp7jPS3r4Jm3jsUPKNVhS4at3s4evJqzLMe86YmAlFQjKkprRGiYeqcqEPOfs94KVcqYB2wJcJZBJRTi3C9scDStUbHawrQgdjVxsI5GqTUBdkwfsuBZAZAi2EUBzwrl2ZBkBAZD"
+			);
+			const result = await whatsapp.sendTextMessage(to, message);
 
 			if (result) {
 				toast.success("Mensaje enviado y conversación creada", {

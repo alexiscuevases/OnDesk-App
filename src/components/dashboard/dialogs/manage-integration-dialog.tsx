@@ -22,18 +22,17 @@ interface ManageIntegrationDialogProps {
 
 export function ManageIntegrationDialog({ children, integration }: ManageIntegrationDialogProps) {
 	const [open, setOpen] = useState(false);
-	const { getConnectionsByType, deleteConnection, updateConnection } = useConnections();
+	const { fetchConnectionsByType, deleteConnection, updateConnection } = useConnections();
 	const [connections, setConnections] = useState<Connection[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
-	// Cargar conexiones cuando se abre el diálogo
 	const handleOpenChange = async (newOpen: boolean) => {
 		setOpen(newOpen);
 
 		if (newOpen) {
 			setIsLoading(true);
 			try {
-				const data = await getConnectionsByType(integration.id as any);
+				const data = await fetchConnectionsByType(integration.type);
 				setConnections(data);
 			} catch (error) {
 				console.error("Error al cargar conexiones:", error);
@@ -46,17 +45,17 @@ export function ManageIntegrationDialog({ children, integration }: ManageIntegra
 	const handleDelete = async (id: string) => {
 		if (confirm("¿Estás seguro de que deseas eliminar esta conexión?")) {
 			await deleteConnection(id);
-			// Recargar la lista
-			const data = await getConnectionsByType(integration.id as any);
+
+			const data = await fetchConnectionsByType(integration.type);
 			setConnections(data);
 		}
 	};
 
 	const handleToggleStatus = async (connection: Connection) => {
-		const newStatus = connection.status === "connected" ? "disconnected" : "connected";
-		await updateConnection(connection.id, { status: newStatus as any });
-		// Recargar la lista
-		const data = await getConnectionsByType(integration.id as any);
+		const status = connection.status === "connected" ? "disconnected" : "connected";
+		await updateConnection(connection.id, { status });
+
+		const data = await fetchConnectionsByType(integration.type);
 		setConnections(data);
 	};
 
@@ -86,14 +85,7 @@ export function ManageIntegrationDialog({ children, integration }: ManageIntegra
 					) : (
 						connections.map((connection) => {
 							const config = connection.config as any;
-							const identifier =
-								integration.id === "whatsapp"
-									? config.phoneNumber
-									: integration.id === "website"
-									? config.websiteUrl
-									: integration.id === "email"
-									? config.emailAddress
-									: config.phoneNumber || connection.name;
+							const identifier = integration.type === "whatsapp" ? config.phoneNumber : config.websiteUrl;
 
 							return (
 								<Card key={connection.id}>

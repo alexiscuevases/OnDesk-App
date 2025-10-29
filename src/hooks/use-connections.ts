@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Connection, CreateConnectionInput, UpdateConnectionInput } from "@/lib/validations/connection";
+import { baseCreateConnectionInput, baseUpdateConnectionInput, Connection, CreateConnectionInput, UpdateConnectionInput } from "@/lib/validations/connection";
 import { Profile } from "@/lib/validations/profile";
 
 export function useConnections() {
@@ -43,7 +43,35 @@ export function useConnections() {
 		}
 	};
 
-	const createConnection = async (input: CreateConnectionInput) => {
+	const fetchConnectionsByType = async (type: Connection["type"]) => {
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", user.id)
+				.single();
+			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+
+			const { data, error: fetchError }: { data: Connection[] | null; error: any } = await supabase
+				.from("connections")
+				.select("*")
+				.eq("team_id", profile.team_id)
+				.eq("type", type)
+				.order("created_at", { ascending: false });
+			if (fetchError) throw fetchError;
+
+			return data || [];
+		} catch (err: any) {
+			return [];
+		}
+	};
+
+	const createConnection = async (input: baseCreateConnectionInput) => {
 		setError(null);
 
 		try {
@@ -73,7 +101,7 @@ export function useConnections() {
 		}
 	};
 
-	const updateConnection = async (id: string, input: UpdateConnectionInput) => {
+	const updateConnection = async (id: string, input: baseUpdateConnectionInput) => {
 		setError(null);
 
 		try {
@@ -131,6 +159,7 @@ export function useConnections() {
 		isLoading,
 		error,
 		fetchConnections,
+		fetchConnectionsByType,
 		createConnection,
 		updateConnection,
 		deleteConnection,
