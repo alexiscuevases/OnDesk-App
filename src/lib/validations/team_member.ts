@@ -17,6 +17,9 @@ export type TeamMember = z.infer<typeof teamMemberSchema> & {
 	updated_at: string;
 };
 
+/**
+ * Invite Team Member
+ */
 export const inviteTeamMemberSchema = z.object({
 	team_id: teamMemberSchema.shape.team_id,
 	invited_by: teamMemberSchema.shape.invited_by,

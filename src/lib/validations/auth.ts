@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { profileSchema } from "./profile";
 
+/**
+ * SignUp
+ */
 export const signUpSchema = z
 	.object({
 		email: profileSchema.shape.email,
@@ -16,6 +19,9 @@ export const signUpSchema = z
 
 export type SignUpInput = z.infer<typeof signUpSchema>;
 
+/**
+ * SignIn
+ */
 export const signInSchema = z.object({
 	email: signUpSchema.shape.email,
 	password: signUpSchema.shape.password,

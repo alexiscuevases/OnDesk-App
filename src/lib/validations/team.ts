@@ -15,6 +15,9 @@ export type Team = z.infer<typeof teamSchema> & {
 	updated_at: string;
 };
 
+/**
+ * Create
+ */
 export const createTeamSchema = z.object({
 	owner_id: teamSchema.shape.owner_id,
 	name: teamSchema.shape.name,
@@ -23,4 +26,15 @@ export const createTeamSchema = z.object({
 
 export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 
-export type UpdateTeamInput = Partial<Team>;
+/**
+ * Update
+ */
+export const updateTeamSchema = z
+	.object({
+		owner_id: teamSchema.shape.owner_id,
+		name: teamSchema.shape.name,
+		description: teamSchema.shape.description,
+	})
+	.partial();
+
+export type UpdateTeamInput = z.infer<typeof updateTeamSchema>;

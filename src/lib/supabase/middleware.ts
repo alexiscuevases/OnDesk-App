@@ -6,12 +6,12 @@ import { AppConfigs } from "@/configs/app";
 import { Profile } from "../validations/profile";
 
 export async function updateSession(request: NextRequest) {
-	// Allow public routes
+	// Permitir rutas publicas
 	const publicRoutes = ["/about", "/api", "/auth", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
 	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route) || request.nextUrl.pathname === "/");
 	if (isPublicRoute) return NextResponse.next();
 
-	// Init Supabase Middleware
+	// Inicializar middleware de Supabase
 	let supabaseResponse = NextResponse.next({
 		request,
 	});
@@ -31,65 +31,72 @@ export async function updateSession(request: NextRequest) {
 		},
 	});
 
-	// Get authed user
+	// Obtener usuario actual
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	// Redirect to sign-in if not authenticated and trying to access protected route
+	// Redireccionar a sign-in si no está autenticado y intenta acceder a una ruta protegida
 	if (!user) {
 		const url = `${AppConfigs.url}/auth/sign-in`;
 		return NextResponse.redirect(url);
 	}
 
-	// Check if user has a team and subscription for dashboard access
-	if (request.nextUrl.pathname.startsWith("/dashboard")) {
-		// Obtener el profile del usuario para ver qué team tiene seleccionado
-		const { data: profile }: { data: Profile | null } = await supabase.from("profiles").select("team_id").eq("id", user.id).single();
+	// Redireccionar a dashboard si está autenticado y intenta acceder a una ruta de autenticación
+	if (request.nextUrl.pathname.startsWith("/auth")) {
+		const url = `${AppConfigs.url}/dashboard`;
+		return NextResponse.redirect(url);
+	}
 
-		// Si no tiene un team seleccionado, verificar si tiene algún team
+	// Gestionar acceso al dashboard
+	if (request.nextUrl.pathname.startsWith("/dashboard")) {
+		// Obtener el perfil del usuario
+		const { data: profile } = await supabase.from("profiles").select("team_id").eq("id", user.id).single<Profile>();
+
+		// Si no tiene un team seleccionado
 		if (!profile?.team_id) {
 			// Verificar si el usuario pertenece a algún team
-			const { data: teamMembers }: { data: TeamMember[] | null } = await supabase
-				.from("team_members")
-				.select("*, teams:team_id(*)")
+			const { data: teamMember } = await supabase
+				.from("team_members, teams:team_id(*)")
+				.select("*")
 				.eq("user_id", user.id)
 				.eq("status", "active")
-				.limit(1);
-
-			// Si no tiene ningún team, redirigir a create-team
-			if (!teamMembers || teamMembers.length === 0) {
+				.single<TeamMember>();
+			if (!teamMember) {
+				// Si no tiene ningún team, redirigir a create-team
 				if (request.nextUrl.pathname !== "/create-team") {
 					const url = `${AppConfigs.url}/create-team`;
 					return NextResponse.redirect(url);
 				}
 			} else {
-				// Si tiene teams pero no tiene ninguno seleccionado, seleccionar el primero automáticamente
-				const firstTeam = teamMembers[0].teams as Team;
-				await supabase.from("profiles").update({ team_id: firstTeam.id }).eq("id", user.id);
+				// Si tiene team pero no tiene ninguno seleccionado, seleccionar automáticamente
+				await supabase.from("profiles").update({ team_id: teamMember.team_id }).eq("id", user.id);
 
 				// Redirigir según el estado de la suscripción del team
-				if (!firstTeam.stripe_subscription_status || firstTeam.stripe_subscription_status !== "active") {
-					const url = `${AppConfigs.url}/select-plan?team_id=${firstTeam.id}`;
-					return NextResponse.redirect(url);
+				if (!teamMember.teams?.stripe_subscription_status || teamMember.teams?.stripe_subscription_status !== "active") {
+					if (!request.nextUrl.pathname.startsWith("/select-plan")) {
+						const url = `${AppConfigs.url}/select-plan?team_id=${teamMember.team_id}`;
+						return NextResponse.redirect(url);
+					}
 				}
 			}
 		} else {
 			// Verificar el team seleccionado
-			const { data: team }: { data: Team | null } = await supabase
+			const { data: team } = await supabase
 				.from("teams")
 				.select("id, stripe_subscription_id, stripe_subscription_status")
 				.eq("id", profile.team_id)
-				.single();
+				.single<Team>();
 
 			if (!team) {
 				// El team seleccionado no existe, limpiar y redirigir
 				await supabase.from("profiles").update({ team_id: null }).eq("id", user.id);
+
 				const url = `${AppConfigs.url}/create-team`;
 				return NextResponse.redirect(url);
 			}
 
-			// Si el team no tiene suscripción activa, redirigir a select-plan
+			// Redirigir según el estado de la suscripción del team
 			if (!team.stripe_subscription_status || team.stripe_subscription_status !== "active") {
 				if (!request.nextUrl.pathname.startsWith("/select-plan")) {
 					const url = `${AppConfigs.url}/select-plan?team_id=${team.id}`;

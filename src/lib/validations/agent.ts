@@ -19,6 +19,9 @@ export type Agent = z.infer<typeof agentSchema> & {
 	updated_at: string;
 };
 
+/**
+ * Create
+ */
 export const createAgentSchema = z.object({
 	team_id: agentSchema.shape.team_id,
 	avatar_url: agentSchema.shape.avatar_url,
@@ -34,6 +37,9 @@ export const createAgentSchema = z.object({
 
 export type CreateAgentInput = z.infer<typeof createAgentSchema>;
 
+/**
+ * Update
+ */
 export const updateAgentSchema = z
 	.object({
 		team_id: agentSchema.shape.team_id,
