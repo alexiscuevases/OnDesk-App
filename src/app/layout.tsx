@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { platformConfigs } from "@/configs/platform";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { NextIntlClientProvider } from "next-intl";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -20,16 +21,18 @@ export const metadata: Metadata = {
 	description: "Create specialized AI agents that engage with your customers 24/7 through WhatsApp and website chat.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<ThemeProvider attribute="class" defaultTheme="ligth" enableSystem disableTransitionOnChange>
-					<AuthProvider>{children}</AuthProvider>
+					<NextIntlClientProvider>
+						<AuthProvider>{children}</AuthProvider>
+					</NextIntlClientProvider>
 				</ThemeProvider>
 			</body>
 		</html>

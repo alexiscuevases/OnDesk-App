@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Bot, MessageSquareShare } from "lucide-react";
 import { platformConfigs } from "@/configs/platform";
 import { useAuth } from "../providers/auth-provider";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "./language-switcher";
 
 export function SiteHeader() {
-	const { profile } = useAuth();
+    const { profile } = useAuth();
+    const t = useTranslations("Header");
 
 	return (
 		<header className="sticky top-0 z-50 w-full bg-card/70 backdrop-blur-md">
@@ -21,27 +24,27 @@ export function SiteHeader() {
 					</Link>
 				</div>
 
-				<nav className="hidden md:flex items-center gap-6">
-					<Link href="/#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-						Features
-					</Link>
-					<Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-						Pricing
-					</Link>
-					<Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-						About
-					</Link>
-					<Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-						Blog
-					</Link>
-				</nav>
+                <nav className="hidden md:flex items-center gap-6">
+                    <Link href="/#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        {t("features")}
+                    </Link>
+                    <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        {t("pricing")}
+                    </Link>
+                    <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        {t("about")}
+                    </Link>
+                    <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        {t("blog")}
+                    </Link>
+                </nav>
 
 				<div className="flex items-center gap-3">
-					{profile ? (
+                    {profile ? (
 						<>
 							<Button variant="outline" asChild>
 								<Link href="/dashboard">
-									<span>Go Dashboard</span>
+                                    <span>{t("goDashboard")}</span>
 									<MessageSquareShare />
 								</Link>
 							</Button>
@@ -49,13 +52,14 @@ export function SiteHeader() {
 					) : (
 						<>
 							<Button variant="ghost" asChild>
-								<Link href="/auth/sign-in">Sign In</Link>
+                                <Link href="/auth/sign-in">{t("signIn")}</Link>
 							</Button>
 							<Button asChild>
-								<Link href="/auth/sign-up">Get Started</Link>
+                                <Link href="/auth/sign-up">{t("getStarted")}</Link>
 							</Button>
 						</>
 					)}
+                    <LanguageSwitcher />
 				</div>
 			</div>
 		</header>

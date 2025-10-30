@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "blog": "Blog",
+    "goDashboard": "Go Dashboard",
+    "signIn": "Sign In",
+    "getStarted": "Get Started"
+  },
+  "Hero": {
+    "badge": "AI-Powered Customer Engagement",
+    "title": "Create AI Agents That Engage Your Customers 24/7",
+    "description": "Build specialized AI agents with custom prompts and connect them to WhatsApp and your website. Automate customer support, boost engagement, and scale your business effortlessly.",
+    "startTrial": "Start Free Trial",
+    "viewPricing": "View Pricing",
+    "socialProof": "Trusted by 10,000+ businesses worldwide",
+    "altDashboard": "{{name}} Dashboard Preview"
+  }
+}
+
