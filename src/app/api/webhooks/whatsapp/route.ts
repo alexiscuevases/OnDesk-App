@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { WhatsAppWebhookPayload, WhatsAppWebhookMessage } from "@/lib/whatsapp";
 import { Connection } from "@/lib/validations/connection";
+import { Conversation } from "@/lib/validations/conversation";
 
 const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
 	auth: {
@@ -46,9 +47,7 @@ export async function POST(req: NextRequest) {
 		console.log("[WhatsApp Webhook] Received payload:", JSON.stringify(payload, null, 2));
 
 		// Verificar que es un evento de WhatsApp
-		if (payload.object !== "whatsapp_business_account") {
-			return NextResponse.json({ error: "Invalid object type" }, { status: 400 });
-		}
+		if (payload.object !== "whatsapp_business_account") return NextResponse.json({ error: "Invalid object type" }, { status: 400 });
 
 		// Procesar cada entrada
 		for (const entry of payload.entry) {
@@ -154,8 +153,7 @@ async function processIncomingMessages(
 				.eq("channel", "whatsapp")
 				.eq("status", "open")
 				.order("updated_at", { ascending: false })
-				.limit(1)
-				.single();
+				.single<Conversation>();
 
 			let conversationId: string;
 			if (existingConversation) {
@@ -182,8 +180,8 @@ async function processIncomingMessages(
 						status: "open",
 						priority: "medium",
 					})
-					.select()
-					.single();
+					.select("*")
+					.single<Conversation>();
 				if (createError) {
 					console.error("[WhatsApp] Error creating conversation:", createError);
 					continue;

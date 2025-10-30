@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: `${platformConfigs.name} - AI-Powered Customer Engagement Platform`,
+	title: `${platformConfigs.name} | AI-Powered Customer Engagement Platform`,
 	description: "Create specialized AI agents that engage with your customers 24/7 through WhatsApp and website chat.",
 };
 

@@ -26,8 +26,8 @@ function SelectPlanContent() {
 	useEffect(() => {
 		// Verificar que tengamos el team_id
 		if (!teamId) {
-			setError("No se encontró el ID del equipo. Por favor, crea un equipo primero.");
-			router.push("/create-team");
+			setError("No se encontró el ID del equipo.");
+			router.push("/dashboard");
 			return;
 		}
 
@@ -45,7 +45,6 @@ function SelectPlanContent() {
 			// Poll for subscription activation (webhook might take a few seconds)
 			const checkSubscription = async (attempts = 0) => {
 				const result = await verifyCheckoutSession(sessionId, teamId);
-
 				if (result.success) {
 					// Subscription is active, redirect to dashboard
 					router.push("/dashboard");
