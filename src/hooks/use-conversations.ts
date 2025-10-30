@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Conversation } from "@/lib/validations/conversation";
 import { Message } from "@/lib/validations/message";
 import { Profile } from "@/lib/validations/profile";
+import { createWhatsAppAPI } from "@/lib/whatsapp";
+import { Connection } from "@/lib/validations/connection";
 
 export function useConversations() {
 	const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -78,6 +80,74 @@ export function useConversations() {
 		}
 	};
 
+	const sendMessageByConnectionId = async ({ connectionId, role, to, message }) => {
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", user.id)
+				.single();
+			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+
+			const { data: connection, error: connectionError }: { data: Connection | null; error: any } = await supabase
+				.from("connections")
+				.select("*")
+				.eq("id", connectionId)
+				.single();
+			if (connectionError || !connection) throw connectionError ?? new Error("Connection not exists");
+
+			let query = supabase.from("conversations").select("*");
+			if (connection.type === "whatsapp") query.eq("customer_phone", to);
+			const { data: conversation, error: conversationError }: { data: Conversation | null; error: any } = await query.maybeSingle();
+			if (conversationError) throw connectionError;
+
+			let currentConversation = conversation;
+			if (!currentConversation) {
+				const { data: newConversation, error: newConversationError } = await supabase
+					.from("conversations")
+					.insert({
+						team_id: profile.team_id,
+						connection_id: connectionId,
+						agent_id: undefined,
+						customer_name: "",
+						customer_email: "",
+						customer_phone: connection.type === "whatsapp" ? to : "",
+						channel: connection.type,
+						status: "open",
+						priority: "medium",
+					})
+					.select()
+					.single();
+				if (newConversationError) throw newConversationError;
+				currentConversation = newConversation;
+			}
+
+			if (connection.type === "whatsapp") {
+				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
+				await whatsapp.sendTextMessage(to, message);
+
+				const { data, error: messageError } = await supabase
+					.from("messages")
+					.insert({
+						conversation_id: currentConversation?.id,
+						role,
+						content: message,
+					})
+					.select()
+					.single<Message>();
+				if (messageError) throw messageError;
+				return data;
+			}
+		} catch (err) {
+			throw err;
+		}
+	};
+
 	useEffect(() => {
 		fetchConversations();
 	}, []);
@@ -89,5 +159,7 @@ export function useConversations() {
 		fetchConversations,
 		fetchConversationMessages,
 		deleteConversation,
+
+		sendMessageByConnectionId,
 	};
 }

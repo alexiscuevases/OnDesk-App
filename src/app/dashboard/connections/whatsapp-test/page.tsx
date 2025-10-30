@@ -9,16 +9,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
 import { useConnections } from "@/hooks/use-connections";
-import { createWhatsAppAPI } from "@/lib/whatsapp";
+import { useConversations } from "@/hooks/use-conversations";
 
 export default function WhatsAppTestPage() {
 	const { connections, isLoading: connectionsLoading } = useConnections();
+	const { sendMessageByConnectionId } = useConversations();
 	const [selectedConnection, setSelectedConnection] = useState<string>("");
 	const [to, setTo] = useState("");
 	const [message, setMessage] = useState("");
 	const [isSending, setIsSending] = useState(false);
 
-	// Filtrar solo conexiones de WhatsApp
 	const whatsappConnections = connections.filter((conn) => conn.type === "whatsapp" && conn.status === "connected");
 
 	const handleSend = async () => {
@@ -32,25 +32,20 @@ export default function WhatsAppTestPage() {
 		setIsSending(true);
 
 		try {
-			const whatsapp = createWhatsAppAPI(
-				"832457296620450",
-				"EAATMsydw6zgBP9XuW7NXejj5wsbiaL7tKOoM43sfjyneZCNUrZAs68ZBHdF66NZBZCtKmNRwLdbt32kwI2ODQFNS5INCiAuHoevzR4jNMDrZBIt3BSL49bpEdZB7UqbW1ZAZClAoIgyo9PhJvlustZAQlCtOoa6XPs9YZABOoG2KXp7jPS3r4Jm3jsUPKNVhS4at3s4evJqzLMe86YmAlFQjKkprRGiYeqcqEPOfs94KVcqYB2wJcJZBJRTi3C9scDStUbHawrQgdjVxsI5GqTUBdkwfsuBZAZAi2EUBzwrl2ZBkBAZD"
-			);
-			const result = await whatsapp.sendTextMessage(to, message);
+			const result = await sendMessageByConnectionId({
+				connectionId: selectedConnection,
+				role: "system",
+				to,
+				message,
+			});
 
-			if (result) {
-				toast.success("Mensaje enviado y conversación creada", {
-					description: `ID de conversación: ${result.conversationId.substring(0, 8)}...`,
-				});
+			toast.success("Mensaje enviado y conversación creada", {
+				description: `ID de conversación: ${result?.conversation_id.substring(0, 8)}...`,
+			});
 
-				// Limpiar el formulario
-				setMessage("");
-
-				// Opcional: Redirigir a la conversación
-				// setTimeout(() => {
-				// 	window.location.href = `/dashboard/conversations/${result.conversationId}`;
-				// }, 2000);
-			}
+			setTimeout(() => {
+				window.location.href = `/dashboard/conversations/${result?.conversation_id}`;
+			}, 2000);
 		} catch (error: any) {
 			toast.error("Error", {
 				description: error.message || "No se pudo enviar el mensaje",
