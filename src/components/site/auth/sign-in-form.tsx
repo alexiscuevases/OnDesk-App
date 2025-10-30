@@ -9,6 +9,7 @@ import { signInSchema, type SignInInput } from "@/lib/validations/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 export function SignInForm() {
 	const { signIn, isLoading, error } = useAuth();
@@ -23,6 +24,10 @@ export function SignInForm() {
 	async function onSubmit(data: SignInInput) {
 		try {
 			await signIn(data);
+
+			toast.success("Successful sign-in", {
+				description: "Redirecting...",
+			});
 		} catch (err) {
 			// Error is handled by useAuth hook
 		}

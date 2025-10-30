@@ -18,11 +18,11 @@ export async function startCheckoutSession(productId: string, teamId: string) {
 	if (!user) throw new Error("Not authenticated");
 
 	// Verificar que el usuario sea el owner del team
-	const { data: team }: { data: Team | null } = await supabase.from("teams").select("*").eq("id", teamId).eq("owner_id", user.id).single();
+	const { data: team } = await supabase.from("teams").select("*").eq("id", teamId).eq("owner_id", user.id).single<Team>();
 	if (!team) throw new Error("Team not found or you don't have permission");
 
 	// Get or create Stripe customer
-	const { data: profile }: { data: Profile | null } = await supabase.from("profiles").select("stripe_customer_id, email").eq("id", user.id).single();
+	const { data: profile } = await supabase.from("profiles").select("stripe_customer_id, email").eq("id", user.id).single<Profile>();
 
 	let customerId = profile?.stripe_customer_id;
 	if (!customerId) {
@@ -77,7 +77,7 @@ export async function createPortalSession() {
 	} = await supabase.auth.getUser();
 	if (!user) throw new Error("Not authenticated");
 
-	const { data: profile }: { data: Profile | null } = await supabase.from("profiles").select("stripe_customer_id").eq("id", user.id).single();
+	const { data: profile } = await supabase.from("profiles").select("stripe_customer_id").eq("id", user.id).single<Profile>();
 	if (!profile?.stripe_customer_id) throw new Error("No Stripe customer found");
 
 	const session = await stripe.billingPortal.sessions.create({
@@ -101,12 +101,12 @@ export async function verifyCheckoutSession(sessionId: string, teamId: string) {
 			if (!user) return { success: false, error: "Not authenticated" };
 
 			// Verificar que el team tenga una suscripción activa
-			const { data: team }: { data: Team | null } = await supabase
+			const { data: team } = await supabase
 				.from("teams")
 				.select("stripe_subscription_id, stripe_subscription_status")
 				.eq("id", teamId)
 				.eq("owner_id", user.id)
-				.single();
+				.single<Team>();
 
 			// If webhook hasn't processed yet, wait a bit and check again
 			if (!team?.stripe_subscription_id || team.stripe_subscription_status !== "active") return { success: false, pending: true };

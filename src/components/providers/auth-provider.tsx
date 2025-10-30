@@ -40,11 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setUser(user);
 
 			if (user) {
-				const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
-					.from("profiles")
-					.select("*")
-					.eq("id", user.id)
-					.single();
+				const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
 				if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
 				setProfile(profile);
@@ -105,8 +101,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
 	const context = useContext(AuthContext);
-	if (!context) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
+	if (!context) throw new Error("useAuth must be used within an AuthProvider");
 	return context;
 };

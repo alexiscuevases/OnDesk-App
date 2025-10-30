@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Bot } from "lucide-react";
+import { Bot, MessageSquareShare } from "lucide-react";
 import { platformConfigs } from "@/configs/platform";
+import { useAuth } from "../providers/auth-provider";
 
 export function SiteHeader() {
+	const { profile } = useAuth();
+
 	return (
 		<header className="sticky top-0 z-50 w-full bg-card/70 backdrop-blur-md">
 			<div className="container flex h-16 items-center justify-between">
@@ -34,12 +37,25 @@ export function SiteHeader() {
 				</nav>
 
 				<div className="flex items-center gap-3">
-					<Button variant="ghost" asChild>
-						<Link href="/auth/sign-in">Sign In</Link>
-					</Button>
-					<Button asChild>
-						<Link href="/auth/sign-up">Get Started</Link>
-					</Button>
+					{profile ? (
+						<>
+							<Button variant="outline" asChild>
+								<Link href="/dashboard">
+									<span>Go Dashboard</span>
+									<MessageSquareShare />
+								</Link>
+							</Button>
+						</>
+					) : (
+						<>
+							<Button variant="ghost" asChild>
+								<Link href="/auth/sign-in">Sign In</Link>
+							</Button>
+							<Button asChild>
+								<Link href="/auth/sign-up">Get Started</Link>
+							</Button>
+						</>
+					)}
 				</div>
 			</div>
 		</header>
