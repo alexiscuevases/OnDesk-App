@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { WhatsAppWebhookPayload, WhatsAppWebhookMessage } from "@/lib/whatsapp";
+import { Connection } from "@/lib/validations/connection";
 
-// Create Supabase admin client for webhook operations
 const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
 	auth: {
 		autoRefreshToken: false,
@@ -12,11 +12,6 @@ const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, proces
 
 /**
  * GET - Verificación del webhook por WhatsApp
- *
- * WhatsApp envía un GET request con:
- * - hub.mode: 'subscribe'
- * - hub.verify_token: tu token de verificación
- * - hub.challenge: string aleatorio que debes devolver
  */
 export async function GET(req: NextRequest) {
 	const searchParams = req.nextUrl.searchParams;
@@ -25,7 +20,7 @@ export async function GET(req: NextRequest) {
 	const challenge = searchParams.get("hub.challenge");
 
 	// El token debe coincidir con el configurado en tu conexión
-	const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || "ondesk_verify_token";
+	const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
 
 	console.log("[WhatsApp Webhook] Verification request:", { mode, token, hasChallenge: !!challenge });
 
@@ -58,7 +53,6 @@ export async function POST(req: NextRequest) {
 			for (const change of entry.changes) {
 				// Obtener el phone_number_id para encontrar la conexión
 				const phoneNumberId = change.value.metadata?.phone_number_id;
-
 				if (!phoneNumberId) {
 					console.log("[WhatsApp Webhook] No phone_number_id found in change");
 					continue;
@@ -68,18 +62,13 @@ export async function POST(req: NextRequest) {
 
 				// Buscar la conexión por phone_number_id
 				const { data: connections } = await supabaseAdmin.from("connections").select("*").eq("type", "whatsapp").eq("status", "connected");
-
 				if (!connections || connections.length === 0) {
 					console.log("[WhatsApp Webhook] No WhatsApp connections found");
 					continue;
 				}
 
 				// Buscar la conexión que coincida con este phoneNumberId
-				const connection = connections.find((conn: any) => {
-					const config = conn.config;
-					return config?.phoneNumberId === phoneNumberId || config?.webhookUrl?.includes(req.url);
-				});
-
+				const connection = connections.find((conn: any) => conn.config?.phoneNumberId === phoneNumberId);
 				if (!connection) {
 					console.log("[WhatsApp Webhook] No connection found for phone_number_id:", phoneNumberId);
 					continue;
@@ -107,7 +96,11 @@ export async function POST(req: NextRequest) {
 /**
  * Procesa mensajes entrantes de WhatsApp
  */
-async function processIncomingMessages(messages: WhatsAppWebhookMessage[], connection: any, contacts?: Array<{ profile: { name: string }; wa_id: string }>) {
+async function processIncomingMessages(
+	messages: WhatsAppWebhookMessage[],
+	connection: Connection,
+	contacts?: Array<{ profile: { name: string }; wa_id: string }>
+) {
 	for (const message of messages) {
 		try {
 			console.log("[WhatsApp] Processing message:", {
@@ -122,32 +115,32 @@ async function processIncomingMessages(messages: WhatsAppWebhookMessage[], conne
 
 			// Extraer el contenido del mensaje según el tipo
 			let content = "";
-			let messageType = "text";
+			let contentType = "text";
 
 			switch (message.type) {
 				case "text":
 					content = message.text?.body || "";
-					messageType = "text";
+					contentType = "text";
 					break;
 				case "image":
 					content = `[Imagen] ${message.image?.id}`;
-					messageType = "image";
+					contentType = "image";
 					break;
 				case "video":
 					content = `[Video] ${message.video?.id}`;
-					messageType = "video";
+					contentType = "video";
 					break;
 				case "audio":
 					content = `[Audio] ${message.audio?.id}`;
-					messageType = "audio";
+					contentType = "audio";
 					break;
 				case "document":
 					content = `[Documento] ${message.document?.filename || message.document?.id}`;
-					messageType = "document";
+					contentType = "document";
 					break;
 				default:
 					content = `[${message.type}]`;
-					messageType = "other";
+					contentType = "other";
 			}
 
 			// Buscar o crear la conversación
@@ -155,14 +148,14 @@ async function processIncomingMessages(messages: WhatsAppWebhookMessage[], conne
 				.from("conversations")
 				.select("*")
 				.eq("connection_id", connection.id)
-				.eq("participant_id", message.from)
-				.eq("status", "active")
+				.eq("customer_phone", message.from)
+				.eq("channel", "whatsapp")
+				.eq("status", "open")
 				.order("updated_at", { ascending: false })
 				.limit(1)
 				.single();
 
 			let conversationId: string;
-
 			if (existingConversation) {
 				conversationId = existingConversation.id;
 
@@ -178,17 +171,17 @@ async function processIncomingMessages(messages: WhatsAppWebhookMessage[], conne
 				const { data: newConversation, error: createError } = await supabaseAdmin
 					.from("conversations")
 					.insert({
-						connection_id: connection.id,
 						team_id: connection.team_id,
-						participant_id: message.from,
-						participant_name: contactName,
-						status: "active",
-						last_message: content,
-						last_message_at: new Date().toISOString(),
+						connection_id: connection.id,
+						agent_id: undefined,
+						customer_name: contactName,
+						customer_phone: message.from,
+						channel: "whatsapp",
+						status: "open",
+						priority: "medium",
 					})
 					.select()
 					.single();
-
 				if (createError) {
 					console.error("[WhatsApp] Error creating conversation:", createError);
 					continue;
@@ -200,16 +193,13 @@ async function processIncomingMessages(messages: WhatsAppWebhookMessage[], conne
 			// Crear el mensaje
 			await supabaseAdmin.from("messages").insert({
 				conversation_id: conversationId,
-				connection_id: connection.id,
-				sender_id: message.from,
-				sender_name: contactName,
-				sender_type: "user",
-				content: content,
-				message_type: messageType,
-				metadata: {
-					whatsapp_message_id: message.id,
-					whatsapp_timestamp: message.timestamp,
-				},
+				role: "user",
+				content,
+				content_type: contentType,
+				// metadata: {
+				// whatsapp_message_id: message.id,
+				// whatsapp_timestamp: message.timestamp,
+				// },
 			});
 
 			console.log("[WhatsApp] Message processed successfully");
