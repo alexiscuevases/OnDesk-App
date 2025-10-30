@@ -12,17 +12,17 @@ import { ArrowLeft, Bot, User, Send, MoreVertical, MessageCircle } from "lucide-
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useConversations } from "@/hooks/use-conversations";
 import type { Conversation } from "@/lib/validations/conversation";
-import type { Message } from "@/lib/validations/message";
 import { useAgents } from "@/hooks/use-agents";
+import { useMessages } from "@/hooks/use-messages";
 
 export default function SingleConversationPage() {
 	const params = useParams();
 	const conversationId = String(params?.id ?? "");
-	const { fetchConversationById, fetchConversationMessages, sendMessageByConversationId, assignAgentToConversation } = useConversations();
+	const { fetchConversationById, sendMessageByConversationId, assignAgentToConversation } = useConversations();
+	const { messages } = useMessages(conversationId);
 	const { agents } = useAgents();
 
 	const [conversation, setConversation] = useState<Conversation | null>(null);
-	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
 	const [sending, setSending] = useState(false);
 	const [assignOpen, setAssignOpen] = useState(false);
@@ -32,10 +32,9 @@ export default function SingleConversationPage() {
 	useEffect(() => {
 		if (!conversationId) return;
 		(async () => {
-			const [conv, msgs] = await Promise.all([fetchConversationById(conversationId), fetchConversationMessages(conversationId)]);
+			const [conv] = await Promise.all([fetchConversationById(conversationId)]);
 			setConversation(conv);
 			setSelectedAgentId(conv?.agent_id ?? null);
-			setMessages(msgs);
 		})();
 	}, [conversationId]);
 
@@ -52,8 +51,8 @@ export default function SingleConversationPage() {
 		if (!input.trim() || !conversationId) return;
 		setSending(true);
 		try {
-			const newMsg = await sendMessageByConversationId({ conversationId, role: "agent", message: input.trim() });
-			setMessages((prev) => [...prev, newMsg]);
+			await sendMessageByConversationId({ conversationId, role: "agent", message: input.trim() });
+
 			setInput("");
 		} finally {
 			setSending(false);
@@ -61,8 +60,8 @@ export default function SingleConversationPage() {
 	};
 
 	const onSaveAgent = async () => {
-		if (!conversationId) return;
-		await assignAgentToConversation(conversationId, selectedAgentId ?? null);
+		if (!conversationId || !selectedAgentId) return;
+		await assignAgentToConversation(conversationId, selectedAgentId);
 		const fresh = await fetchConversationById(conversationId);
 		setConversation(fresh);
 		setAssignOpen(false);

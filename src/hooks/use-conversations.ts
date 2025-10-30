@@ -38,22 +38,6 @@ export function useConversations() {
 		}
 	};
 
-	const fetchConversationMessages = async (conversationId: string) => {
-		try {
-			const { data, error: fetchError } = await supabase
-				.from("messages")
-				.select("*")
-				.eq("conversation_id", conversationId)
-				.order("created_at", { ascending: true })
-				.returns<Message[]>();
-			if (fetchError) throw fetchError;
-
-			return data || [];
-		} catch (err: any) {
-			throw new Error(err.message || "Failed to fetch messages");
-		}
-	};
-
 	const fetchConversationById = async (conversationId: string) => {
 		try {
 			if (!profile) throw new Error("Not authenticated");
@@ -222,7 +206,6 @@ export function useConversations() {
 		error,
 		fetchConversations,
 		fetchConversationById,
-		fetchConversationMessages,
 		deleteConversation,
 
 		sendMessageByConnectionId,
