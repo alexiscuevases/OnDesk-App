@@ -20,11 +20,8 @@ export async function GET(req: NextRequest) {
 	const challenge = searchParams.get("hub.challenge");
 
 	// El token debe coincidir con el configurado en tu conexión
-	const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
-
 	console.log("[WhatsApp Webhook] Verification request:", { mode, token, hasChallenge: !!challenge });
-
-	if (mode === "subscribe" && token === verifyToken) {
+	if (mode === "subscribe" && token === process.env.WHATSAPP_VERIFY_TOKEN) {
 		console.log("[WhatsApp Webhook] Verification successful");
 		return NextResponse.text(challenge || "");
 	}
