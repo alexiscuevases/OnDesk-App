@@ -7,6 +7,7 @@ import { Message } from "@/lib/validations/message";
 import { Profile } from "@/lib/validations/profile";
 import { createWhatsAppAPI } from "@/lib/whatsapp";
 import { Connection } from "@/lib/validations/connection";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 export function useConversations() {
 	const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -202,6 +203,48 @@ export function useConversations() {
 
 	useEffect(() => {
 		fetchConversations();
+
+		let conversationsChannel: RealtimeChannel | null = null;
+
+		const setupRealtimeSubscriptions = async () => {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) return;
+
+			const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
+			if (!profile) return;
+
+			// Subscribe to conversations changes
+			conversationsChannel = supabase
+				.channel("conversations-changes")
+				.on(
+					"postgres_changes",
+					{
+						event: "*",
+						schema: "public",
+						table: "conversations",
+						filter: `team_id=eq.${profile.team_id}`,
+					},
+					(payload) => {
+						if (payload.eventType === "INSERT") {
+							setConversations((prev) => [payload.new as Conversation, ...prev]);
+						} else if (payload.eventType === "UPDATE") {
+							setConversations((prev) => prev.map((conv) => (conv.id === payload.new.id ? (payload.new as Conversation) : conv)));
+						} else if (payload.eventType === "DELETE") {
+							setConversations((prev) => prev.filter((conv) => conv.id !== payload.old.id));
+						}
+					}
+				)
+				.subscribe();
+		};
+
+		setupRealtimeSubscriptions();
+
+		// Cleanup subscriptions on unmount
+		return () => {
+			if (conversationsChannel) supabase.removeChannel(conversationsChannel);
+		};
 	}, []);
 
 	return {
