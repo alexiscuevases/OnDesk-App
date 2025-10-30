@@ -80,7 +80,17 @@ export function useConversations() {
 		}
 	};
 
-	const sendMessageByConnectionId = async ({ connectionId, role, to, message }) => {
+	const sendMessageByConnectionId = async ({
+		connectionId,
+		role,
+		to,
+		message,
+	}: {
+		connectionId: string;
+		role: Message["role"];
+		to: string;
+		message: string;
+	}) => {
 		try {
 			const {
 				data: { user },

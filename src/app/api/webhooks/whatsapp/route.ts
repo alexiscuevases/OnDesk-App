@@ -23,7 +23,12 @@ export async function GET(req: NextRequest) {
 	console.log("[WhatsApp Webhook] Verification request:", { mode, token, hasChallenge: !!challenge });
 	if (mode === "subscribe" && token === process.env.WHATSAPP_VERIFY_TOKEN) {
 		console.log("[WhatsApp Webhook] Verification successful");
-		return NextResponse.text(challenge || "");
+		return new Response(challenge || "", {
+			status: 200,
+			headers: {
+				"Content-Type": "text/plain",
+			},
+		});
 	}
 
 	console.log("[WhatsApp Webhook] Verification failed");

@@ -16,30 +16,30 @@ export default function DashboardPage() {
 		{
 			title: "Total Conversations",
 			value: stats?.totalConversations.toLocaleString() || "0",
-			change: `${stats?.conversationsChange > 0 ? "+" : ""}${stats?.conversationsChange}%`,
+			change: `${(stats?.conversationsChange as number) > 0 ? "+" : ""}${stats?.conversationsChange}%`,
 			icon: MessageSquare,
-			trend: stats?.conversationsChange >= 0 ? "up" : "down",
+			trend: (stats?.conversationsChange as number) >= 0 ? "up" : "down",
 		},
 		{
 			title: "Active Agents",
 			value: stats?.activeAgents.toString() || "0",
-			change: `${stats?.agentsChange > 0 ? "+" : ""}${stats?.agentsChange}%`,
+			change: `${(stats?.agentsChange as number) > 0 ? "+" : ""}${stats?.agentsChange}%`,
 			icon: Bot,
-			trend: stats?.agentsChange >= 0 ? "up" : "down",
+			trend: (stats?.agentsChange as number) >= 0 ? "up" : "down",
 		},
 		{
 			title: "Avg Response Time",
 			value: stats?.avgResponseTime || "0s",
-			change: `${stats?.responseTimeChange > 0 ? "+" : ""}${stats?.responseTimeChange}%`,
+			change: `${(stats?.responseTimeChange as number) > 0 ? "+" : ""}${stats?.responseTimeChange}%`,
 			icon: Zap,
-			trend: stats?.responseTimeChange <= 0 ? "up" : "down",
+			trend: (stats?.responseTimeChange as number) <= 0 ? "up" : "down",
 		},
 		{
 			title: "Satisfaction Rate",
 			value: `${stats?.satisfactionRate.toFixed(1) || "0"}%`,
-			change: `${stats?.satisfactionChange > 0 ? "+" : ""}${stats?.satisfactionChange}%`,
+			change: `${(stats?.satisfactionChange as number) > 0 ? "+" : ""}${stats?.satisfactionChange}%`,
 			icon: TrendingUp,
-			trend: stats?.satisfactionChange >= 0 ? "up" : "down",
+			trend: (stats?.satisfactionChange as number) >= 0 ? "up" : "down",
 		},
 	];
 

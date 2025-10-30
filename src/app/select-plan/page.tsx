@@ -1,20 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { startCheckoutSession, verifyCheckoutSession } from "@/actions/stripe";
-import { useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { platformConfigs } from "@/configs/platform";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-export default function SelectPlanPage() {
+function SelectPlanContent() {
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isVerifying, setIsVerifying] = useState(false);
@@ -63,7 +63,7 @@ export default function SelectPlanPage() {
 		}
 	}, [searchParams, router, isVerifying, teamId]);
 
-	const startCheckout = useCallback(async () => {
+	const startCheckout = useCallback(async (): Promise<any> => {
 		if (!selectedPlan || !teamId) return null;
 		return await startCheckoutSession(selectedPlan, teamId);
 	}, [selectedPlan, teamId]);
@@ -158,5 +158,18 @@ export default function SelectPlanPage() {
 				</div>
 			</div>
 		</div>
+	);
+}
+
+export default function SelectPlanPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className="min-h-screen bg-background flex items-center justify-center p-6">
+					<Loader2 className="h-8 w-8 animate-spin text-accent" />
+				</div>
+			}>
+			<SelectPlanContent />
+		</Suspense>
 	);
 }

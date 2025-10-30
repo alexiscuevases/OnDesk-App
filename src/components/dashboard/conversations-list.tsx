@@ -65,7 +65,8 @@ export function ConversationsList() {
 	return (
 		<div className="space-y-4">
 			{conversations.map((conversation) => {
-				const initials = conversation.customer_name
+				const displayName = conversation.customer_name || "Unknown";
+				const initials = displayName
 					.split(" ")
 					.map((n) => n[0])
 					.join("")
@@ -82,7 +83,7 @@ export function ConversationsList() {
 									</Avatar>
 									<div className="flex-1 min-w-0">
 										<div className="flex items-center gap-2">
-											<h3 className="font-semibold text-sm">{conversation.customer_name}</h3>
+											<h3 className="font-semibold text-sm">{displayName}</h3>
 											{conversation.status === "open" && (
 												<Badge variant="default" className="h-5 px-1.5 text-xs">
 													Nuevo

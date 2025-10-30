@@ -8,8 +8,16 @@ import { MessageCircle, Globe, Smartphone, Mail, Check, Plus } from "lucide-reac
 import { ConnectIntegrationDialog } from "./dialogs/connect-integration-dialog";
 import { ManageIntegrationDialog } from "./dialogs/manage-integration-dialog";
 import { useConnections } from "@/hooks/use-connections";
+import { Connection } from "@/lib/validations/connection";
 
-const availableIntegrations = [
+interface Integration {
+	type: Connection["type"];
+	name: string;
+	description: string;
+	icon: any;
+}
+
+const availableIntegrations: Integration[] = [
 	{
 		type: "whatsapp",
 		name: "WhatsApp Business",
@@ -23,12 +31,14 @@ const availableIntegrations = [
 		icon: Globe,
 	},
 	{
+		// @ts-expect-error
 		type: "sms",
 		name: "SMS",
 		description: "Envía y recibe mensajes SMS con tus agentes",
 		icon: Smartphone,
 	},
 	{
+		// @ts-expect-error
 		type: "email",
 		name: "Email",
 		description: "Maneja emails de clientes con respuestas impulsadas por IA",

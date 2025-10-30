@@ -42,40 +42,44 @@ export function RecentConversations() {
 
 	return (
 		<div className="space-y-4">
-			{recentConversations.map((conversation) => (
-				<Link
-					key={conversation.id}
-					href={`/dashboard/conversations/${conversation.id}`}
-					className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0 hover:opacity-70 transition-opacity">
-					<Avatar className="h-9 w-9">
-						<AvatarFallback>{conversation.customer_name.charAt(0).toUpperCase()}</AvatarFallback>
-					</Avatar>
-					<div className="flex-1 space-y-1">
-						<div className="flex items-center justify-between">
-							<p className="text-sm font-medium">{conversation.customer_name}</p>
-							<span className="text-xs text-muted-foreground">
-								{formatDistanceToNow(new Date(conversation.created_at), { addSuffix: true, locale: es })}
-							</span>
-						</div>
-						{conversation.customer_email && <p className="text-xs text-muted-foreground line-clamp-1">{conversation.customer_email}</p>}
-						<div className="flex items-center gap-2">
-							<Badge variant="outline" className="text-xs">
-								{conversation.channel}
-							</Badge>
-							<Badge
-								variant={conversation.status === "open" ? "default" : conversation.status === "resolved" ? "secondary" : "outline"}
-								className="text-xs">
-								{conversation.status}
-							</Badge>
-							{conversation.priority && (
-								<Badge variant={conversation.priority === "high" ? "destructive" : "outline"} className="text-xs">
-									{conversation.priority}
+			{recentConversations.map((conversation) => {
+				const displayName = conversation.customer_name || "Unknown";
+
+				return (
+					<Link
+						key={conversation.id}
+						href={`/dashboard/conversations/${conversation.id}`}
+						className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0 hover:opacity-70 transition-opacity">
+						<Avatar className="h-9 w-9">
+							<AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
+						</Avatar>
+						<div className="flex-1 space-y-1">
+							<div className="flex items-center justify-between">
+								<p className="text-sm font-medium">{displayName}</p>
+								<span className="text-xs text-muted-foreground">
+									{formatDistanceToNow(new Date(conversation.created_at), { addSuffix: true, locale: es })}
+								</span>
+							</div>
+							{conversation.customer_email && <p className="text-xs text-muted-foreground line-clamp-1">{conversation.customer_email}</p>}
+							<div className="flex items-center gap-2">
+								<Badge variant="outline" className="text-xs">
+									{conversation.channel}
 								</Badge>
-							)}
+								<Badge
+									variant={conversation.status === "open" ? "default" : conversation.status === "resolved" ? "secondary" : "outline"}
+									className="text-xs">
+									{conversation.status}
+								</Badge>
+								{conversation.priority && (
+									<Badge variant={conversation.priority === "high" ? "destructive" : "outline"} className="text-xs">
+										{conversation.priority}
+									</Badge>
+								)}
+							</div>
 						</div>
-					</div>
-				</Link>
-			))}
+					</Link>
+				);
+			})}
 		</div>
 	);
 }

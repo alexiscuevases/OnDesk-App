@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
 
-export default function CreateTeamPage() {
+function CreateTeamContent() {
 	const searchParams = useSearchParams();
 	const fromDashboard = searchParams.get("from") === "dashboard";
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -108,5 +109,18 @@ export default function CreateTeamPage() {
 				</CardContent>
 			</Card>
 		</div>
+	);
+}
+
+export default function CreateTeamPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className="min-h-screen bg-background flex items-center justify-center p-6">
+					<Loader2 className="h-8 w-8 animate-spin text-accent" />
+				</div>
+			}>
+			<CreateTeamContent />
+		</Suspense>
 	);
 }
