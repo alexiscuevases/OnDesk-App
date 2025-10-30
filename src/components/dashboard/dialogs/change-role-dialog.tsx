@@ -29,13 +29,15 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 
 		try {
 			await updateTeamMemberRole(member.id, selectedRole);
+
 			toast.success("Rol actualizado", {
 				description: `El rol de ${member.email} ha sido actualizado a ${selectedRole}.`,
 			});
+
 			setOpen(false);
-		} catch (error: any) {
+		} catch (err: any) {
 			toast.error("Error", {
-				description: error.message || "No se pudo actualizar el rol",
+				description: err.message || "No se pudo actualizar el rol",
 			});
 		} finally {
 			setIsLoading(false);

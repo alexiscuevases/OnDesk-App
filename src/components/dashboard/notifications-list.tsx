@@ -8,6 +8,7 @@ import { useNotifications } from "@/hooks/use-notifications";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { getNotificationIcon } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface NotificationsListProps {
 	filter: "all" | "unread";
@@ -22,8 +23,10 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 		if (!isRead) {
 			try {
 				await markAsRead(notificationId);
-			} catch (error) {
-				console.error("Error marking notification as read:", error);
+			} catch (err: any) {
+				toast.error("Error", {
+					description: err.message || "No se pudo actualizar la notificación",
+				});
 			}
 		}
 	};

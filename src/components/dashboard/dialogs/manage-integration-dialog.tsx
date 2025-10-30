@@ -22,17 +22,18 @@ interface ManageIntegrationDialogProps {
 
 export function ManageIntegrationDialog({ children, integration }: ManageIntegrationDialogProps) {
 	const [open, setOpen] = useState(false);
-	const { fetchConnectionsByType, deleteConnection, updateConnection } = useConnections();
+	const { deleteConnection, updateConnection } = useConnections();
 	const [connections, setConnections] = useState<Connection[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
+	const filterConnectionsByType = (type: Connection["type"]) => connections.filter((connection) => connection.type === type);
+
 	const handleOpenChange = async (newOpen: boolean) => {
 		setOpen(newOpen);
-
 		if (newOpen) {
 			setIsLoading(true);
 			try {
-				const data = await fetchConnectionsByType(integration.type);
+				const data = await filterConnectionsByType(integration.type);
 				setConnections(data);
 			} catch (error) {
 				console.error("Error al cargar conexiones:", error);
@@ -46,7 +47,7 @@ export function ManageIntegrationDialog({ children, integration }: ManageIntegra
 		if (confirm("¿Estás seguro de que deseas eliminar esta conexión?")) {
 			await deleteConnection(id);
 
-			const data = await fetchConnectionsByType(integration.type);
+			const data = await filterConnectionsByType(integration.type);
 			setConnections(data);
 		}
 	};
@@ -55,7 +56,7 @@ export function ManageIntegrationDialog({ children, integration }: ManageIntegra
 		const status = connection.status === "connected" ? "disconnected" : "connected";
 		await updateConnection(connection.id, { status });
 
-		const data = await fetchConnectionsByType(integration.type);
+		const data = await filterConnectionsByType(integration.type);
 		setConnections(data);
 	};
 

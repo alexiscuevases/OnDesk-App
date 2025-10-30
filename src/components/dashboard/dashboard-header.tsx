@@ -22,6 +22,7 @@ import { useTheme } from "next-themes";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useAuth } from "../providers/auth-provider";
+import { toast } from "sonner";
 
 export function DashboardHeader() {
 	const { toggleSidebar } = useSidebar();
@@ -36,8 +37,10 @@ export function DashboardHeader() {
 		if (!isRead) {
 			try {
 				await markAsRead(notificationId);
-			} catch (error) {
-				console.error("Error marking notification as read:", error);
+			} catch (err: any) {
+				toast.error("Error", {
+					description: err.message || "No se pudo actualizar la notificación",
+				});
 			}
 		}
 	};
@@ -45,8 +48,10 @@ export function DashboardHeader() {
 	const handleMarkAllAsRead = async () => {
 		try {
 			await markAllAsRead();
-		} catch (error) {
-			console.error("Error marking all as read:", error);
+		} catch (err: any) {
+			toast.error("Error", {
+				description: err.message || "No se pudo actualizar las notificaciones",
+			});
 		}
 	};
 

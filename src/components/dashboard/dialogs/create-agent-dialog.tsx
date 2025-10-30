@@ -42,19 +42,15 @@ export function CreateAgentDialog() {
 	}, [currentTeam, setValue]);
 
 	const onSubmit = async (data: CreateAgentInput) => {
-		if (!currentTeam?.id) {
-			toast.error("Error", {
-				description: "Debes seleccionar un equipo antes de crear un agente",
-			});
-			return;
-		}
-
 		setIsLoading(true);
+
 		try {
 			await createAgent(data);
+
 			toast.success("Agente creado", {
 				description: "El agente ha sido creado exitosamente.",
 			});
+
 			setOpen(false);
 			reset();
 		} catch (error: any) {

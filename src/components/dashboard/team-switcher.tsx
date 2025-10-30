@@ -22,17 +22,16 @@ export function TeamSwitcher() {
 	const [switching, setSwitching] = useState(false);
 
 	const handleSelectTeam = async (teamId: string) => {
-		if (teamId === currentTeam?.id) {
-			return;
-		}
+		if (teamId === currentTeam?.id) return;
 
 		setSwitching(true);
 		try {
 			await switchTeam(teamId);
+
 			toast.success("Equipo cambiado", {
 				description: "Se ha cambiado el equipo correctamente",
 			});
-			// Recargar la página para actualizar todos los datos
+
 			router.refresh();
 		} catch (error: any) {
 			toast.error("Error", {
@@ -41,10 +40,6 @@ export function TeamSwitcher() {
 		} finally {
 			setSwitching(false);
 		}
-	};
-
-	const handleCreateTeam = () => {
-		router.push("/create-team?from=dashboard");
 	};
 
 	if (isLoading || !currentTeam) {
@@ -84,7 +79,7 @@ export function TeamSwitcher() {
 					</DropdownMenuItem>
 				))}
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={handleCreateTeam} className="cursor-pointer" disabled={switching}>
+				<DropdownMenuItem onClick={() => router.push("/create-team?from=dashboard")} className="cursor-pointer" disabled={switching}>
 					<Plus className="mr-2 h-4 w-4" />
 					Crear nuevo equipo
 				</DropdownMenuItem>

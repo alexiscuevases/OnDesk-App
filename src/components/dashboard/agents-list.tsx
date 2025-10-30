@@ -24,6 +24,7 @@ export function AgentsList() {
 		try {
 			const newStatus = agent.status === "active" ? "inactive" : "active";
 			await updateAgent(agent.id, { status: newStatus });
+
 			toast.success("Agente actualizado", {
 				description: `El agente ha sido ${newStatus === "active" ? "activado" : "desactivado"} exitosamente.`,
 			});
@@ -40,6 +41,7 @@ export function AgentsList() {
 		setLoadingAction(agentId);
 		try {
 			await deleteAgent(agentId);
+
 			toast.success("Agente eliminado", {
 				description: "El agente ha sido eliminado exitosamente.",
 			});

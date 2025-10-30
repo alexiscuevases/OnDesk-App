@@ -12,6 +12,7 @@ import { ChangeRoleDialog } from "./dialogs/change-role-dialog";
 import { useTeam } from "@/hooks/use-team";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { toast } from "sonner";
 
 export function TeamMembersList() {
 	const { teamMembers, isLoading, error, removeTeamMember } = useTeam();
@@ -21,8 +22,13 @@ export function TeamMembersList() {
 		setRemovingId(id);
 		try {
 			await removeTeamMember(id);
-		} catch (error) {
-			console.error("Error removing team member:", error);
+			toast.success("Miembro eliminado", {
+				description: "Se ha eliminado correctamente",
+			});
+		} catch (err: any) {
+			toast.error("Error", {
+				description: err.message || "No se pudo eliminar el miembro",
+			});
 		} finally {
 			setRemovingId(null);
 		}

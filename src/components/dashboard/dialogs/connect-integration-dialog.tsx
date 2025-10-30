@@ -12,6 +12,7 @@ import { useConnections } from "@/hooks/use-connections";
 import { Connection, CreateConnectionInput, createConnectionSchema } from "@/lib/validations/connection";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTeam } from "@/hooks/use-team";
+import { toast } from "sonner";
 
 interface ConnectIntegrationDialogProps {
 	children: React.ReactNode;
@@ -70,10 +71,16 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 				config,
 			});
 
+			toast.success("Conexión creada", {
+				description: "Se ha creado la conexión exitosamente",
+			});
+
 			setOpen(false);
 			reset();
-		} catch (error: any) {
-			// Error is handled by useConnections hook
+		} catch (err: any) {
+			toast.error("Error", {
+				description: err.message || "No se pudo actualizar el agente",
+			});
 		} finally {
 			setIsLoading(false);
 		}

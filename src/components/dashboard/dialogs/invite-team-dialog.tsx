@@ -32,24 +32,20 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 	});
 
 	const onSubmit = async (data: InviteTeamMemberInput) => {
-		if (!currentTeam) {
-			toast.error("Error", {
-				description: "No se encontró el equipo actual",
-			});
-			return;
-		}
-
 		setIsLoading(true);
+
 		try {
-			await inviteTeamMember({ ...data, team_id: currentTeam.id });
+			await inviteTeamMember({ ...data, team_id: currentTeam?.id as string });
+
 			toast.success("Invitación enviada", {
 				description: `Se ha enviado una invitación a ${data.email}.`,
 			});
+
 			setOpen(false);
 			reset();
-		} catch (error: any) {
+		} catch (err: any) {
 			toast.error("Error", {
-				description: error.message || "No se pudo enviar la invitación",
+				description: err.message || "No se pudo enviar la invitación",
 			});
 		} finally {
 			setIsLoading(false);

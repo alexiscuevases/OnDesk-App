@@ -10,11 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
 import { Loader2 } from "lucide-react";
 import { useAgents } from "@/hooks/use-agents";
 import { toast } from "sonner";
-import { Agent, agentSchema, UpdateAgentInput, updateAgentSchema } from "@/lib/validations/agent";
+import { Agent, UpdateAgentInput, updateAgentSchema } from "@/lib/validations/agent";
 
 interface ConfigureAgentDialogProps {
 	open: boolean;
@@ -68,15 +67,18 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 
 	const onSubmit = async (data: UpdateAgentInput) => {
 		setIsLoading(true);
+
 		try {
 			await updateAgent(agent.id, data);
+
 			toast.success("Agente actualizado", {
 				description: "Los cambios han sido guardados exitosamente.",
 			});
+
 			onOpenChange(false);
-		} catch (error: any) {
+		} catch (err: any) {
 			toast.error("Error", {
-				description: error.message || "No se pudo actualizar el agente",
+				description: err.message || "No se pudo actualizar el agente",
 			});
 		} finally {
 			setIsLoading(false);
