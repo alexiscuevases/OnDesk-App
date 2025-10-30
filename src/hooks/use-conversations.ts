@@ -24,18 +24,15 @@ export function useConversations() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
-				.from("profiles")
-				.select("*")
-				.eq("id", user.id)
-				.single();
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
 			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			const { data, error: fetchError }: { data: Conversation[] | null; error: any } = await supabase
+			const { data, error: fetchError } = await supabase
 				.from("conversations")
 				.select("*")
 				.eq("team_id", profile.team_id)
-				.order("created_at", { ascending: false });
+				.order("created_at", { ascending: false })
+				.returns<Conversation[]>();
 			if (fetchError) throw fetchError;
 
 			setConversations(data || []);
@@ -48,11 +45,12 @@ export function useConversations() {
 
 	const fetchConversationMessages = async (conversationId: string) => {
 		try {
-			const { data, error: fetchError }: { data: Message[] | null; error: any } = await supabase
+			const { data, error: fetchError } = await supabase
 				.from("messages")
 				.select("*")
 				.eq("conversation_id", conversationId)
-				.order("created_at", { ascending: true });
+				.order("created_at", { ascending: true })
+				.returns<Message[]>();
 			if (fetchError) throw fetchError;
 
 			return data || [];
@@ -113,23 +111,15 @@ export function useConversations() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
-				.from("profiles")
-				.select("*")
-				.eq("id", user.id)
-				.single();
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
 			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			const { data: connection, error: connectionError }: { data: Connection | null; error: any } = await supabase
-				.from("connections")
-				.select("*")
-				.eq("id", connectionId)
-				.single();
+			const { data: connection, error: connectionError } = await supabase.from("connections").select("*").eq("id", connectionId).single<Connection>();
 			if (connectionError || !connection) throw connectionError ?? new Error("Connection not exists");
 
 			let query = supabase.from("conversations").select("*");
 			if (connection.type === "whatsapp") query.eq("customer_phone", to);
-			const { data: conversation, error: conversationError }: { data: Conversation | null; error: any } = await query.maybeSingle();
+			const { data: conversation, error: conversationError } = await query.maybeSingle<Conversation>();
 			if (conversationError) throw connectionError;
 
 			let currentConversation = conversation;
@@ -148,7 +138,7 @@ export function useConversations() {
 						priority: "medium",
 					})
 					.select()
-					.single();
+					.single<Conversation>();
 				if (newConversationError) throw newConversationError;
 				currentConversation = newConversation;
 			}
@@ -169,7 +159,9 @@ export function useConversations() {
 				if (messageError) throw messageError;
 				return data;
 			}
-		} catch (err) {
+
+			return null;
+		} catch (err: any) {
 			throw err;
 		}
 	};
@@ -181,30 +173,30 @@ export function useConversations() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: conversation, error: conversationError }: { data: Conversation | null; error: any } = await supabase
+			const { data: conversation, error: conversationError } = await supabase
 				.from("conversations")
 				.select("*")
 				.eq("id", conversationId)
-				.single();
+				.single<Conversation>();
 			if (conversationError || !conversation) throw conversationError ?? new Error("Conversation not exists");
 
 			return await sendMessageByConnectionId({
 				connectionId: conversation.connection_id,
 				role,
-				to: conversation.customer_phone,
+				to: conversation.customer_phone as string,
 				message,
 			});
-		} catch (err) {
-			throw err as any;
+		} catch (err: any) {
+			throw err;
 		}
 	};
 
-	const assignAgentToConversation = async (conversationId: string, agentId: string | null) => {
+	const assignAgentToConversation = async (conversationId: string, agentId: string) => {
 		try {
 			const { error: updateError } = await supabase.from("conversations").update({ agent_id: agentId }).eq("id", conversationId);
 			if (updateError) throw updateError;
 		} catch (err: any) {
-			throw new Error(err.message || "Failed to assign agent");
+			throw err;
 		}
 	};
 
