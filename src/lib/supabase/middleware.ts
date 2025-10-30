@@ -8,7 +8,7 @@ import { Profile } from "../validations/profile";
 export async function updateSession(request: NextRequest) {
 	// Allow public routes
 	const publicRoutes = ["/about", "/api", "/auth", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
-	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
+	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route) || request.nextUrl.pathname === "/");
 	if (isPublicRoute) return NextResponse.next();
 
 	// Init Supabase Middleware
