@@ -79,7 +79,7 @@ function SelectPlanContent() {
 				<Card className="max-w-md w-full">
 					<CardHeader className="text-center">
 						<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
-							<Loader2 className="h-6 w-6 animate-spin text-accent" />
+							<Loader2 className="h-6 w-6 animate-spin text-primary" />
 						</div>
 						<CardTitle>Verificando tu pago</CardTitle>
 						<CardDescription>Por favor espera mientras confirmamos tu suscripción. Esto solo tomará unos segundos.</CardDescription>
@@ -139,7 +139,7 @@ function SelectPlanContent() {
 								<ul className="space-y-3">
 									{product.features.map((feature, index) => (
 										<li key={index} className="flex items-start gap-3">
-											<Check className="h-5 w-5 shrink-0 text-accent" />
+											<Check className="h-5 w-5 shrink-0 text-primary" />
 											<span className="text-sm">{feature}</span>
 										</li>
 									))}

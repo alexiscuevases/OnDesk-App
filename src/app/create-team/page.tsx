@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
 import { AppConfigs } from "@/configs/app";
+import { useAuth } from "@/components/providers/auth-provider";
 
 function CreateTeamContent() {
 	const searchParams = useSearchParams();
@@ -23,13 +24,20 @@ function CreateTeamContent() {
 	const fromDashboard = searchParams.get("from") === "dashboard";
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const { createTeam, error } = useTeam();
+	const { profile } = useAuth();
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
+		setValue,
 	} = useForm<CreateTeamInput>({
 		resolver: zodResolver(createTeamSchema),
 	});
+
+	useEffect(() => {
+		if (!profile) return;
+		setValue("owner_id", profile.id);
+	}, [profile]);
 
 	async function onSubmit(data: CreateTeamInput) {
 		try {
