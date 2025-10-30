@@ -21,19 +21,16 @@ export function useNotifications() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
-				.from("profiles")
-				.select("*")
-				.eq("id", user.id)
-				.single();
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
 			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			const { data, error: fetchError }: { data: Notification[] | null; error: any } = await supabase
+			const { data, error: fetchError } = await supabase
 				.from("notifications")
 				.select("*")
 				.eq("team_id", profile.team_id)
 				.order("created_at", { ascending: false })
-				.limit(50);
+				.limit(50)
+				.returns<Notification[]>();
 			if (fetchError) throw fetchError;
 
 			setNotifications(data || []);
@@ -72,11 +69,7 @@ export function useNotifications() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
-				.from("profiles")
-				.select("*")
-				.eq("id", user.id)
-				.single();
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
 			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
 			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("team_id", profile.team_id).eq("read", false);

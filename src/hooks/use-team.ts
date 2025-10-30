@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { InviteTeamMemberInput, TeamMember } from "@/lib/validations/team_member";
 import { CreateTeamInput, Team } from "@/lib/validations/team";
-import { useRouter } from "next/navigation";
 import { Profile } from "@/lib/validations/profile";
 
 export function useTeam() {
@@ -13,7 +12,6 @@ export function useTeam() {
 	const [allTeams, setAllTeams] = useState<Team[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const router = useRouter();
 	const supabase = createClient();
 
 	const fetchCurrentTeam = async () => {
@@ -26,14 +24,9 @@ export function useTeam() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
-				.from("profiles")
-				.select("*,teams:team_id(*)")
-				.eq("id", user.id)
-				.single();
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*,teams:team_id(*)").eq("id", user.id).single<Profile>();
 			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			// @ts-expect-error
 			const team = profile.teams as Team;
 			setCurrentTeam(team);
 		} catch (err: any) {
@@ -52,14 +45,15 @@ export function useTeam() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: teamMembers, error: membersError }: { data: TeamMember[] | null; error: any } = await supabase
+			const { data: teamMembers, error: membersError } = await supabase
 				.from("team_members")
 				.select("*,teams:team_id(*)")
 				.eq("user_id", user.id)
-				.eq("status", "active");
+				.eq("status", "active")
+				.returns<TeamMember[]>();
 			if (membersError) throw membersError;
 
-			const teams = teamMembers?.map((tm: any) => tm.teams).filter(Boolean) || [];
+			const teams = teamMembers.map((teamMember) => teamMember.teams as Team).filter(Boolean) || [];
 			setAllTeams(teams);
 		} catch (err: any) {
 			setError(err.message || "Failed to fetch teams");
@@ -79,7 +73,7 @@ export function useTeam() {
 			let query = supabase.from("team_members").select("*").order("created_at", { ascending: false });
 			if (teamId) query = query.eq("team_id", teamId);
 			else if (currentTeam) query = query.eq("team_id", currentTeam.id);
-			const { data, error: fetchError }: { data: TeamMember[] | null; error: any } = await query;
+			const { data, error: fetchError } = await query.returns<TeamMember[]>();
 			if (fetchError) throw fetchError;
 
 			setTeamMembers(data || []);
@@ -100,7 +94,7 @@ export function useTeam() {
 			if (!user) throw new Error("Not authenticated");
 
 			// Crear el team
-			const { data: team, error: teamError }: { data: Team | null; error: any } = await supabase
+			const { data: team, error: teamError } = await supabase
 				.from("teams")
 				.insert({
 					owner_id: user.id,
@@ -108,7 +102,7 @@ export function useTeam() {
 					description: input.description,
 				})
 				.select()
-				.single();
+				.single<Team>();
 			if (teamError || !team) throw teamError ?? new Error("Team not created");
 
 			// Crear el team member para el owner
@@ -128,7 +122,7 @@ export function useTeam() {
 			setCurrentTeam(team);
 			await fetchAllTeams();
 
-			router.push("/dashboard");
+			return team;
 		} catch (err: any) {
 			setError(err.message || "Error al crear el equipo. Por favor, intenta de nuevo.");
 			throw err;
@@ -145,20 +139,19 @@ export function useTeam() {
 			if (!user) throw new Error("Not authenticated");
 
 			// Verificar que el usuario pertenezca a ese team
-			const { data: teamMember, error: memberError }: { data: TeamMember | null; error: any } = await supabase
+			const { data: teamMember, error: memberError } = await supabase
 				.from("team_members")
 				.select("*")
 				.eq("user_id", user.id)
 				.eq("team_id", teamId)
 				.eq("status", "active")
-				.single();
+				.single<TeamMember>();
 			if (memberError || !teamMember) throw memberError ?? new Error("No perteneces a este equipo");
 
 			// Actualizar el team_id en el profile
 			const { error: updateError } = await supabase.from("profiles").update({ team_id: teamId }).eq("id", user.id);
 			if (updateError) throw updateError;
 
-			// Actualizar el estado local
 			await fetchCurrentTeam();
 			return true;
 		} catch (err: any) {
@@ -176,7 +169,7 @@ export function useTeam() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data, error: createError }: { data: TeamMember | null; error: any } = await supabase
+			const { data, error: createError } = await supabase
 				.from("team_members")
 				.insert({
 					invited_by: user.id,
@@ -185,7 +178,7 @@ export function useTeam() {
 					role: input.role,
 				})
 				.select()
-				.single();
+				.single<TeamMember>();
 			if (createError) throw createError;
 
 			await fetchTeamMembers(input.team_id);
@@ -196,7 +189,7 @@ export function useTeam() {
 		}
 	};
 
-	const updateTeamMemberRole = async (id: string, role: string, teamId?: string) => {
+	const updateTeamMemberRole = async (id: string, role: string) => {
 		setError(null);
 
 		try {
@@ -205,15 +198,10 @@ export function useTeam() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data, error: updateError }: { data: TeamMember | null; error: any } = await supabase
-				.from("team_members")
-				.update({ role })
-				.eq("id", id)
-				.select()
-				.single();
+			const { data, error: updateError } = await supabase.from("team_members").update({ role }).eq("id", id).select().single<TeamMember>();
 			if (updateError) throw updateError;
 
-			await fetchTeamMembers(teamId);
+			await fetchTeamMembers();
 			return data;
 		} catch (err: any) {
 			setError(err.message || "Failed to update team member role");

@@ -51,7 +51,6 @@ export function useAuth() {
 			});
 			if (authError) throw authError;
 
-			// Show success message
 			router.push("/auth/sign-up/success");
 		} catch (err: any) {
 			setError(err.message || "An error occurred during sign up");

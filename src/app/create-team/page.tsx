@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +15,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
+import { AppConfigs } from "@/configs/app";
 
 function CreateTeamContent() {
 	const searchParams = useSearchParams();
+	const router = useRouter();
 	const fromDashboard = searchParams.get("from") === "dashboard";
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const { createTeam, error } = useTeam();
@@ -32,7 +34,10 @@ function CreateTeamContent() {
 	async function onSubmit(data: CreateTeamInput) {
 		try {
 			setIsLoading(true);
+
 			await createTeam(data);
+
+			router.push(`${AppConfigs.url}/dashboard`);
 		} catch (err) {
 			// Error is handled by useTeam hook
 		} finally {

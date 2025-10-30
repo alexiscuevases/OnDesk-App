@@ -21,14 +21,10 @@ export function useAgents() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError }: { data: Profile | null; error: any } = await supabase
-				.from("profiles")
-				.select("*")
-				.eq("id", user.id)
-				.single();
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
 			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-			const { data, error: fetchError }: { data: Agent[] | null; error: any } = await supabase
+			const { data, error: fetchError } = await supabase
 				.from("agents")
 				.select("*")
 				.eq("team_id", profile.team_id)
@@ -52,7 +48,7 @@ export function useAgents() {
 			} = await supabase.auth.getUser();
 			if (!user) throw new Error("Not authenticated");
 
-			const { data, error: createError }: { data: Agent | null; error: any } = await supabase
+			const { data, error: createError } = await supabase
 				.from("agents")
 				.insert({
 					team_id: input.team_id,
@@ -66,8 +62,8 @@ export function useAgents() {
 					max_tokens: input.max_tokens,
 					status: input.status,
 				})
-				.select()
-				.single();
+				.select("*")
+				.single<Agent>();
 			if (createError) throw createError;
 
 			await fetchAgents();
@@ -90,20 +86,15 @@ export function useAgents() {
 			const updateData: UpdateAgentInput = {};
 			if (input.avatar_url) updateData.avatar_url = input.avatar_url;
 			if (input.name) updateData.name = input.name;
-			if (input.description !== undefined) updateData.description = input.description;
+			if (input.description) updateData.description = input.description;
 			if (input.type) updateData.type = input.type;
 			if (input.model) updateData.model = input.model;
 			if (input.system_prompt) updateData.system_prompt = input.system_prompt;
-			if (input.temperature !== undefined) updateData.temperature = input.temperature;
+			if (input.temperature) updateData.temperature = input.temperature;
 			if (input.max_tokens) updateData.max_tokens = input.max_tokens;
 			if (input.status) updateData.status = input.status;
 
-			const { data, error: updateError }: { data: Agent | null; error: any } = await supabase
-				.from("agents")
-				.update(updateData)
-				.eq("id", id)
-				.select()
-				.single();
+			const { data, error: updateError } = await supabase.from("agents").update(updateData).eq("id", id).select("*").single<Agent>();
 			if (updateError) throw updateError;
 
 			await fetchAgents();

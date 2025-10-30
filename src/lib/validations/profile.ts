@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Team } from "./team";
 
 export const profileSchema = z.object({
 	stripe_customer_id: z.string().optional(),
@@ -11,6 +12,7 @@ export const profileSchema = z.object({
 
 export type Profile = z.infer<typeof profileSchema> & {
 	id: string;
+	teams?: Team;
 	created_at: string;
 	updated_at: string;
 };
