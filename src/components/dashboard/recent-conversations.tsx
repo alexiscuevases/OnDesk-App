@@ -30,7 +30,6 @@ export function RecentConversations() {
 	}
 
 	const recentConversations = conversations.slice(0, 5);
-
 	if (recentConversations.length === 0) {
 		return (
 			<div className="text-center py-8">
