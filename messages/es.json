@@ -15,7 +15,7 @@
     "startTrial": "Empieza gratis",
     "viewPricing": "Ver precios",
     "socialProof": "Con la confianza de más de 10.000 empresas en todo el mundo",
-    "altDashboard": "Vista previa del panel de {{name}}"
+    "altDashboard": "Vista previa del panel de {name}"
   }
 }
 
