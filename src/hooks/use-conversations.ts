@@ -61,6 +61,22 @@ export function useConversations() {
 		}
 	};
 
+	const fetchConversationById = async (conversationId: string) => {
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			const { data, error } = await supabase.from("conversations").select("*").eq("id", conversationId).single<Conversation>();
+			if (error) throw error;
+
+			return data;
+		} catch (err: any) {
+			throw err;
+		}
+	};
+
 	const deleteConversation = async (id: string) => {
 		setError(null);
 
@@ -158,6 +174,40 @@ export function useConversations() {
 		}
 	};
 
+	const sendMessageByConversationId = async ({ conversationId, role, message }: { conversationId: string; role: Message["role"]; message: string }) => {
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) throw new Error("Not authenticated");
+
+			const { data: conversation, error: conversationError }: { data: Conversation | null; error: any } = await supabase
+				.from("conversations")
+				.select("*")
+				.eq("id", conversationId)
+				.single();
+			if (conversationError || !conversation) throw conversationError ?? new Error("Conversation not exists");
+
+			return await sendMessageByConnectionId({
+				connectionId: conversation.connection_id,
+				role,
+				to: conversation.customer_phone,
+				message,
+			});
+		} catch (err) {
+			throw err as any;
+		}
+	};
+
+	const assignAgentToConversation = async (conversationId: string, agentId: string | null) => {
+		try {
+			const { error: updateError } = await supabase.from("conversations").update({ agent_id: agentId }).eq("id", conversationId);
+			if (updateError) throw updateError;
+		} catch (err: any) {
+			throw new Error(err.message || "Failed to assign agent");
+		}
+	};
+
 	useEffect(() => {
 		fetchConversations();
 	}, []);
@@ -167,9 +217,12 @@ export function useConversations() {
 		isLoading,
 		error,
 		fetchConversations,
+		fetchConversationById,
 		fetchConversationMessages,
 		deleteConversation,
 
 		sendMessageByConnectionId,
+		sendMessageByConversationId,
+		assignAgentToConversation,
 	};
 }
