@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Notification } from "@/lib/validations/notification";
-import { Profile } from "@/lib/validations/profile";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export function useNotifications() {
+	const { profile } = useAuth();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -16,13 +17,7 @@ export function useNotifications() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
-
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
-			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError } = await supabase
 				.from("notifications")
@@ -45,10 +40,7 @@ export function useNotifications() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("id", id);
 			if (updateError) throw updateError;
@@ -64,13 +56,7 @@ export function useNotifications() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
-
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
-			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("team_id", profile.team_id).eq("read", false);
 			if (updateError) throw updateError;

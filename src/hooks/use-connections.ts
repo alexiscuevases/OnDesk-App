@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { baseCreateConnectionInput, baseUpdateConnectionInput, Connection, UpdateConnectionInput } from "@/lib/validations/connection";
-import { Profile } from "@/lib/validations/profile";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export function useConnections() {
+	const { profile } = useAuth();
 	const [connections, setConnections] = useState<Connection[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -16,13 +17,7 @@ export function useConnections() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
-
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
-			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError }: { data: Connection[] | null; error: any } = await supabase
 				.from("connections")
@@ -43,10 +38,7 @@ export function useConnections() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: createError } = await supabase
 				.from("connections")
@@ -73,10 +65,7 @@ export function useConnections() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const updateData: UpdateConnectionInput = {};
 			if (input.name) updateData.name = input.name;
@@ -98,10 +87,7 @@ export function useConnections() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("connections").delete().eq("id", id);
 			if (deleteError) throw deleteError;

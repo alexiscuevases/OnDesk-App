@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { InviteTeamMemberInput, TeamMember } from "@/lib/validations/team_member";
 import { CreateTeamInput, Team } from "@/lib/validations/team";
-import { Profile } from "@/lib/validations/profile";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export function useTeam() {
+	const { profile } = useAuth();
 	const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
 	const [allTeams, setAllTeams] = useState<Team[]>([]);
@@ -19,15 +20,11 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*,teams:team_id(*)").eq("id", user.id).single<Profile>();
-			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+			const { data: team, error: teamError } = await supabase.from("teams").select("*").eq("id", profile.team_id).single<Team>();
+			if (teamError || !team) throw teamError ?? new Error("Team not found");
 
-			const team = profile.teams as Team;
 			setCurrentTeam(team);
 		} catch (err: any) {
 			setError(err.message || "Failed to fetch team");
@@ -40,15 +37,12 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data: teamMembers, error: membersError } = await supabase
 				.from("team_members")
 				.select("*,teams:team_id(*)")
-				.eq("user_id", user.id)
+				.eq("user_id", profile.id)
 				.eq("status", "active")
 				.returns<TeamMember[]>();
 			if (membersError) throw membersError;
@@ -65,10 +59,7 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			let query = supabase.from("team_members").select("*").order("created_at", { ascending: false });
 			if (teamId) query = query.eq("team_id", teamId);
@@ -88,16 +79,13 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			// Crear el team
 			const { data: team, error: teamError } = await supabase
 				.from("teams")
 				.insert({
-					owner_id: user.id,
+					owner_id: profile.id,
 					name: input.name,
 					description: input.description,
 				})
@@ -108,16 +96,16 @@ export function useTeam() {
 			// Crear el team member para el owner
 			const { error: memberError } = await supabase.from("team_members").insert({
 				team_id: team.id,
-				invited_by: user.id,
-				user_id: user.id,
-				email: user.email!,
+				invited_by: profile.id,
+				user_id: profile.id,
+				email: profile.email,
 				role: "owner",
 				status: "active",
 			});
 			if (memberError) throw memberError;
 
 			// Actualizar el profile para seleccionar el nuevo team
-			await supabase.from("profiles").update({ team_id: team.id }).eq("id", user.id);
+			await supabase.from("profiles").update({ team_id: team.id }).eq("id", profile.id);
 
 			setCurrentTeam(team);
 			await fetchAllTeams();
@@ -133,23 +121,20 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			// Verificar que el usuario pertenezca a ese team
 			const { data: teamMember, error: memberError } = await supabase
 				.from("team_members")
 				.select("*")
-				.eq("user_id", user.id)
+				.eq("user_id", profile.id)
 				.eq("team_id", teamId)
 				.eq("status", "active")
 				.single<TeamMember>();
 			if (memberError || !teamMember) throw memberError ?? new Error("No perteneces a este equipo");
 
 			// Actualizar el team_id en el profile
-			const { error: updateError } = await supabase.from("profiles").update({ team_id: teamId }).eq("id", user.id);
+			const { error: updateError } = await supabase.from("profiles").update({ team_id: teamId }).eq("id", profile.id);
 			if (updateError) throw updateError;
 
 			await fetchCurrentTeam();
@@ -164,15 +149,12 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: createError } = await supabase
 				.from("team_members")
 				.insert({
-					invited_by: user.id,
+					invited_by: profile.id,
 					team_id: input.team_id,
 					email: input.email,
 					role: input.role,
@@ -193,10 +175,7 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: updateError } = await supabase.from("team_members").update({ role }).eq("id", id).select().single<TeamMember>();
 			if (updateError) throw updateError;
@@ -213,10 +192,7 @@ export function useTeam() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("team_members").delete().eq("id", id);
 			if (deleteError) throw deleteError;

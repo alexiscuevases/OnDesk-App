@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Agent, CreateAgentInput, UpdateAgentInput } from "@/lib/validations/agent";
-import { Profile } from "@/lib/validations/profile";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export function useAgents() {
+	const { profile } = useAuth();
 	const [agents, setAgents] = useState<Agent[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -16,13 +17,7 @@ export function useAgents() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
-
-			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
-			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError } = await supabase
 				.from("agents")
@@ -43,10 +38,7 @@ export function useAgents() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: createError } = await supabase
 				.from("agents")
@@ -78,10 +70,7 @@ export function useAgents() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const updateData: UpdateAgentInput = {};
 			if (input.avatar_url) updateData.avatar_url = input.avatar_url;
@@ -109,10 +98,7 @@ export function useAgents() {
 		setError(null);
 
 		try {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (!user) throw new Error("Not authenticated");
+			if (!profile) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("agents").delete().eq("id", id);
 			if (deleteError) throw deleteError;
