@@ -20,10 +20,10 @@ interface Props {
 }
 
 export default function SingleConversationClientPage({ conversation_id }: Props) {
+	const { profile } = useAuth();
 	const { fetchConversationById, sendMessageByConversationId, assignAgentToConversation } = useConversations();
 	const { messages } = useMessages(conversation_id);
 	const { agents } = useAgents();
-
 	const [conversation, setConversation] = useState<Conversation | null>(null);
 	const [input, setInput] = useState("");
 	const [sending, setSending] = useState(false);
@@ -32,12 +32,14 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 	const bottomRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
+		if (!profile) return;
+
 		(async () => {
 			const conv = await fetchConversationById(conversation_id);
 			setConversation(conv);
 			setSelectedAgentId(conv?.agent_id ?? null);
 		})();
-	}, [conversation_id]);
+	}, [profile]);
 
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
