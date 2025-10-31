@@ -37,10 +37,12 @@ export async function updateSession(request: NextRequest) {
 	} = await supabase.auth.getUser();
 
 	// Redireccionar a dashboard si está autenticado y intenta acceder a una ruta de autenticación
-	if (user && request.nextUrl.pathname.startsWith("/auth")) {
-		const url = `${AppConfigs.url}/dashboard`;
-		return NextResponse.redirect(url);
-	} else if (!user && request.nextUrl.pathname.startsWith("/auth")) return NextResponse.next();
+	if (request.nextUrl.pathname.startsWith("/auth")) {
+		if (user && !request.nextUrl.pathname.endsWith("/update-password")) {
+			const url = `${AppConfigs.url}/dashboard`;
+			return NextResponse.redirect(url);
+		} else return NextResponse.next();
+	}
 
 	// Redireccionar a sign-in si no está autenticado y intenta acceder a una ruta protegida (fuera de auth)
 	if (!user) {

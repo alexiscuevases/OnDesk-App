@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { SignInInput, SignUpInput } from "@/lib/validations/auth";
+import type { ResetPasswordInput, SignInInput, SignUpInput, UpdatePasswordInput } from "@/lib/validations/auth";
 import { AppConfigs } from "@/configs/app";
 
 export function useAuth() {
@@ -60,9 +60,50 @@ export function useAuth() {
 		}
 	};
 
+	const resetPassword = async (data: ResetPasswordInput) => {
+		setIsLoading(true);
+		setError(null);
+
+		try {
+			const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+				redirectTo: `${AppConfigs.url}/auth/update-password`,
+			});
+			if (error) throw error;
+
+			return true;
+		} catch (err: any) {
+			setError(err.message || "Ocurrió un error al enviar el correo de recuperación");
+			throw err;
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const updatePassword = async (data: UpdatePasswordInput) => {
+		setIsLoading(true);
+		setError(null);
+
+		try {
+			const { error } = await supabase.auth.updateUser({
+				password: data.password,
+			});
+			if (error) throw error;
+
+			router.push("/auth/sign-in");
+			router.refresh();
+		} catch (err: any) {
+			setError(err.message || "Ocurrió un error al actualizar la contraseña");
+			throw err;
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return {
 		signIn,
 		signUp,
+		resetPassword,
+		updatePassword,
 		isLoading,
 		error,
 	};
