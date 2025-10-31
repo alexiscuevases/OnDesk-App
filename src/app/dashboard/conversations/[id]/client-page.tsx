@@ -14,6 +14,7 @@ import type { Conversation } from "@/lib/validations/conversation";
 import { useAgents } from "@/hooks/use-agents";
 import { useMessages } from "@/hooks/use-messages";
 import { useAuth } from "@/components/providers/auth-provider";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface Props {
 	conversation_id: string;
@@ -102,13 +103,13 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 
 			<div className="grid gap-6 lg:grid-cols-3">
 				<div className="lg:col-span-2 space-y-4">
-					<Card>
-						<CardContent className="p-6">
-							<div className="space-y-6 mb-6 max-h-[540px] overflow-auto">
+					<Card className="p-0">
+						<CardContent className="p-0">
+							<ScrollArea className="space-y-6 h-[540px] px-4">
 								{messages.map((m) => {
 									const isCustomer = m.role === "user";
 									return (
-										<div key={m.id} className={`flex gap-3 ${isCustomer ? "" : "flex-row-reverse"}`}>
+										<div key={m.id} className={`flex gap-3 first-of-type:pt-4 last-of-type:pb-4 ${isCustomer ? "" : "flex-row-reverse"}`}>
 											<Avatar className="h-8 w-8">
 												{isCustomer ? (
 													<>
@@ -150,10 +151,11 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 										</div>
 									);
 								})}
-								<div ref={bottomRef} />
-							</div>
 
-							<div className="border-t border-border pt-4">
+								<span ref={bottomRef} />
+							</ScrollArea>
+
+							<div className="border-t border-border p-4">
 								<div className="flex gap-2">
 									<Textarea
 										placeholder="Type a message..."
