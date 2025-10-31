@@ -28,7 +28,7 @@ const mainNavItems = [
 
 const settingsNavItems = [
 	{ title: "Connections", href: "/dashboard/connections", icon: Plug },
-	{ title: "Team", href: "/dashboard/team", icon: Users },
+	{ title: "Team Members", href: "/dashboard/team", icon: Users },
 	{ title: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
