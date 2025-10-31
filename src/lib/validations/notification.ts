@@ -6,6 +6,7 @@ export const notificationSchema = z.object({
 	content: z.string().min(1, "Content is required"),
 	type: z.enum(["info", "success", "warning", "error"]),
 	read: z.boolean().default(false),
+	path: z.string().optional(),
 });
 
 export type Notification = z.infer<typeof notificationSchema> & {

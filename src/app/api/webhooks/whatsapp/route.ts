@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { WhatsAppWebhookPayload, WhatsAppWebhookMessage } from "@/lib/whatsapp";
 import { Connection } from "@/lib/validations/connection";
 import { Conversation } from "@/lib/validations/conversation";
+import { notifications } from "@/lib/notifications";
 
 const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
 	auth: {
@@ -200,6 +201,11 @@ async function processIncomingMessages(
 				// whatsapp_message_id: message.id,
 				// whatsapp_timestamp: message.timestamp,
 				// },
+			});
+
+			notifications.newIncomingMessage({
+				team_id: connection.team_id,
+				conversation_id: conversationId,
 			});
 
 			console.log("[WhatsApp] Message processed successfully");
