@@ -57,11 +57,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	useEffect(() => {
-		fetchUserAndProfile();
-
 		const {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange((_event, session) => {
+			if (_event === "INITIAL_SESSION") {
+				if (session?.user) fetchUserAndProfile();
+				return;
+			}
+
 			if (_event === "SIGNED_OUT") {
 				setUser(null);
 				setProfile(null);
