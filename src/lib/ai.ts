@@ -39,33 +39,38 @@ export class AI {
 				})
 				.join("\n");
 
-			// Build the prompt with context
-			const prompt = `
-				System Prompt:
-                ${agent.system_prompt}
-
-                Información del cliente:
-                - Nombre: ${conversation.customer_name || "No proporcionado"}
-                - Email: ${conversation.customer_email || "No proporcionado"}
-                - Teléfono: ${conversation.customer_phone || "No proporcionado"}
-                - Canal: ${conversation.channel}
-                - Prioridad: ${conversation.priority}
-
-                Historial de conversación:
-                ${conversationHistory}
-
-				IMPORTANTE:
-                - Por favor, responde al último mensaje del usuario de manera profesional y útil.
-				- Por favor, limitate a cómo te describe el system prompt, no hagas nada que no esté descrito en el system promt.
-            `;
-
 			const deepseek = createDeepSeek({
 				apiKey: process.env.DEEPSEEK_API_KEY ?? "",
 			});
 
+			const messagesForAI = [
+				{
+					role: "system",
+					content: `
+						${agent.system_prompt}
+
+						Información del cliente:
+						- Nombre: ${conversation.customer_name || "No proporcionado"}
+						- Email: ${conversation.customer_email || "No proporcionado"}
+						- Teléfono: ${conversation.customer_phone || "No proporcionado"}
+						- Canal: ${conversation.channel}
+						- Prioridad: ${conversation.priority}
+
+						IMPORTANTE:
+						- Responde al último mensaje del usuario de manera profesional y útil.
+						- Limítate al comportamiento descrito en el system prompt.
+								`,
+				},
+				// reconstruir el historial
+				...(messages?.map((msg) => ({
+					role: msg.role === "agent" ? "assistant" : msg.role === "user" ? "user" : "system",
+					content: msg.content,
+				})) ?? []),
+			];
+
 			const { text } = await generateText({
 				model: deepseek("deepseek-chat"),
-				prompt,
+				messages: messagesForAI,
 				maxOutputTokens: agent.max_tokens,
 				temperature: agent.temperature,
 			});

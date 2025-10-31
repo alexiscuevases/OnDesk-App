@@ -219,7 +219,7 @@ async function processIncomingMessages(
 				.insert({
 					conversation_id: conversationId,
 					role: "agent",
-					content: message,
+					content: aiResponse,
 				})
 				.select()
 				.single<Message>();
