@@ -109,7 +109,7 @@ export default function SingleConversationPage() {
 											<Avatar className="h-8 w-8">
 												{isCustomer ? (
 													<>
-														<AvatarImage src={"/placeholder.svg"} alt={conversation?.customer_name || "Customer"} />
+														<AvatarImage src={"/placeholder.svg"} alt={conversation?.customer_name || "Unknown"} />
 														<AvatarFallback>{(conversation?.customer_name || "C").slice(0, 2).toUpperCase()}</AvatarFallback>
 													</>
 												) : (
@@ -120,8 +120,8 @@ export default function SingleConversationPage() {
 													</>
 												)}
 											</Avatar>
-											<div className={`flex-1 space-y-1 ${!isCustomer ? "text-right" : ""}`}>
-												<div className="flex items-center gap-2">
+											<div className={`flex-1 space-y-1 ${!isCustomer ? "text-right" : "text-left"}`}>
+												<div className={`flex items-center gap-2 ${!isCustomer ? "justify-end" : "justify-start"}`}>
 													{isCustomer ? (
 														<>
 															<span className="text-sm font-medium">{conversation?.customer_name || "Unknown"}</span>
@@ -133,14 +133,16 @@ export default function SingleConversationPage() {
 															<span className="text-sm font-medium">{currentAgent?.name || "Agent"}</span>
 														</>
 													)}
-													<span className="text-xs text-muted-foreground">{new Date(m.created_at).toLocaleTimeString()}</span>
 												</div>
-												<div
-													className={`inline-block rounded-lg px-4 py-2 ${
-														isCustomer ? "bg-muted text-foreground" : "bg-primary text-primary-foreground"
-													}`}>
-													<p className="text-sm whitespace-pre-wrap text-left">{m.content}</p>
+												<div className="flex flex-col">
+													<div
+														className={`block-inline max-w-2/3 rounded-lg px-4 py-2 ${
+															!isCustomer ? "ml-auto bg-primary text-primary-foreground" : "mr-auto bg-muted text-foreground"
+														}`}>
+														<p className={`text-sm whitespace-pre-wrap ${!isCustomer ? "text-right" : "text-left"}`}>{m.content}</p>
+													</div>
 												</div>
+												<span className="text-xs text-muted-foreground">{new Date(m.created_at).toLocaleTimeString()}</span>
 											</div>
 										</div>
 									);
