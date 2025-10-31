@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import type { WhatsAppWebhookPayload, WhatsAppWebhookMessage } from "@/lib/whatsapp";
+import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from "@/lib/whatsapp";
 import { Connection } from "@/lib/validations/connection";
 import { Conversation } from "@/lib/validations/conversation";
 import { notifications } from "@/lib/notifications";
+import { ai } from "@/lib/ai";
+import { Message } from "@/lib/validations/message";
 
 const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
 	auth: {
@@ -207,6 +209,28 @@ async function processIncomingMessages(
 				team_id: connection.team_id,
 				conversation_id: conversationId,
 			});
+
+			console.log("[WhatsApp] Generating agent response...");
+			const responseResult = await ai.generateAgentResponse(conversationId);
+			if (responseResult.success && responseResult.response) {
+				console.log("[WhatsApp] Agent response generated, sending to WhatsApp...");
+
+				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
+				await whatsapp.sendTextMessage(message.from, responseResult.response);
+
+				const { data, error: messageError } = await supabaseAdmin
+					.from("messages")
+					.insert({
+						conversation_id: conversationId,
+						role: "agent",
+						content: message,
+					})
+					.select()
+					.single<Message>();
+				if (messageError) throw messageError;
+			} else {
+				console.error("[WhatsApp] Failed to generate agent response:", responseResult.error);
+			}
 
 			console.log("[WhatsApp] Message processed successfully");
 		} catch (error) {
