@@ -1,22 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { Agent, CreateAgentInput, UpdateAgentInput } from "@/lib/validations/agent";
+import type { Agent, CreateAgentInput, UpdateAgentInput } from "@/lib/validations/agent";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export function useAgents() {
 	const { profile } = useAuth();
-	const [agents, setAgents] = useState<Agent[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();
+	const queryClient = useQueryClient();
 
-	const fetchAgents = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
+	const {
+		data: agents = [],
+		isLoading,
+		error,
+		refetch: fetchAgents,
+	} = useQuery({
+		queryKey: ["agents", profile?.team_id],
+		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError } = await supabase
@@ -26,18 +27,13 @@ export function useAgents() {
 				.order("created_at", { ascending: false });
 			if (fetchError) throw fetchError;
 
-			setAgents(data || []);
-		} catch (err: any) {
-			setError(err.message || "Failed to fetch agents");
-		} finally {
-			setIsLoading(false);
-		}
-	};
+			return data || [];
+		},
+		enabled: !!profile,
+	});
 
-	const createAgent = async (input: CreateAgentInput) => {
-		setError(null);
-
-		try {
+	const createAgentMutation = useMutation({
+		mutationFn: async (input: CreateAgentInput) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: createError } = await supabase
@@ -58,18 +54,15 @@ export function useAgents() {
 				.single<Agent>();
 			if (createError) throw createError;
 
-			await fetchAgents();
 			return data;
-		} catch (err: any) {
-			setError(err.message || "Failed to create agent");
-			throw err;
-		}
-	};
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["agents", profile?.team_id] });
+		},
+	});
 
-	const updateAgent = async (id: string, input: UpdateAgentInput) => {
-		setError(null);
-
-		try {
+	const updateAgentMutation = useMutation({
+		mutationFn: async ({ id, input }: { id: string; input: UpdateAgentInput }) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const updateData: UpdateAgentInput = {};
@@ -86,41 +79,32 @@ export function useAgents() {
 			const { data, error: updateError } = await supabase.from("agents").update(updateData).eq("id", id).select("*").single<Agent>();
 			if (updateError) throw updateError;
 
-			await fetchAgents();
 			return data;
-		} catch (err: any) {
-			setError(err.message || "Failed to update agent");
-			throw err;
-		}
-	};
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["agents", profile?.team_id] });
+		},
+	});
 
-	const deleteAgent = async (id: string) => {
-		setError(null);
-
-		try {
+	const deleteAgentMutation = useMutation({
+		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("agents").delete().eq("id", id);
 			if (deleteError) throw deleteError;
-
-			await fetchAgents();
-		} catch (err: any) {
-			setError(err.message || "Failed to delete agent");
-			throw err;
-		}
-	};
-
-	useEffect(() => {
-		fetchAgents();
-	}, [profile]);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["agents", profile?.team_id] });
+		},
+	});
 
 	return {
 		agents,
 		isLoading,
-		error,
+		error: error?.message || null,
 		fetchAgents,
-		createAgent,
-		updateAgent,
-		deleteAgent,
+		createAgent: createAgentMutation.mutateAsync,
+		updateAgent: (id: string, input: UpdateAgentInput) => updateAgentMutation.mutateAsync({ id, input }),
+		deleteAgent: deleteAgentMutation.mutateAsync,
 	};
 }

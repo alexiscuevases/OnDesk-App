@@ -1,25 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { Conversation } from "@/lib/validations/conversation";
-import { Message } from "@/lib/validations/message";
+import type { Conversation } from "@/lib/validations/conversation";
+import type { Message } from "@/lib/validations/message";
 import { createWhatsAppAPI } from "@/lib/whatsapp";
-import { Connection } from "@/lib/validations/connection";
+import type { Connection } from "@/lib/validations/connection";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export function useConversations() {
 	const { profile } = useAuth();
-	const [conversations, setConversations] = useState<Conversation[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();
+	const queryClient = useQueryClient();
 
-	const fetchConversations = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
+	const {
+		data: conversations = [],
+		isLoading,
+		error,
+		refetch: fetchConversations,
+	} = useQuery({
+		queryKey: ["conversations", profile?.team_id],
+		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError } = await supabase
@@ -30,13 +32,10 @@ export function useConversations() {
 				.returns<Conversation[]>();
 			if (fetchError) throw fetchError;
 
-			setConversations(data || []);
-		} catch (err: any) {
-			setError(err.message || "Failed to fetch conversations");
-		} finally {
-			setIsLoading(false);
-		}
-	};
+			return data || [];
+		},
+		enabled: !!profile,
+	});
 
 	const fetchConversationById = async (conversationId: string) => {
 		try {
@@ -51,21 +50,17 @@ export function useConversations() {
 		}
 	};
 
-	const deleteConversation = async (id: string) => {
-		setError(null);
-
-		try {
+	const deleteConversationMutation = useMutation({
+		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("conversations").delete().eq("id", id);
 			if (deleteError) throw deleteError;
-
-			await fetchConversations();
-		} catch (err: any) {
-			setError(err.message || "Failed to delete conversation");
-			throw err;
-		}
-	};
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["conversations", profile?.team_id] });
+		},
+	});
 
 	const sendMessageByConnectionId = async ({
 		connectionId,
@@ -84,7 +79,7 @@ export function useConversations() {
 			const { data: connection, error: connectionError } = await supabase.from("connections").select("*").eq("id", connectionId).single<Connection>();
 			if (connectionError || !connection) throw connectionError ?? new Error("Connection not exists");
 
-			let query = supabase.from("conversations").select("*");
+			const query = supabase.from("conversations").select("*");
 			if (connection.type === "whatsapp") query.eq("customer_phone", to);
 			const { data: conversation, error: conversationError } = await query.maybeSingle<Conversation>();
 			if (conversationError) throw connectionError;
@@ -165,13 +160,8 @@ export function useConversations() {
 	};
 
 	useEffect(() => {
-		fetchConversations();
-	}, [profile]);
-
-	useEffect(() => {
 		if (!profile) return;
 
-		// Subscribe to conversations changes
 		const conversationsChannel = supabase
 			.channel("conversations-changes")
 			.on(
@@ -184,29 +174,32 @@ export function useConversations() {
 				},
 				(payload) => {
 					if (payload.eventType === "INSERT") {
-						setConversations((prev) => [payload.new as Conversation, ...prev]);
+						queryClient.setQueryData<Conversation[]>(["conversations", profile.team_id], (old = []) => [payload.new as Conversation, ...old]);
 					} else if (payload.eventType === "UPDATE") {
-						setConversations((prev) => prev.map((conv) => (conv.id === payload.new.id ? (payload.new as Conversation) : conv)));
+						queryClient.setQueryData<Conversation[]>(["conversations", profile.team_id], (old = []) =>
+							old.map((conv) => (conv.id === payload.new.id ? (payload.new as Conversation) : conv))
+						);
 					} else if (payload.eventType === "DELETE") {
-						setConversations((prev) => prev.filter((conv) => conv.id !== payload.old.id));
+						queryClient.setQueryData<Conversation[]>(["conversations", profile.team_id], (old = []) =>
+							old.filter((conv) => conv.id !== payload.old.id)
+						);
 					}
 				}
 			)
 			.subscribe();
 
-		// Cleanup subscriptions on unmount
 		return () => {
 			supabase.removeChannel(conversationsChannel);
 		};
-	}, [profile]);
+	}, [profile, queryClient]);
 
 	return {
 		conversations,
 		isLoading,
-		error,
+		error: error?.message || null,
 		fetchConversations,
 		fetchConversationById,
-		deleteConversation,
+		deleteConversation: deleteConversationMutation.mutate,
 
 		sendMessageByConnectionId,
 		sendMessageByConversationId,

@@ -1,22 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { baseCreateConnectionInput, baseUpdateConnectionInput, Connection, UpdateConnectionInput } from "@/lib/validations/connection";
+import type { baseCreateConnectionInput, baseUpdateConnectionInput, Connection, UpdateConnectionInput } from "@/lib/validations/connection";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export function useConnections() {
 	const { profile } = useAuth();
-	const [connections, setConnections] = useState<Connection[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();
+	const queryClient = useQueryClient();
 
-	const fetchConnections = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
+	const {
+		data: connections = [],
+		isLoading,
+		error,
+		refetch: fetchConnections,
+	} = useQuery({
+		queryKey: ["connections", profile?.team_id],
+		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError }: { data: Connection[] | null; error: any } = await supabase
@@ -26,18 +27,13 @@ export function useConnections() {
 				.order("created_at", { ascending: false });
 			if (fetchError) throw fetchError;
 
-			setConnections(data || []);
-		} catch (err: any) {
-			setError(err.message || "Failed to fetch connections");
-		} finally {
-			setIsLoading(false);
-		}
-	};
+			return data || [];
+		},
+		enabled: !!profile,
+	});
 
-	const createConnection = async (input: baseCreateConnectionInput) => {
-		setError(null);
-
-		try {
+	const createConnectionMutation = useMutation({
+		mutationFn: async (input: baseCreateConnectionInput) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: createError } = await supabase
@@ -53,18 +49,15 @@ export function useConnections() {
 				.single<Connection>();
 			if (createError) throw createError;
 
-			await fetchConnections();
 			return data;
-		} catch (err: any) {
-			setError(err.message || "Failed to create connection");
-			throw err;
-		}
-	};
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["connections", profile?.team_id] });
+		},
+	});
 
-	const updateConnection = async (id: string, input: baseUpdateConnectionInput) => {
-		setError(null);
-
-		try {
+	const updateConnectionMutation = useMutation({
+		mutationFn: async ({ id, input }: { id: string; input: baseUpdateConnectionInput }) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const updateData: UpdateConnectionInput = {};
@@ -75,41 +68,32 @@ export function useConnections() {
 			const { data, error: updateError } = await supabase.from("connections").update(updateData).eq("id", id).select().single<Connection>();
 			if (updateError) throw updateError;
 
-			await fetchConnections();
 			return data;
-		} catch (err: any) {
-			setError(err.message || "Failed to update connection");
-			throw err;
-		}
-	};
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["connections", profile?.team_id] });
+		},
+	});
 
-	const deleteConnection = async (id: string) => {
-		setError(null);
-
-		try {
+	const deleteConnectionMutation = useMutation({
+		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { error: deleteError } = await supabase.from("connections").delete().eq("id", id);
 			if (deleteError) throw deleteError;
-
-			await fetchConnections();
-		} catch (err: any) {
-			setError(err.message || "Failed to delete connection");
-			throw err;
-		}
-	};
-
-	useEffect(() => {
-		fetchConnections();
-	}, [profile]);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["connections", profile?.team_id] });
+		},
+	});
 
 	return {
 		connections,
 		isLoading,
-		error,
+		error: error?.message || null,
 		fetchConnections,
-		createConnection,
-		updateConnection,
-		deleteConnection,
+		createConnection: createConnectionMutation.mutateAsync,
+		updateConnection: (id: string, input: baseUpdateConnectionInput) => updateConnectionMutation.mutateAsync({ id, input }),
+		deleteConnection: deleteConnectionMutation.mutateAsync,
 	};
 }

@@ -1,22 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { Message } from "@/lib/validations/message";
+import type { Message } from "@/lib/validations/message";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export function useMessages(conversationId: string) {
 	const { profile } = useAuth();
-	const [messages, setMessages] = useState<Message[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();
+	const queryClient = useQueryClient();
 
-	const fetchMessages = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
+	const {
+		data: messages = [],
+		isLoading,
+		error,
+	} = useQuery({
+		queryKey: ["messages", conversationId],
+		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError } = await supabase
@@ -27,22 +28,14 @@ export function useMessages(conversationId: string) {
 				.returns<Message[]>();
 			if (fetchError) throw fetchError;
 
-			setMessages(data || []);
-		} catch (err: any) {
-			setError(err.message || "Failed to fetch messages");
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchMessages();
-	}, [profile]);
+			return data || [];
+		},
+		enabled: !!profile && !!conversationId,
+	});
 
 	useEffect(() => {
 		if (!conversationId) return;
 
-		// Subscribe to messages changes
 		const messagesChannel = supabase
 			.channel(`messages-${conversationId}`)
 			.on(
@@ -55,29 +48,30 @@ export function useMessages(conversationId: string) {
 				},
 				(payload) => {
 					if (payload.eventType === "INSERT") {
-						setMessages((prev) => {
-							const exists = prev.some((msg) => msg.id === payload.new.id);
-							if (exists) return prev;
-							return [...prev, payload.new as Message];
+						queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) => {
+							const exists = old.some((msg) => msg.id === payload.new.id);
+							if (exists) return old;
+							return [...old, payload.new as Message];
 						});
 					} else if (payload.eventType === "UPDATE") {
-						setMessages((prev) => prev.map((msg) => (msg.id === payload.new.id ? (payload.new as Message) : msg)));
+						queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) =>
+							old.map((msg) => (msg.id === payload.new.id ? (payload.new as Message) : msg))
+						);
 					} else if (payload.eventType === "DELETE") {
-						setMessages((prev) => prev.filter((msg) => msg.id !== payload.old.id));
+						queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) => old.filter((msg) => msg.id !== payload.old.id));
 					}
 				}
 			)
 			.subscribe();
 
-		// Cleanup subscriptions on unmount
 		return () => {
 			supabase.removeChannel(messagesChannel);
 		};
-	}, [conversationId]);
+	}, [conversationId, queryClient]);
 
 	return {
 		messages,
 		isLoading,
-		error,
+		error: error?.message || null,
 	};
 }

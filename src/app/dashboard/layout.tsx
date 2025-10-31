@@ -4,20 +4,23 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<AuthProvider>
-			<SidebarProvider>
-				<div className="flex min-h-screen w-full">
-					<DashboardSidebar />
-					<div className="flex flex-1 flex-col">
-						<DashboardHeader />
-						<main className="flex-1 p-6 md:p-8">{children}</main>
+		<QueryProvider>
+			<AuthProvider>
+				<SidebarProvider>
+					<div className="flex min-h-screen w-full">
+						<DashboardSidebar />
+						<div className="flex flex-1 flex-col">
+							<DashboardHeader />
+							<main className="flex-1 p-6 md:p-8">{children}</main>
+						</div>
 					</div>
-				</div>
-				<Toaster />
-			</SidebarProvider>
-		</AuthProvider>
+					<Toaster />
+				</SidebarProvider>
+			</AuthProvider>
+		</QueryProvider>
 	);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/providers/auth-provider";
 
@@ -17,33 +17,30 @@ export interface DashboardStats {
 
 export function useStats() {
 	const { profile } = useAuth();
-	const [stats, setStats] = useState<DashboardStats | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();
 
-	const fetchStats = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
+	const {
+		data: stats = null,
+		isLoading,
+		error,
+		refetch: fetchStats,
+	} = useQuery({
+		queryKey: ["stats", profile?.team_id],
+		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
-			// Fetch conversations count
 			const { count: conversationsCount } = await supabase
 				.from("conversations")
 				.select("*", { count: "exact", head: true })
 				.eq("team_id", profile.team_id);
 
-			// Fetch active agents count
 			const { count: agentsCount } = await supabase
 				.from("agents")
 				.select("*", { count: "exact", head: true })
 				.eq("team_id", profile.team_id)
 				.eq("status", "active");
 
-			// Calculate stats (mock data for changes)
-			setStats({
+			return {
 				totalConversations: conversationsCount || 0,
 				activeAgents: agentsCount || 0,
 				avgResponseTime: "2.4s",
@@ -52,22 +49,15 @@ export function useStats() {
 				agentsChange: 8.2,
 				responseTimeChange: -5.3,
 				satisfactionChange: 2.1,
-			});
-		} catch (err: any) {
-			setError(err.message || "Failed to fetch stats");
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchStats();
-	}, [profile]);
+			};
+		},
+		enabled: !!profile,
+	});
 
 	return {
 		stats,
 		isLoading,
-		error,
+		error: error?.message || null,
 		fetchStats,
 	};
 }

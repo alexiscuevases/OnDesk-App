@@ -1,22 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { Notification } from "@/lib/validations/notification";
+import type { Notification } from "@/lib/validations/notification";
 import { useAuth } from "@/components/providers/auth-provider";
 
-export function useNotifications(fromDashboardHeader: boolean = false) {
+export function useNotifications(fromDashboardHeader = false) {
 	const { profile } = useAuth();
-	const [notifications, setNotifications] = useState<Notification[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const supabase = createClient();
+	const queryClient = useQueryClient();
 
-	const fetchNotifications = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
+	const {
+		data: notifications = [],
+		isLoading,
+		error,
+		refetch: fetchNotifications,
+	} = useQuery({
+		queryKey: ["notifications", profile?.team_id],
+		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: fetchError } = await supabase
@@ -28,56 +30,40 @@ export function useNotifications(fromDashboardHeader: boolean = false) {
 				.returns<Notification[]>();
 			if (fetchError) throw fetchError;
 
-			setNotifications(data || []);
-		} catch (err: any) {
-			setError(err.message || "Failed to fetch notifications");
-		} finally {
-			setIsLoading(false);
-		}
-	};
+			return data || [];
+		},
+		enabled: !!profile,
+	});
 
-	const markAsRead = async (id: string) => {
-		setError(null);
-
-		try {
+	const markAsReadMutation = useMutation({
+		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("id", id);
 			if (updateError) throw updateError;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["notifications", profile?.team_id] });
+		},
+	});
 
-			await fetchNotifications();
-		} catch (err: any) {
-			setError(err.message || "Failed to mark notification as read");
-			throw err;
-		}
-	};
-
-	const markAllAsRead = async () => {
-		setError(null);
-
-		try {
+	const markAllAsReadMutation = useMutation({
+		mutationFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { error: updateError } = await supabase.from("notifications").update({ read: true }).eq("team_id", profile.team_id).eq("read", false);
 			if (updateError) throw updateError;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["notifications", profile?.team_id] });
+		},
+	});
 
-			await fetchNotifications();
-		} catch (err: any) {
-			setError(err.message || "Failed to mark all notifications as read");
-			throw err;
-		}
-	};
-
-	const unreadCount = notifications.filter((n) => !n.read).length;
-
-	useEffect(() => {
-		fetchNotifications();
-	}, [profile]);
+	const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
 	useEffect(() => {
 		if (!profile) return;
 
-		// Subscribe to notifications changes
 		const notificationsChannel = supabase
 			.channel(fromDashboardHeader ? "notifications-changes-header" : "notifications-changes-page")
 			.on(
@@ -90,29 +76,32 @@ export function useNotifications(fromDashboardHeader: boolean = false) {
 				},
 				(payload) => {
 					if (payload.eventType === "INSERT") {
-						setNotifications((prev) => [payload.new as Notification, ...prev]);
+						queryClient.setQueryData<Notification[]>(["notifications", profile.team_id], (old = []) => [payload.new as Notification, ...old]);
 					} else if (payload.eventType === "UPDATE") {
-						setNotifications((prev) => prev.map((conv) => (conv.id === payload.new.id ? (payload.new as Notification) : conv)));
+						queryClient.setQueryData<Notification[]>(["notifications", profile.team_id], (old = []) =>
+							old.map((conv) => (conv.id === payload.new.id ? (payload.new as Notification) : conv))
+						);
 					} else if (payload.eventType === "DELETE") {
-						setNotifications((prev) => prev.filter((conv) => conv.id !== payload.old.id));
+						queryClient.setQueryData<Notification[]>(["notifications", profile.team_id], (old = []) =>
+							old.filter((conv) => conv.id !== payload.old.id)
+						);
 					}
 				}
 			)
 			.subscribe();
 
-		// Cleanup notifications on unmount
 		return () => {
 			supabase.removeChannel(notificationsChannel);
 		};
-	}, [profile]);
+	}, [profile, queryClient, fromDashboardHeader]);
 
 	return {
 		notifications,
 		unreadCount,
 		isLoading,
-		error,
+		error: error?.message || null,
 		fetchNotifications,
-		markAsRead,
-		markAllAsRead,
+		markAsRead: markAsReadMutation.mutateAsync,
+		markAllAsRead: markAllAsReadMutation.mutateAsync,
 	};
 }
