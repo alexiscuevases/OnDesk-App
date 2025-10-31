@@ -3,6 +3,7 @@ import { Agent } from "./validations/agent";
 import { Conversation } from "./validations/conversation";
 import { Message } from "./validations/message";
 import { generateText } from "ai";
+import { createDeepSeek } from "@ai-sdk/deepseek";
 
 export class AI {
 	async generateAgentResponse(conversationId: string): Promise<{
@@ -84,8 +85,12 @@ export class AI {
 
 			console.log("[AI Agent] Generating response with GPT-4...");
 
+			const deepseek = createDeepSeek({
+				apiKey: process.env.DEEPSEEK_API_KEY ?? "",
+			});
+
 			const { text, usage, finishReason } = await generateText({
-				model: "openai/gpt-4",
+				model: deepseek("deepseek-chat"),
 				prompt,
 				maxOutputTokens: agent.max_tokens,
 				temperature: agent.temperature,
