@@ -39,14 +39,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 			setUser(user);
 
-			if (user) {
-				const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
-				if (profileError || !profile) throw profileError ?? new Error("Profile not found");
+			const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", user.id).single<Profile>();
+			if (profileError || !profile) throw profileError ?? new Error("Profile not found");
 
-				setProfile(profile);
-			} else {
-				setProfile(null);
-			}
+			setProfile(profile);
 		} catch (err) {
 			console.error("Error fetching user/profile:", err);
 			setUser(null);
@@ -60,25 +56,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		const {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange((_event, session) => {
-			if (_event === "INITIAL_SESSION") {
-				if (session?.user) fetchUserAndProfile();
-				return;
-			}
+			switch (_event) {
+				case "INITIAL_SESSION":
+					fetchUserAndProfile();
+					break;
+				case "SIGNED_OUT":
+					setUser(null);
+					setProfile(null);
+					break;
 
-			if (_event === "SIGNED_OUT") {
-				setUser(null);
-				setProfile(null);
-				return;
-			}
+				case "USER_UPDATED":
+					if (session?.user) fetchUserAndProfile();
+					break;
 
-			if (_event === "SIGNED_IN") {
-				if (!profile && session?.user) fetchUserAndProfile();
-				return;
-			}
-
-			if (_event === "USER_UPDATED") {
-				if (session?.user) fetchUserAndProfile();
-				return;
+				default:
+					break;
 			}
 		});
 
