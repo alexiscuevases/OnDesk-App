@@ -26,7 +26,7 @@ import { toast } from "sonner";
 
 export function DashboardHeader() {
 	const { toggleSidebar } = useSidebar();
-	const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useNotifications();
+	const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useNotifications(true);
 	const { setTheme } = useTheme();
 	const { signOut, profile, user } = useAuth();
 

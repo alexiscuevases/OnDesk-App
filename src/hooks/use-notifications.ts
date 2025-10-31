@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Notification } from "@/lib/validations/notification";
 import { useAuth } from "@/components/providers/auth-provider";
 
-export function useNotifications() {
+export function useNotifications(fromDashboardHeader: boolean = false) {
 	const { profile } = useAuth();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +79,7 @@ export function useNotifications() {
 
 		// Subscribe to notifications changes
 		const notificationsChannel = supabase
-			.channel("notifications-changes")
+			.channel(fromDashboardHeader ? "notifications-changes-header" : "notifications-changes-page")
 			.on(
 				"postgres_changes",
 				{
