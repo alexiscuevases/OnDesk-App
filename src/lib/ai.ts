@@ -118,7 +118,7 @@ IMPORTANTE:
 				const endpoint = endpoints.find((e) => e.id === toolMatch.id);
 				if (endpoint) {
 					// Execute the endpoint
-					const executionResult = await endpointExecutor(endpoint.id, toolMatch.parameters);
+					const executionResult = await this.endpointExecutor(endpoint.id, toolMatch.parameters);
 
 					// Add tool execution result to context
 					messagesForAI.push({
@@ -236,7 +236,7 @@ Ahora responde al usuario basándote en este resultado. NO repitas el formato de
 	/**
 	 *
 	 */
-	async execute(endpointId: string, params: Record<string, any> = {}) {
+	async endpointExecutor(endpointId: string, params: Record<string, any> = {}) {
 		const supabase = await createClient();
 
 		const { data: endpoint, error } = await supabase.from("endpoints").select("*").eq("id", endpointId).single<Endpoint>();
