@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Agent } from "./agent";
 
 export const conversationSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
@@ -14,6 +15,7 @@ export const conversationSchema = z.object({
 
 export type Conversation = z.infer<typeof conversationSchema> & {
 	id: string;
+	agents?: Agent;
 	created_at: string;
 	updated_at: string;
 };

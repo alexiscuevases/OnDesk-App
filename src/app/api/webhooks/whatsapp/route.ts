@@ -210,27 +210,20 @@ async function processIncomingMessages(
 				conversation_id: conversationId,
 			});
 
-			console.log("[WhatsApp] Generating agent response...");
-			const responseResult = await ai.generateAgentResponse(conversationId);
-			if (responseResult.success && responseResult.response) {
-				console.log("[WhatsApp] Agent response generated, sending to WhatsApp...");
+			const aiResponse = await ai.generateAgentResponse(conversationId);
+			const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
+			await whatsapp.sendTextMessage(message.from, aiResponse);
 
-				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
-				await whatsapp.sendTextMessage(message.from, responseResult.response);
-
-				const { data, error: messageError } = await supabaseAdmin
-					.from("messages")
-					.insert({
-						conversation_id: conversationId,
-						role: "agent",
-						content: message,
-					})
-					.select()
-					.single<Message>();
-				if (messageError) throw messageError;
-			} else {
-				console.error("[WhatsApp] Failed to generate agent response:", responseResult.error);
-			}
+			const { data, error: messageError } = await supabaseAdmin
+				.from("messages")
+				.insert({
+					conversation_id: conversationId,
+					role: "agent",
+					content: message,
+				})
+				.select()
+				.single<Message>();
+			if (messageError) throw messageError;
 
 			console.log("[WhatsApp] Message processed successfully");
 		} catch (error) {
