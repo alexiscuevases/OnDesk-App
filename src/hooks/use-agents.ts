@@ -112,7 +112,7 @@ export function useAgents() {
 
 	useEffect(() => {
 		fetchAgents();
-	}, []);
+	}, [profile]);
 
 	return {
 		agents,

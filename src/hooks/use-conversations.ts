@@ -166,7 +166,7 @@ export function useConversations() {
 
 	useEffect(() => {
 		fetchConversations();
-	}, []);
+	}, [profile]);
 
 	useEffect(() => {
 		if (!profile) return;
@@ -198,7 +198,7 @@ export function useConversations() {
 		return () => {
 			supabase.removeChannel(conversationsChannel);
 		};
-	}, []);
+	}, [profile]);
 
 	return {
 		conversations,
