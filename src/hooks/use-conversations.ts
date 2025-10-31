@@ -174,7 +174,12 @@ export function useConversations() {
 				},
 				(payload) => {
 					if (payload.eventType === "INSERT") {
-						queryClient.setQueryData<Conversation[]>(["conversations", profile.team_id], (old = []) => [payload.new as Conversation, ...old]);
+						queryClient.setQueryData<Conversation[]>(["conversations", profile.team_id], (old = []) => {
+							const newConversation = payload.new as Conversation;
+							const exists = old.some((conv) => conv.id === newConversation.id);
+							if (exists) return old.map((conv) => (conv.id === newConversation.id ? newConversation : conv));
+							return [newConversation, ...old];
+						});
 					} else if (payload.eventType === "UPDATE") {
 						queryClient.setQueryData<Conversation[]>(["conversations", profile.team_id], (old = []) =>
 							old.map((conv) => (conv.id === payload.new.id ? (payload.new as Conversation) : conv))

@@ -76,7 +76,12 @@ export function useNotifications(fromDashboardHeader = false) {
 				},
 				(payload) => {
 					if (payload.eventType === "INSERT") {
-						queryClient.setQueryData<Notification[]>(["notifications", profile.team_id], (old = []) => [payload.new as Notification, ...old]);
+						queryClient.setQueryData<Notification[]>(["notifications", profile.team_id], (old = []) => {
+							const newNotification = payload.new as Notification;
+							const exists = old.some((n) => n.id === newNotification.id);
+							if (exists) return old.map((n) => (n.id === newNotification.id ? newNotification : n));
+							return [newNotification, ...old];
+						});
 					} else if (payload.eventType === "UPDATE") {
 						queryClient.setQueryData<Notification[]>(["notifications", profile.team_id], (old = []) =>
 							old.map((conv) => (conv.id === payload.new.id ? (payload.new as Notification) : conv))
@@ -93,7 +98,7 @@ export function useNotifications(fromDashboardHeader = false) {
 		return () => {
 			supabase.removeChannel(notificationsChannel);
 		};
-	}, [profile, queryClient, fromDashboardHeader]);
+	}, [profile, queryClient]);
 
 	return {
 		notifications,

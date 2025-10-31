@@ -49,9 +49,10 @@ export function useMessages(conversationId: string) {
 				(payload) => {
 					if (payload.eventType === "INSERT") {
 						queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) => {
-							const exists = old.some((msg) => msg.id === payload.new.id);
-							if (exists) return old;
-							return [...old, payload.new as Message];
+							const newMsg = payload.new as Message;
+							const exists = old.find((msg) => msg.id === newMsg.id);
+							if (exists) return old.map((msg) => (msg.id === newMsg.id ? newMsg : msg));
+							return [...old, newMsg];
 						});
 					} else if (payload.eventType === "UPDATE") {
 						queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) =>
