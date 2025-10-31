@@ -91,7 +91,20 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 
 	const onSubmit = async (data: CreateEndpointInput) => {
 		try {
-			await createEndpoint(data);
+			// Parse JSON strings to objects
+			const parsedData = {
+				...data,
+				headers_schema: data.headers_schema ? (typeof data.headers_schema === "string" ? JSON.parse(data.headers_schema) : data.headers_schema) : {},
+				body_schema: data.body_schema ? (typeof data.body_schema === "string" ? JSON.parse(data.body_schema) : data.body_schema) : {},
+				params_schema: data.params_schema ? (typeof data.params_schema === "string" ? JSON.parse(data.params_schema) : data.params_schema) : {},
+				response_schema: data.response_schema
+					? typeof data.response_schema === "string"
+						? JSON.parse(data.response_schema)
+						: data.response_schema
+					: {},
+			};
+
+			await createEndpoint(parsedData);
 			toast.success("Endpoint creado exitosamente");
 			reset();
 			setShowCreateForm(false);
@@ -185,14 +198,63 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 										{errors.url && <p className="text-xs text-destructive">{errors.url.message}</p>}
 									</div>
 
+									<div className="space-y-2">
+										<Label htmlFor="params_schema">Esquema de Parámetros (JSON)</Label>
+										<Textarea
+											id="params_schema"
+											placeholder='{"id": {"type": "string", "required": true}}'
+											className="font-mono text-xs"
+											rows={3}
+											{...register("params_schema")}
+										/>
+										<p className="text-xs text-muted-foreground">Define los parámetros de URL. Ejemplo: {`{"id": {"type": "string"}}`}</p>
+									</div>
+
+									<div className="space-y-2">
+										<Label htmlFor="body_schema">Esquema del Body (JSON)</Label>
+										<Textarea
+											id="body_schema"
+											placeholder='{"name": {"type": "string", "required": true}, "email": {"type": "string"}}'
+											className="font-mono text-xs"
+											rows={3}
+											{...register("body_schema")}
+										/>
+										<p className="text-xs text-muted-foreground">Define los campos del body para POST/PUT/PATCH</p>
+									</div>
+
+									<div className="space-y-2">
+										<Label htmlFor="headers_schema">Headers Personalizados (JSON)</Label>
+										<Textarea
+											id="headers_schema"
+											placeholder='{"X-Custom-Header": "value"}'
+											className="font-mono text-xs"
+											rows={2}
+											{...register("headers_schema")}
+										/>
+										<p className="text-xs text-muted-foreground">Headers HTTP adicionales (opcional)</p>
+									</div>
+
+									<div className="space-y-2">
+										<Label htmlFor="response_schema">Esquema de Respuesta (JSON)</Label>
+										<Textarea
+											id="response_schema"
+											placeholder='{"id": "string", "name": "string", "email": "string"}'
+											className="font-mono text-xs"
+											rows={3}
+											{...register("response_schema")}
+										/>
+										<p className="text-xs text-muted-foreground">Describe la estructura esperada de la respuesta (opcional)</p>
+									</div>
+
 									<div className="grid grid-cols-2 gap-4">
 										<div className="space-y-2">
 											<Label htmlFor="timeout">Timeout (ms)</Label>
 											<Input id="timeout" type="number" {...register("timeout", { valueAsNumber: true })} />
 										</div>
+
 										<div className="space-y-2">
-											<Label htmlFor="retry_count">Retry Count</Label>
-											<Input id="retry_count" type="number" {...register("retry_count", { valueAsNumber: true })} />
+											<Label htmlFor="retry_count">Reintentos</Label>
+											<Input id="retry_count" type="number" min="0" max="3" {...register("retry_count", { valueAsNumber: true })} />
 										</div>
 									</div>
 
