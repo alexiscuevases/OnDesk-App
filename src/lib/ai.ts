@@ -49,50 +49,52 @@ export class AI {
 			const toolsDescription =
 				endpoints && endpoints.length > 0
 					? `
-HERRAMIENTAS DISPONIBLES:
-Tienes acceso a las siguientes herramientas para ayudar al usuario. Cuando necesites usar una, responde EXACTAMENTE en este formato:
-[USAR_HERRAMIENTA: id_de_la_herramienta]
-[PARAMETROS: {"param1": "valor1", "param2": "valor2"}]
+						HERRAMIENTAS DISPONIBLES:
+						Tienes acceso a las siguientes herramientas para ayudar al usuario.
+						Cuando necesites usar una, responde EXACTAMENTE en este formato:
+						[USAR_HERRAMIENTA: id_de_la_herramienta]
+						[PARAMETROS: {"param1": "valor1", "param2": "valor2"}]
 
-Herramientas disponibles:
-${endpoints
-	.map(
-		(e) => `
-- ${e.name}: ${e.description}
-  ID: ${e.id}
-  Método: ${e.method}
-  URL: ${e.url}
-  Parámetros requeridos: ${JSON.stringify(e.params_schema)}${
-			Object.keys(e.body_schema).length > 0
-				? `
-  Body requerido: ${JSON.stringify(e.body_schema)}`
-				: ""
-		}`
-	)
-	.join("\n")}
-`
+						Lista de Herramientas:
+						${endpoints
+							.map(
+								(e) => `
+								- ${e.name}: ${e.description}
+								ID: ${e.id}
+								Método: ${e.method}
+								URL: ${e.url}
+								Parámetros requeridos: ${JSON.stringify(e.params_schema)}
+								${Object.keys(e.body_schema).length > 0 ? `Body requerido: ${JSON.stringify(e.body_schema)}` : ""}`
+							)
+							.join("\n")}
+					`
 					: "";
 
 			const messagesForAI = [
 				{
 					role: "system" as const,
 					content: `
-${agent.system_prompt}
+						SYSTEM PROMPT:
+						${agent.system_prompt}
 
-Información del cliente:
-- Nombre: ${conversation.customer_name || "No proporcionado"}
-- Email: ${conversation.customer_email || "No proporcionado"}
-- Teléfono: ${conversation.customer_phone || "No proporcionado"}
-- Canal: ${conversation.channel}
-- Prioridad: ${conversation.priority}
+						${toolsDescription}
 
-${toolsDescription}
+						Información del cliente:
+						- Nombre: ${conversation.customer_name || "No proporcionado"}
+						- Email: ${conversation.customer_email || "No proporcionado"}
+						- Teléfono: ${conversation.customer_phone || "No proporcionado"}
 
-IMPORTANTE:
-- Responde al último mensaje del usuario de manera profesional y útil.
-- Limítate al comportamiento descrito en el system prompt.
-- Si necesitas usar una herramienta, usa el formato exacto especificado arriba con el ID de la herramienta.
-- NUNCA inventes o modifiques los IDs de las herramientas ni de el formato especificado para las herramientas.`,
+						Información de la conversación:
+						- Canal: ${conversation.channel}
+						- Prioridad: ${conversation.priority}
+
+						IMPORTANTE:
+						- Limítate a responder al último mensaje del usuario de manera profesional y sútil (utiliza el resto para alimentarte).
+						- Limítate al comportamiento descrito en el SYSTEM PROMPT.
+						- Si necesitas usar una herramienta, usa el formato exacto especificado arriba con el ID de la herramienta.
+						- NUNCA inventes o modifiques los IDs de las herramientas.
+						- NUNCA inventes o modifiques el formato especificado para las herramientas.
+					`,
 				},
 				...(messages?.map((msg) => ({
 					role: msg.role === "agent" ? "assistant" : msg.role === "user" ? "user" : "system",
@@ -112,7 +114,6 @@ IMPORTANTE:
 
 			// Check if AI wants to use a tool
 			const toolMatch = this.parseToolUsage(initialResponse);
-
 			if (toolMatch && endpoints) {
 				// Find the endpoint by ID
 				const endpoint = endpoints.find((e) => e.id === toolMatch.id);
@@ -128,18 +129,20 @@ IMPORTANTE:
 
 					messagesForAI.push({
 						role: "system" as const,
-						content: `RESULTADO DE LA HERRAMIENTA "${endpoint.name}":
-${
-	executionResult.success
-		? `✓ Éxito (${executionResult.duration}ms)
-Respuesta: ${JSON.stringify(executionResult.data, null, 2)}`
-		: `✗ Error: ${executionResult.error}`
-}
+						content: `
+							RESULTADO DE LA HERRAMIENTA "${endpoint.name}":
+							${
+								executionResult.success
+									? `✓ Éxito (${executionResult.duration}ms) Respuesta: ${JSON.stringify(executionResult.data, null, 2)}`
+									: `✗ Error: ${executionResult.error}`
+							}
 
-Ahora responde al usuario basándote en este resultado. NO repitas el formato de herramienta, solo proporciona una respuesta natural y útil.`,
+							Ahora responde al usuario basándote en este resultado.
+							NO repitas el formato de herramienta, solo proporciona una respuesta natural y útil.
+						`,
 					});
 
-					console.log("Message for AI Last: ", messagesForAI);
+					console.log("Message for AI 2: ", messagesForAI);
 
 					// Generate final response with tool result
 					const { text: finalResponse } = await generateText({
