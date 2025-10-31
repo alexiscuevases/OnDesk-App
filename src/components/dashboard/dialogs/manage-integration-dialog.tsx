@@ -18,46 +18,22 @@ interface ManageIntegrationDialogProps {
 		name: Connection["name"];
 		type: Connection["type"];
 	};
+	connections: Connection[];
 }
 
-export function ManageIntegrationDialog({ children, integration }: ManageIntegrationDialogProps) {
+export function ManageIntegrationDialog({ children, integration, connections }: ManageIntegrationDialogProps) {
 	const [open, setOpen] = useState(false);
 	const { deleteConnection, updateConnection } = useConnections();
-	const [connections, setConnections] = useState<Connection[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-
-	const filterConnectionsByType = (type: Connection["type"]) => connections.filter((connection) => connection.type === type);
-
-	const handleOpenChange = async (newOpen: boolean) => {
-		setOpen(newOpen);
-		if (newOpen) {
-			setIsLoading(true);
-			try {
-				const data = await filterConnectionsByType(integration.type);
-				setConnections(data);
-			} catch (error) {
-				console.error("Error al cargar conexiones:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-	};
 
 	const handleDelete = async (id: string) => {
 		if (confirm("¿Estás seguro de que deseas eliminar esta conexión?")) {
 			await deleteConnection(id);
-
-			const data = await filterConnectionsByType(integration.type);
-			setConnections(data);
 		}
 	};
 
 	const handleToggleStatus = async (connection: Connection) => {
 		const status = connection.status === "connected" ? "disconnected" : "connected";
 		await updateConnection(connection.id, { status });
-
-		const data = await filterConnectionsByType(integration.type);
-		setConnections(data);
 	};
 
 	const formatDate = (dateString: string) => {
@@ -70,7 +46,7 @@ export function ManageIntegrationDialog({ children, integration }: ManageIntegra
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="sm:max-w-[600px]">
 				<DialogHeader>
@@ -79,9 +55,7 @@ export function ManageIntegrationDialog({ children, integration }: ManageIntegra
 				</DialogHeader>
 
 				<div className="space-y-4 py-4">
-					{isLoading ? (
-						<p className="text-center text-muted-foreground">Cargando...</p>
-					) : connections.length === 0 ? (
+					{connections.length === 0 ? (
 						<p className="text-center text-muted-foreground">No hay conexiones configuradas</p>
 					) : (
 						connections.map((connection) => {

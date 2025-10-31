@@ -134,7 +134,8 @@ export function ConnectionsList() {
 											integration={{
 												name: integration.name,
 												type: integration.type,
-											}}>
+											}}
+											connections={connectionsByType[integration.type]}>
 											<Button variant="outline" size="sm" className="flex-1 bg-transparent">
 												Administrar
 											</Button>
