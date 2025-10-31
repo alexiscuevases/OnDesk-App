@@ -87,7 +87,7 @@ export function DashboardHeader() {
 										<Button
 											variant="ghost"
 											size="sm"
-											className="h-auto p-0 text-xs text-primary"
+											className="h-auto px-2 py-1 text-xs text-primary"
 											onClick={handleMarkAllAsRead}
 											disabled={isLoading}>
 											Marcar todas como leídas
