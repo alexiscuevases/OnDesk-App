@@ -101,7 +101,7 @@ export default function SingleConversationPage() {
 				<div className="lg:col-span-2 space-y-4">
 					<Card>
 						<CardContent className="p-6">
-							<div className="space-y-6 mb-6">
+							<div className="space-y-6 mb-6 max-h-[540px] overflow-auto">
 								{messages.map((m) => {
 									const isCustomer = m.role === "user";
 									return (
