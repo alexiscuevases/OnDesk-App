@@ -74,6 +74,38 @@ export function useNotifications() {
 		fetchNotifications();
 	}, []);
 
+	useEffect(() => {
+		if (!profile) return;
+
+		// Subscribe to notifications changes
+		const notificationsChannel = supabase
+			.channel("notifications-changes")
+			.on(
+				"postgres_changes",
+				{
+					event: "*",
+					schema: "public",
+					table: "notifications",
+					filter: `team_id=eq.${profile.team_id}`,
+				},
+				(payload) => {
+					if (payload.eventType === "INSERT") {
+						setNotifications((prev) => [payload.new as Notification, ...prev]);
+					} else if (payload.eventType === "UPDATE") {
+						setNotifications((prev) => prev.map((conv) => (conv.id === payload.new.id ? (payload.new as Notification) : conv)));
+					} else if (payload.eventType === "DELETE") {
+						setNotifications((prev) => prev.filter((conv) => conv.id !== payload.old.id));
+					}
+				}
+			)
+			.subscribe();
+
+		// Cleanup notifications on unmount
+		return () => {
+			supabase.removeChannel(notificationsChannel);
+		};
+	}, [profile]);
+
 	return {
 		notifications,
 		unreadCount,
