@@ -207,7 +207,7 @@ export function useTeam() {
 	useEffect(() => {
 		fetchCurrentTeam();
 		fetchAllTeams();
-	}, [profile]);
+	}, []);
 
 	return {
 		teamMembers,

@@ -72,7 +72,7 @@ export function useNotifications(fromDashboardHeader: boolean = false) {
 
 	useEffect(() => {
 		fetchNotifications();
-	}, [profile]);
+	}, []);
 
 	useEffect(() => {
 		if (!profile) return;
@@ -104,7 +104,7 @@ export function useNotifications(fromDashboardHeader: boolean = false) {
 		return () => {
 			supabase.removeChannel(notificationsChannel);
 		};
-	}, [profile]);
+	}, []);
 
 	return {
 		notifications,

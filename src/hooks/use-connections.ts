@@ -101,7 +101,7 @@ export function useConnections() {
 
 	useEffect(() => {
 		fetchConnections();
-	}, [profile]);
+	}, []);
 
 	return {
 		connections,
