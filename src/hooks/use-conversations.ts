@@ -166,7 +166,7 @@ export function useConversations() {
 
 	useEffect(() => {
 		fetchConversations();
-	}, []);
+	}, [profile]);
 
 	useEffect(() => {
 		if (!profile) return;

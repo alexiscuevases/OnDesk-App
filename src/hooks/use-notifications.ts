@@ -72,7 +72,7 @@ export function useNotifications() {
 
 	useEffect(() => {
 		fetchNotifications();
-	}, []);
+	}, [profile]);
 
 	useEffect(() => {
 		if (!profile) return;

@@ -37,7 +37,7 @@ export function useMessages(conversationId: string) {
 
 	useEffect(() => {
 		fetchMessages();
-	}, []);
+	}, [profile]);
 
 	useEffect(() => {
 		if (!conversationId) return;

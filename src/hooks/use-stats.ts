@@ -62,7 +62,7 @@ export function useStats() {
 
 	useEffect(() => {
 		fetchStats();
-	}, []);
+	}, [profile]);
 
 	return {
 		stats,
