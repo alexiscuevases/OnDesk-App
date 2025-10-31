@@ -60,9 +60,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 				case "INITIAL_SESSION":
 					fetchUserAndProfile();
 					break;
+
 				case "SIGNED_OUT":
 					setUser(null);
 					setProfile(null);
+
+					router.push("/auth/sign-in");
+					router.refresh();
 					break;
 
 				case "USER_UPDATED":
