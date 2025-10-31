@@ -28,3 +28,27 @@ export const signInSchema = z.object({
 });
 
 export type SignInInput = z.infer<typeof signInSchema>;
+
+/**
+ * ResetPassword
+ */
+export const resetPasswordSchema = z.object({
+	email: signUpSchema.shape.email,
+});
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+/**
+ * UpdatePassword
+ */
+export const updatePasswordSchema = z
+	.object({
+		password: signUpSchema.shape.password,
+		confirm_password: signUpSchema.shape.confirm_password,
+	})
+	.refine((data) => data.password === data.confirm_password, {
+		message: "Passwords don't match",
+		path: ["confirm_password"],
+	});
+
+export type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>;
