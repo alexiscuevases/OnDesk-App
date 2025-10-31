@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Bot, MessageSquareShare } from "lucide-react";
+import { Bot } from "lucide-react";
 import { platformConfigs } from "@/configs/platform";
-import { useAuth } from "../providers/auth-provider";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "./language-switcher";
 
 export function SiteHeader() {
-	const { profile } = useAuth();
 	const t = useTranslations("Header");
 
 	return (
@@ -40,25 +38,12 @@ export function SiteHeader() {
 				</nav>
 
 				<div className="flex items-center gap-3">
-					{profile ? (
-						<>
-							<Button variant="outline" asChild>
-								<Link href="/dashboard">
-									<span>{t("goDashboard")}</span>
-									<MessageSquareShare />
-								</Link>
-							</Button>
-						</>
-					) : (
-						<>
-							<Button variant="ghost" asChild>
-								<Link href="/auth/sign-in">{t("signIn")}</Link>
-							</Button>
-							<Button asChild>
-								<Link href="/auth/sign-up">{t("getStarted")}</Link>
-							</Button>
-						</>
-					)}
+					<Button variant="ghost" asChild>
+						<Link href="/auth/sign-in">{t("signIn")}</Link>
+					</Button>
+					<Button asChild>
+						<Link href="/auth/sign-up">{t("getStarted")}</Link>
+					</Button>
 					<LanguageSwitcher />
 				</div>
 			</div>

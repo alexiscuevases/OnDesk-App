@@ -105,7 +105,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 				refreshProfile: fetchUserAndProfile,
 				signOut,
 			}}>
-			{children}
+			{loading ? (
+				<div className="flex h-screen items-center justify-center">
+					<p className="text-sm text-muted-foreground">Loading...</p>
+				</div>
+			) : profile ? (
+				children
+			) : null}
 		</AuthContext.Provider>
 	);
 };

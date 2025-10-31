@@ -7,7 +7,7 @@ import { Profile } from "../validations/profile";
 
 export async function updateSession(request: NextRequest) {
 	// Permitir rutas publicas
-	const publicRoutes = ["/about", "/api", "/auth", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
+	const publicRoutes = ["/about", "/api", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
 	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route) || request.nextUrl.pathname === "/");
 	if (isPublicRoute) return NextResponse.next();
 
@@ -36,15 +36,15 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	// Redireccionar a sign-in si no está autenticado y intenta acceder a una ruta protegida
+	// Redireccionar a dashboard si está autenticado y intenta acceder a una ruta de autenticación
+	if (user && request.nextUrl.pathname.startsWith("/auth")) {
+		const url = `${AppConfigs.url}/dashboard`;
+		return NextResponse.redirect(url);
+	} else if (!user && request.nextUrl.pathname.startsWith("/auth")) return NextResponse.next();
+
+	// Redireccionar a sign-in si no está autenticado y intenta acceder a una ruta protegida (fuera de auth)
 	if (!user) {
 		const url = `${AppConfigs.url}/auth/sign-in`;
-		return NextResponse.redirect(url);
-	}
-
-	// Redireccionar a dashboard si está autenticado y intenta acceder a una ruta de autenticación
-	if (request.nextUrl.pathname.startsWith("/auth")) {
-		const url = `${AppConfigs.url}/dashboard`;
 		return NextResponse.redirect(url);
 	}
 
