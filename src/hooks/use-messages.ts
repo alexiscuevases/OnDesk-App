@@ -23,7 +23,7 @@ export function useMessages(conversationId: string) {
 				.from("messages")
 				.select("*")
 				.eq("conversation_id", conversationId)
-				.order("created_at", { ascending: false })
+				.order("created_at", { ascending: true })
 				.returns<Message[]>();
 			if (fetchError) throw fetchError;
 
