@@ -125,15 +125,15 @@ export class WhatsAppAPI {
 		const response = await fetch(url, {
 			...options,
 			headers: {
-				Authorization: `Bearer ${this.accessToken}`,
 				"Content-Type": "application/json",
+				Authorization: `Bearer ${this.accessToken}`,
 				...options.headers,
 			},
 		});
 
 		if (!response.ok) {
 			const errorData = await response.json().catch(() => ({}));
-			throw new Error(errorData.error?.message || `Error en la API de WhatsApp: ${response.status} ${response.statusText}`);
+			throw new Error(errorData.error?.message || `WhatsApp ${response.status}: ${response.statusText}`);
 		}
 
 		return response.json();
@@ -266,7 +266,7 @@ export class WhatsAppAPI {
 	 */
 	async checkStatus(): Promise<any> {
 		try {
-			const response = await this.makeRequest("", {
+			const response = await this.makeRequest("/", {
 				method: "GET",
 			});
 
@@ -275,11 +275,13 @@ export class WhatsAppAPI {
 				phoneNumber: response.display_phone_number,
 				verifiedName: response.verified_name,
 			};
-		} catch (error: any) {
-			return {
-				status: "error",
-				error: error.message,
-			};
+		} catch (err: unknown) {
+			if (err instanceof Error)
+				return {
+					status: "error",
+					error: err.message,
+				};
+			else return { status: "error", error: "Unexpected error occurred connecting Whatsapp" };
 		}
 	}
 

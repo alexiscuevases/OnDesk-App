@@ -6,6 +6,9 @@ import { Endpoint } from "./validations/endpoint";
 import { generateText } from "ai";
 import { createDeepSeek } from "@ai-sdk/deepseek";
 
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
+if (!DEEPSEEK_API_KEY) throw new Error("Please define all AI environment variables");
+
 export class AI {
 	/**
 	 * Generar respuesta
@@ -24,8 +27,8 @@ export class AI {
 
 			// Verificar agente asignado
 			const agent = conversation.agents as Agent;
-			if (!agent) return new Error("No agent assigned to conversation");
-			if (agent.status !== "active") return new Error("Agent is not active");
+			if (!agent) throw new Error("No agent assigned to conversation");
+			if (agent.status !== "active") throw new Error("Agent is not active");
 
 			// Obtener historial de conversación (Últimos 20 mensajes)
 			const { data: messages, error: messagesError } = await supabase
@@ -45,11 +48,6 @@ export class AI {
 				.eq("is_active", true)
 				.returns<Endpoint[]>();
 			if (endpointsError) throw endpointsError;
-
-			// Crear conexión con DeepSeek
-			const deepseek = createDeepSeek({
-				apiKey: process.env.DEEPSEEK_API_KEY ?? "",
-			});
 
 			// Construir las acciones del agente
 			const actionsDescription =
@@ -129,6 +127,11 @@ export class AI {
 				}) ?? []),
 			];
 
+			// Crear conexión con DeepSeek
+			const deepseek = createDeepSeek({
+				apiKey: DEEPSEEK_API_KEY,
+			});
+
 			// Primera llamada a la IA para detectar si el uso de una acción es requerida
 			const { text: initialResponse } = await generateText({
 				model: deepseek("deepseek-chat"),
@@ -144,7 +147,7 @@ export class AI {
 				const endpoint = endpoints.find((endpoint) => endpoint.id === actionMatch.id);
 				if (endpoint) {
 					// Ejecutar el endpoint
-					const executionResult = await this.endpointExecutor(actionMatch.id, actionMatch.parameters);
+					const actionResult = await this.actionExecutor(actionMatch.id, actionMatch.parameters);
 
 					// Agregar el resultado de la ejecución de la acción al contexto de la IA
 					messagesForAI.push({
@@ -156,11 +159,7 @@ export class AI {
 						role: "system",
 						content: `
 							====== START | RESULTADO DE LA ACCIÓN "${endpoint.name}" ======
-							${
-								executionResult.success
-									? `✓ Éxito (${executionResult.duration}ms) Respuesta: ${JSON.stringify(executionResult.data, null, 2)}`
-									: `✗ Error: ${executionResult.error}`
-							}
+							${actionResult.success ? `✓ Éxito (${actionResult.duration}ms) Respuesta: ${JSON.stringify(actionResult.data, null, 2)}` : `✗ Error: ${actionResult.error}`}
 
 							- Ahora responde al usuario basándote en este resultado.
 							- NO repitas el formato del resultado, solo proporciona una respuesta natural y útil.
@@ -183,8 +182,8 @@ export class AI {
 			// Si no se requiere ejecutar alguna acción o no se encontró, retornar la respuesta inicial
 			return { success: true, message: initialResponse };
 		} catch (err: unknown) {
-			if (err instanceof Error) return { success: false, message: err.message };
-			return { success: false, message: "Unexpected error occurred" };
+			if (err instanceof Error) return { success: false, error: err.message };
+			return { success: false, error: "Unexpected error occurred generating AI response" };
 		}
 	}
 
@@ -201,13 +200,12 @@ export class AI {
 
 		if (actionMatch && actionMatch[1]) {
 			let parameters: Record<string, any> = {};
-			let body: Record<string, any> = {};
 
 			// Try to parse parameters if present
 			if (paramsMatch && paramsMatch[1]) {
 				try {
 					parameters = JSON.parse(paramsMatch[1]);
-				} catch (e) {
+				} catch (e: unknown) {
 					// Try to extract parameters manually
 					parameters = this.extractParametersManually(paramsMatch[1]);
 				}
@@ -234,7 +232,6 @@ export class AI {
 
 			// Split by comma but respect quotes
 			const pairs = cleaned.match(/(?:[^,"]|"[^"]*")+/g) || [];
-
 			for (const pair of pairs) {
 				const colonIndex = pair.indexOf(":");
 				if (colonIndex > 0) {
@@ -245,16 +242,12 @@ export class AI {
 						.replace(/"/g, "");
 
 					// Try to parse as number
-					if (!isNaN(Number(value))) {
-						parameters[key] = Number(value);
-					} else if (value === "true" || value === "false") {
-						parameters[key] = value === "true";
-					} else {
-						parameters[key] = value;
-					}
+					if (!isNaN(Number(value))) parameters[key] = Number(value);
+					else if (value === "true" || value === "false") parameters[key] = value === "true";
+					else parameters[key] = value;
 				}
 			}
-		} catch (err: any) {
+		} catch (err: unknown) {
 			// None
 		}
 
@@ -264,17 +257,11 @@ export class AI {
 	/**
 	 *
 	 */
-	async endpointExecutor(endpointId: string, params: Record<string, any> = {}) {
+	async actionExecutor(endpointId: string, params: Record<string, any> = {}) {
 		const supabase = await createClient();
 
-		const { data: endpoint, error } = await supabase.from("endpoints").select("*").eq("id", endpointId).single<Endpoint>();
-		if (error || !endpoint) {
-			return {
-				success: false,
-				error: error?.message || "Endpoint no encontrado",
-				duration: 0,
-			};
-		}
+		const { data: endpoint, error: endpointError } = await supabase.from("endpoints").select("*").eq("id", endpointId).single<Endpoint>();
+		if (endpointError) throw endpointError;
 
 		const start = Date.now();
 
@@ -294,39 +281,28 @@ export class AI {
 
 			// Preparar body (para POST, PUT, PATCH)
 			const body = ["POST", "PUT", "PATCH"].includes(endpoint.method.toUpperCase()) ? JSON.stringify(params) : undefined;
-
-			const res = await fetch(url, {
+			const response = await fetch(url, {
 				method: endpoint.method,
 				headers: {
 					"Content-Type": "application/json",
+					...endpoint.headers_schema,
 				},
 				body,
 			});
+			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 
+			const data = await response.json().catch(() => ({}));
 			const duration = Date.now() - start;
-
-			if (!res.ok) {
-				return {
-					success: false,
-					error: `HTTP ${res.status}: ${res.statusText}`,
-					duration,
-				};
-			}
-
-			const data = await res.json().catch(() => ({}));
 
 			return {
 				success: true,
 				data,
 				duration,
 			};
-		} catch (err: any) {
+		} catch (err: unknown) {
 			const duration = Date.now() - start;
-			return {
-				success: false,
-				error: err.message || "Error desconocido ejecutando el endpoint",
-				duration,
-			};
+			if (err instanceof Error) return { success: false, error: err.message, duration };
+			return { success: false, error: "Unexpected error occurred executing AI action", duration };
 		}
 	}
 }

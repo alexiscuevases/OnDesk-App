@@ -1,32 +1,13 @@
 import { createClient } from "./supabase/server";
 import { Notification } from "./validations/notification";
 
+interface NewConversation {
+	team_id: string;
+	conversation_id: string;
+}
+
 export class Notifications {
-	async newIncomingMessage({ team_id, conversation_id }: { team_id: string; conversation_id: string }) {
-		try {
-			const supabase = await createClient();
-
-			const { data, error } = await supabase
-				.from("notifications")
-				.insert({
-					team_id,
-					title: "New Message",
-					content: "Has recibido un nuevo mensaje",
-					type: "info",
-					read: false,
-					path: `/conversations/${conversation_id}`,
-				})
-				.select("*")
-				.single<Notification>();
-			if (error) throw error;
-
-			return data;
-		} catch (err: any) {
-			throw err;
-		}
-	}
-
-	async newConversation({ team_id, conversation_id }: { team_id: string; conversation_id: string }) {
+	async newConversation({ team_id, conversation_id }: NewConversation) {
 		try {
 			const supabase = await createClient();
 
@@ -35,7 +16,7 @@ export class Notifications {
 				.insert({
 					team_id,
 					title: "New Conversation",
-					content: "Has recibido un nuevo mensaje",
+					content: "A new conversation has started",
 					type: "info",
 					read: false,
 					path: `/conversations/${conversation_id}`,
@@ -45,7 +26,7 @@ export class Notifications {
 			if (error) throw error;
 
 			return data;
-		} catch (err: any) {
+		} catch (err: unknown) {
 			throw err;
 		}
 	}
