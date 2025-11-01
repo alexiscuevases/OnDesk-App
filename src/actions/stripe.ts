@@ -115,7 +115,6 @@ export async function verifyCheckoutSession(sessionId: string, teamId: string) {
 
 		return { success: false, error: "Payment not completed" };
 	} catch (error) {
-		console.error("[v0] Error verifying checkout session:", error);
 		return { success: false, error: "Failed to verify session" };
 	}
 }
