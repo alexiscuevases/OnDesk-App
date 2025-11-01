@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { Team } from "./team";
+import { TEAM_MEMBER_ROLES, TEAM_MEMBER_STATUSES } from "../constants/team_member";
 
 export const teamMemberSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
 	invited_by: z.string().min(1, "'Invited By' is required"),
 	user_id: z.string().optional(),
 	email: z.string().email("Invalid email address"),
-	role: z.enum(["owner", "admin", "member", "viewer"]),
-	status: z.enum(["active", "inactive", "pending"]).optional(),
+	role: z.enum(TEAM_MEMBER_ROLES),
+	status: z.enum(TEAM_MEMBER_STATUSES).optional(),
 });
 
 export type TeamMember = z.infer<typeof teamMemberSchema> & {

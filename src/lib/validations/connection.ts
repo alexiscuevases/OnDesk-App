@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { CONNECTION_DEFAULT_STATUS, CONNECTION_STATUSES, CONNECTION_TYPES } from "../constants/connection";
 
 export const connectionSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
 	name: z.string().min(1, "Name is required"),
-	type: z.enum(["whatsapp", "website"]),
-	status: z.enum(["connected", "disconnected", "error"]).default("disconnected"),
+	type: z.enum(CONNECTION_TYPES),
+	status: z.enum(CONNECTION_STATUSES).default(CONNECTION_DEFAULT_STATUS),
 	config: z.record(z.any(), z.any()),
 });
 

@@ -5,6 +5,10 @@ import { Team } from "../validations/team";
 import { AppConfigs } from "@/configs/app";
 import { Profile } from "../validations/profile";
 
+const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const NEXT_PUBLIC_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+if (!NEXT_PUBLIC_SUPABASE_URL || !NEXT_PUBLIC_SUPABASE_ANON_KEY) throw new Error("Please define all Supabase environment variables");
+
 export async function updateSession(request: NextRequest) {
 	// Permitir rutas publicas
 	const publicRoutes = ["/about", "/api", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
@@ -16,7 +20,7 @@ export async function updateSession(request: NextRequest) {
 		request,
 	});
 
-	const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+	const supabase = createServerClient(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, {
 		cookies: {
 			getAll() {
 				return request.cookies.getAll();

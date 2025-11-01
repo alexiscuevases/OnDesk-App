@@ -1,17 +1,17 @@
 import { z } from "zod";
+import { ENDPOINT_DEFAULT_RETRY_COUNT, ENDPOINT_DEFAULT_TIMEOUT, ENDPOINT_METHODS } from "../constants/endpoint";
 
 export const endpointSchema = z.object({
 	agent_id: z.string().uuid("Agent ID must be a valid UUID"),
 	name: z.string().min(1, "Name is required").max(100),
 	description: z.string().min(10, "Description must be at least 10 characters"),
-	method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
+	method: z.enum(ENDPOINT_METHODS),
 	url: z.string().url("Must be a valid URL"),
 	headers_schema: z.record(z.string(), z.any()).optional().default({}),
-	body_schema: z.record(z.any(), z.any()).optional().default({}),
 	params_schema: z.record(z.any(), z.any()).optional().default({}),
 	response_schema: z.record(z.any(), z.any()).optional().default({}),
-	timeout: z.number().min(1000).max(30000).default(10000),
-	retry_count: z.number().min(0).max(3).default(1),
+	timeout: z.number().min(1000).max(30000).default(ENDPOINT_DEFAULT_TIMEOUT),
+	retry_count: z.number().min(0).max(3).default(ENDPOINT_DEFAULT_RETRY_COUNT),
 	is_active: z.boolean().default(true),
 });
 
@@ -31,7 +31,6 @@ export const createEndpointSchema = z.object({
 	method: endpointSchema.shape.method,
 	url: endpointSchema.shape.url,
 	headers_schema: endpointSchema.shape.headers_schema,
-	body_schema: endpointSchema.shape.body_schema,
 	params_schema: endpointSchema.shape.params_schema,
 	response_schema: endpointSchema.shape.response_schema,
 	timeout: endpointSchema.shape.timeout.optional(),
