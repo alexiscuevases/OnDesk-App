@@ -1,39 +1,31 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
-import { createClient } from "@supabase/supabase-js";
-import type Stripe from "stripe";
+import { stripe, StripeCheckoutSession, StripeEvent, StripeSubscription } from "@/lib/stripe";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
-// Create Supabase admin client for webhook operations
-const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-	auth: {
-		autoRefreshToken: false,
-		persistSession: false,
-	},
-});
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
+if (!STRIPE_WEBHOOK_SECRET || !STRIPE_WEBHOOK_SECRET) throw new Error("Please define all Stripe environment variables");
 
 export async function POST(req: Request) {
 	const body = await req.text();
 	const headersList = await headers();
-	const signature = headersList.get("stripe-signature");
 
+	const signature = headersList.get("stripe-signature");
 	if (!signature) return NextResponse.json({ error: "No signature" }, { status: 400 });
 
-	let event: Stripe.Event;
-
+	let event: StripeEvent;
 	try {
-		event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
-	} catch (err) {
-		console.error("[v0] Webhook signature verification failed:", err);
+		event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET);
+	} catch (err: unknown) {
 		return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
 	}
 
-	console.log("[v0] Webhook event received:", event.type);
+	console.log("[Stripe] Webhook event received:", event.type);
 
 	try {
 		switch (event.type) {
 			case "checkout.session.completed": {
-				const session = event.data.object as Stripe.Checkout.Session;
+				const session = event.data.object as StripeCheckoutSession;
 				console.log("[v0] Checkout session completed:", session.id);
 
 				// Get user ID and team ID from metadata
@@ -42,7 +34,7 @@ export async function POST(req: Request) {
 				const planId = session.metadata?.plan_id;
 
 				if (!userId || !teamId || !planId) {
-					console.error("[v0] Missing user ID, team ID or plan ID in session metadata");
+					console.error("[Stripe] Missing user ID, team ID or plan ID in session metadata");
 					return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
 				}
 
@@ -50,7 +42,7 @@ export async function POST(req: Request) {
 				const subscriptionId = session.subscription as string;
 				const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-				console.log("[v0] Updating team for team:", teamId);
+				console.log("[Stripe] Updating team for team:", teamId);
 
 				// Update team with subscription info
 				const { error: teamError } = await supabaseAdmin
@@ -63,21 +55,20 @@ export async function POST(req: Request) {
 					.eq("id", teamId);
 
 				if (teamError) {
-					console.error("[v0] Error updating team:", teamError);
+					console.error("[Stripe] Error updating team:", teamError);
 					throw teamError;
 				}
 
-				console.log("[v0] Team updated successfully");
+				console.log("[Stripe] Team updated successfully");
 				break;
 			}
 
 			case "customer.subscription.updated": {
-				const subscription = event.data.object as Stripe.Subscription;
-				console.log("[v0] Subscription updated:", subscription.id);
+				const subscription = event.data.object as StripeSubscription;
+				console.log("[Stripe] Subscription updated:", subscription.id);
 
 				// Find team by subscription ID
 				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single();
-
 				if (team) {
 					const { error } = await supabaseAdmin
 						.from("teams")
@@ -87,22 +78,21 @@ export async function POST(req: Request) {
 						.eq("id", team.id);
 
 					if (error) {
-						console.error("[v0] Error updating subscription:", error);
+						console.error("[Stripe] Error updating subscription:", error);
 						throw error;
 					}
 
-					console.log("[v0] Subscription updated successfully");
+					console.log("[Stripe] Subscription updated successfully");
 				}
 				break;
 			}
 
 			case "customer.subscription.deleted": {
-				const subscription = event.data.object as Stripe.Subscription;
-				console.log("[v0] Subscription deleted:", subscription.id);
+				const subscription = event.data.object as StripeSubscription;
+				console.log("[Stripe] Subscription deleted:", subscription.id);
 
 				// Find team by subscription ID
 				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single();
-
 				if (team) {
 					const { error } = await supabaseAdmin
 						.from("teams")
@@ -113,22 +103,22 @@ export async function POST(req: Request) {
 						.eq("id", team.id);
 
 					if (error) {
-						console.error("[v0] Error canceling subscription:", error);
+						console.error("[Stripe] Error canceling subscription:", error);
 						throw error;
 					}
 
-					console.log("[v0] Subscription canceled successfully");
+					console.log("[Stripe] Subscription canceled successfully");
 				}
 				break;
 			}
 
 			default:
-				console.log("[v0] Unhandled event type:", event.type);
+				console.log("[Stripe] Unhandled event type:", event.type);
 		}
 
 		return NextResponse.json({ received: true });
 	} catch (error) {
-		console.error("[v0] Webhook handler error:", error);
+		console.error("[Stripe] Webhook handler error:", error);
 		return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
 	}
 }

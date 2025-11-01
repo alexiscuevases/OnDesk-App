@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from "@/lib/whatsapp";
 import { Connection } from "@/lib/validations/connection";
 import { Conversation } from "@/lib/validations/conversation";
 import { notifications } from "@/lib/notifications";
 import { ai } from "@/lib/ai";
 import { Message } from "@/lib/validations/message";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
-const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-	auth: {
-		autoRefreshToken: false,
-		persistSession: false,
-	},
-});
+const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN!;
+if (!WHATSAPP_VERIFY_TOKEN) throw new Error("Please define all Whatsapp environment variables");
 
 /**
  * GET - Verificación del webhook por WhatsApp
@@ -24,9 +20,9 @@ export async function GET(req: NextRequest) {
 	const challenge = searchParams.get("hub.challenge");
 
 	// El token debe coincidir con el configurado en tu conexión
-	console.log("[WhatsApp Webhook] Verification request:", { mode, token, hasChallenge: !!challenge });
-	if (mode === "subscribe" && token === process.env.WHATSAPP_VERIFY_TOKEN) {
-		console.log("[WhatsApp Webhook] Verification successful");
+	console.log("[WhatsApp] Verification request:", { mode, token, hasChallenge: !!challenge });
+	if (mode === "subscribe" && token === WHATSAPP_VERIFY_TOKEN) {
+		console.log("[WhatsApp] Verification successful");
 		return new Response(challenge || "", {
 			status: 200,
 			headers: {
@@ -35,7 +31,7 @@ export async function GET(req: NextRequest) {
 		});
 	}
 
-	console.log("[WhatsApp Webhook] Verification failed");
+	console.log("[WhatsApp] Verification failed");
 	return NextResponse.json({ error: "Verification failed" }, { status: 403 });
 }
 
@@ -47,8 +43,6 @@ export async function POST(req: NextRequest) {
 		const body = await req.json();
 		const payload: WhatsAppWebhookPayload = body;
 
-		console.log("[WhatsApp Webhook] Received payload:", JSON.stringify(payload, null, 2));
-
 		// Verificar que es un evento de WhatsApp
 		if (payload.object !== "whatsapp_business_account") return NextResponse.json({ error: "Invalid object type" }, { status: 400 });
 
@@ -57,24 +51,21 @@ export async function POST(req: NextRequest) {
 			for (const change of entry.changes) {
 				// Obtener el phone_number_id para encontrar la conexión
 				const phoneNumberId = change.value.metadata?.phone_number_id;
-				if (!phoneNumberId) {
-					console.log("[WhatsApp Webhook] No phone_number_id found in change");
-					continue;
-				}
+				if (!phoneNumberId) continue;
 
-				console.log("[WhatsApp Webhook] Processing for phone_number_id:", phoneNumberId);
+				console.log("[WhatsApp] Processing for phone_number_id:", phoneNumberId);
 
 				// Buscar la conexión por phone_number_id
 				const { data: connections } = await supabaseAdmin.from("connections").select("*").eq("type", "whatsapp").eq("status", "connected");
 				if (!connections || connections.length === 0) {
-					console.log("[WhatsApp Webhook] No WhatsApp connections found");
+					console.log("[WhatsApp] No WhatsApp connections found");
 					continue;
 				}
 
 				// Buscar la conexión que coincida con este phoneNumberId
 				const connection = connections.find((conn: any) => conn.config?.phoneNumberId === phoneNumberId);
 				if (!connection) {
-					console.log("[WhatsApp Webhook] No connection found for phone_number_id:", phoneNumberId);
+					console.log("[WhatsApp] No connection found for phone_number_id:", phoneNumberId);
 					continue;
 				}
 
@@ -92,7 +83,7 @@ export async function POST(req: NextRequest) {
 
 		return NextResponse.json({ received: true });
 	} catch (error) {
-		console.error("[WhatsApp Webhook] Error processing webhook:", error);
+		console.error("[WhatsApp] Error processing webhook:", error);
 		return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
 	}
 }
@@ -127,7 +118,7 @@ async function processIncomingMessages(
 					contentType = "text";
 					break;
 				case "image":
-					content = `[Imagen] ${message.image?.id}`;
+					content = `[Image] ${message.image?.id}`;
 					contentType = "image";
 					break;
 				case "video":
@@ -139,7 +130,7 @@ async function processIncomingMessages(
 					contentType = "audio";
 					break;
 				case "document":
-					content = `[Documento] ${message.document?.filename || message.document?.id}`;
+					content = `[Document] ${message.document?.filename || message.document?.id}`;
 					contentType = "document";
 					break;
 				default:
@@ -240,19 +231,15 @@ async function processIncomingMessages(
 async function processStatusUpdates(statuses: Array<any>, connection: any) {
 	for (const status of statuses) {
 		try {
-			console.log("[WhatsApp] Status update:", {
+			console.log("[WhatsApp] Message Status update:", {
 				messageId: status.id,
 				recipient: status.recipient_id,
 				status: status.status,
 			});
 
-			// Actualizar el estado del mensaje en la base de datos
-			// Por ahora solo registramos el cambio
-			// En el futuro, podrías actualizar una columna de estado en la tabla messages
-
-			console.log("[WhatsApp] Status update processed");
+			console.log("[WhatsApp] Message Status update processed");
 		} catch (error) {
-			console.error("[WhatsApp] Error processing status update:", error);
+			console.error("[WhatsApp] Error processing message status update:", error);
 		}
 	}
 }
