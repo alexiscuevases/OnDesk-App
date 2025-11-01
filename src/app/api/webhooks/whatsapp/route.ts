@@ -185,6 +185,11 @@ async function processIncomingMessages(
 					})
 					.select("*")
 					.single<Conversation>();
+
+				notifications.newConversation({
+					team_id: connection.team_id,
+					conversation_id: newConversation.id,
+				});
 				if (createError) {
 					console.error("[WhatsApp] Error creating conversation:", createError);
 					continue;
@@ -203,11 +208,6 @@ async function processIncomingMessages(
 				// whatsapp_message_id: message.id,
 				// whatsapp_timestamp: message.timestamp,
 				// },
-			});
-
-			notifications.newIncomingMessage({
-				team_id: connection.team_id,
-				conversation_id: conversationId,
 			});
 
 			const aiResponse = await ai.generateAgentResponse(conversationId);
