@@ -265,7 +265,6 @@ export class AI {
 				method: endpoint.method,
 				headers: {
 					"Content-Type": "application/json",
-					// ...(endpoint.auth_header ? { Authorization: endpoint.auth_header } : {}),
 				},
 				body,
 			});
