@@ -11,8 +11,9 @@ import { startCheckoutSession, verifyCheckoutSession } from "@/actions/stripe";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { platformConfigs } from "@/configs/platform";
+import { AppConfigs } from "@/configs/app";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(AppConfigs.stripe.publishableKey);
 
 function SelectPlanContent() {
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -24,7 +25,6 @@ function SelectPlanContent() {
 	const teamId = searchParams.get("team_id");
 
 	useEffect(() => {
-		// Verificar que tengamos el team_id
 		if (!teamId) {
 			setError("No se encontró el ID del equipo.");
 			router.push("/dashboard");

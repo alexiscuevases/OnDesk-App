@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Users, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useTeam } from "@/hooks/use-teams";
+import { useTeams } from "@/hooks/use-teams";
 import { CreateTeamInput, createTeamSchema } from "@/lib/validations/team";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,7 +23,7 @@ function CreateTeamContent() {
 	const router = useRouter();
 	const fromDashboard = searchParams.get("from") === "dashboard";
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const { createTeam, error } = useTeam();
+	const { createTeam, createTeamError } = useTeams();
 	const { profile } = useAuth();
 	const {
 		register,
@@ -79,9 +79,9 @@ function CreateTeamContent() {
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-						{error && (
+						{createTeamError && (
 							<Alert variant="destructive">
-								<AlertDescription>{error}</AlertDescription>
+								<AlertDescription>{createTeamError}</AlertDescription>
 							</Alert>
 						)}
 

@@ -118,6 +118,7 @@ export function useTeams() {
 		currentTeamError: currentTeamError?.message || null,
 		teamsError: teamsError?.message || null,
 		createTeam: createTeamMutation.mutateAsync,
+		createTeamError: createTeamMutation.error?.message || null,
 		switchTeam: switchTeamMutation.mutateAsync,
 		fetchCurrentTeam,
 		fetchTeams,
