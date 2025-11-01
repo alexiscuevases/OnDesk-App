@@ -210,20 +210,22 @@ async function processIncomingMessages(
 				// },
 			});
 
-			const aiResponse = await ai.generateAgentResponse(conversationId);
-			const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
-			await whatsapp.sendTextMessage(message.from, aiResponse);
+			const aiResponse = await ai.generateResponse(conversationId);
+			if (aiResponse.message) {
+				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
+				await whatsapp.sendTextMessage(message.from, aiResponse.message);
 
-			const { data, error: messageError } = await supabaseAdmin
-				.from("messages")
-				.insert({
-					conversation_id: conversationId,
-					role: "agent",
-					content: aiResponse,
-				})
-				.select()
-				.single<Message>();
-			if (messageError) throw messageError;
+				const { data, error: messageError } = await supabaseAdmin
+					.from("messages")
+					.insert({
+						conversation_id: conversationId,
+						role: "agent",
+						content: aiResponse.message,
+					})
+					.select()
+					.single<Message>();
+				if (messageError) throw messageError;
+			}
 
 			console.log("[WhatsApp] Message processed successfully");
 		} catch (error) {
