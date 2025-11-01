@@ -113,12 +113,12 @@ export class AI {
 			// Check if AI wants to use a tool
 			const toolMatch = this.parseToolUsage(initialResponse);
 			if (toolMatch && endpoints) {
-				console.log("Respuesta:", toolMatch);
 				// Find the endpoint by ID
 				const endpoint = endpoints.find((e) => e.id === toolMatch.id);
+				console.log(endpoint);
 				if (endpoint) {
 					// Execute the endpoint
-					const executionResult = await this.endpointExecutor(endpoint.id, toolMatch.parameters);
+					const executionResult = await this.endpointExecutor(toolMatch.id, toolMatch.parameters);
 
 					// Add tool execution result to context
 					messagesForAI.push({
