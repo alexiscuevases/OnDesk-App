@@ -102,8 +102,6 @@ export class AI {
 				})) ?? []),
 			];
 
-			console.log("Message for AI: ", messagesForAI);
-
 			// First AI call to detect if tool usage is needed
 			const { text: initialResponse } = await generateText({
 				model: deepseek("deepseek-chat"),
@@ -115,6 +113,7 @@ export class AI {
 			// Check if AI wants to use a tool
 			const toolMatch = this.parseToolUsage(initialResponse);
 			if (toolMatch && endpoints) {
+				console.log("Respuesta:", toolMatch);
 				// Find the endpoint by ID
 				const endpoint = endpoints.find((e) => e.id === toolMatch.id);
 				if (endpoint) {
@@ -141,8 +140,6 @@ export class AI {
 							NO repitas el formato de herramienta, solo proporciona una respuesta natural y útil.
 						`,
 					});
-
-					console.log("Message for AI 2: ", messagesForAI);
 
 					// Generate final response with tool result
 					const { text: finalResponse } = await generateText({
