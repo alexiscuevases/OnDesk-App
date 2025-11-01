@@ -12,7 +12,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTeam } from "@/hooks/use-team";
+import { useTeam } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 

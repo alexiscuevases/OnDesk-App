@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Users, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useTeam } from "@/hooks/use-team";
+import { useTeam } from "@/hooks/use-teams";
 import { CreateTeamInput, createTeamSchema } from "@/lib/validations/team";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

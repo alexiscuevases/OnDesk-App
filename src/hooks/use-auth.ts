@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { ResetPasswordInput, SignInInput, SignUpInput, UpdatePasswordInput } from "@/lib/validations/auth";
@@ -25,8 +25,9 @@ export function useAuth() {
 
 			router.push("/dashboard");
 			router.refresh();
-		} catch (err: any) {
-			setError(err.message || "An error occurred during sign in");
+		} catch (err: unknown) {
+			if (err instanceof Error) setError(err.message);
+			else setError("An error occurred during sign in");
 			throw err;
 		} finally {
 			setIsLoading(false);
@@ -52,8 +53,9 @@ export function useAuth() {
 			if (authError) throw authError;
 
 			router.push("/auth/sign-up/success");
-		} catch (err: any) {
-			setError(err.message || "An error occurred during sign up");
+		} catch (err: unknown) {
+			if (err instanceof Error) setError(err.message);
+			else setError("An error occurred during sign up");
 			throw err;
 		} finally {
 			setIsLoading(false);
@@ -71,8 +73,9 @@ export function useAuth() {
 			if (error) throw error;
 
 			return true;
-		} catch (err: any) {
-			setError(err.message || "Ocurrió un error al enviar el correo de recuperación");
+		} catch (err: unknown) {
+			if (err instanceof Error) setError(err.message);
+			else setError("An error occurred during recovery");
 			throw err;
 		} finally {
 			setIsLoading(false);
@@ -89,10 +92,11 @@ export function useAuth() {
 			});
 			if (error) throw error;
 
-			router.push("/auth/sign-in");
+			router.push("/dashboard");
 			router.refresh();
-		} catch (err: any) {
-			setError(err.message || "Ocurrió un error al actualizar la contraseña");
+		} catch (err: unknown) {
+			if (err instanceof Error) setError(err.message);
+			else setError("An error occurred during password update");
 			throw err;
 		} finally {
 			setIsLoading(false);

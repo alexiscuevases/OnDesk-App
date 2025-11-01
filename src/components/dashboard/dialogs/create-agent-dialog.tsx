@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Loader2 } from "lucide-react";
 import { useAgents } from "@/hooks/use-agents";
-import { useTeam } from "@/hooks/use-team";
+import { useTeam } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { CreateAgentInput, createAgentSchema } from "@/lib/validations/agent";
 

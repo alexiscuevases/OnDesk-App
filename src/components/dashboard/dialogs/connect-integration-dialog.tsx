@@ -11,7 +11,7 @@ import { Loader2 } from "lucide-react";
 import { useConnections } from "@/hooks/use-connections";
 import { Connection, CreateConnectionInput, createConnectionSchema } from "@/lib/validations/connection";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTeam } from "@/hooks/use-team";
+import { useTeam } from "@/hooks/use-teams";
 import { toast } from "sonner";
 
 interface ConnectIntegrationDialogProps {

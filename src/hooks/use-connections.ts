@@ -93,7 +93,7 @@ export function useConnections() {
 		error: error?.message || null,
 		fetchConnections,
 		createConnection: createConnectionMutation.mutateAsync,
-		updateConnection: (id: string, input: baseUpdateConnectionInput) => updateConnectionMutation.mutateAsync({ id, input }),
+		updateConnection: updateConnectionMutation.mutateAsync,
 		deleteConnection: deleteConnectionMutation.mutateAsync,
 	};
 }

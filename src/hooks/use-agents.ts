@@ -104,7 +104,7 @@ export function useAgents() {
 		error: error?.message || null,
 		fetchAgents,
 		createAgent: createAgentMutation.mutateAsync,
-		updateAgent: (id: string, input: UpdateAgentInput) => updateAgentMutation.mutateAsync({ id, input }),
+		updateAgent: updateAgentMutation.mutateAsync,
 		deleteAgent: deleteAgentMutation.mutateAsync,
 	};
 }

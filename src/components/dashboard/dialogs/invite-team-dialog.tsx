@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { useTeam } from "@/hooks/use-team";
+import { useTeam } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { InviteTeamMemberInput, inviteTeamMemberSchema, TeamMember } from "@/lib/validations/team_member";
 
