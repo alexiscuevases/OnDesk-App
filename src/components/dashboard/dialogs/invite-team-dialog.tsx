@@ -11,14 +11,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { useTeam } from "@/hooks/use-teams";
+import { useTeams } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { InviteTeamMemberInput, inviteTeamMemberSchema, TeamMember } from "@/lib/validations/team_member";
+import { useTeamMembers } from "@/hooks/use-team_members";
 
 export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const { inviteTeamMember, currentTeam } = useTeam();
+	const { currentTeam } = useTeams();
+	const { inviteTeamMember } = useTeamMembers(currentTeam?.id);
 
 	const {
 		register,

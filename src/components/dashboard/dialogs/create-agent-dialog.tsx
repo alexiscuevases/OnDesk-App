@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Loader2 } from "lucide-react";
 import { useAgents } from "@/hooks/use-agents";
-import { useTeam } from "@/hooks/use-teams";
+import { useTeams } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { CreateAgentInput, createAgentSchema } from "@/lib/validations/agent";
 
@@ -19,7 +19,7 @@ export function CreateAgentDialog() {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { createAgent } = useAgents();
-	const { currentTeam } = useTeam();
+	const { currentTeam } = useTeams();
 
 	const {
 		register,

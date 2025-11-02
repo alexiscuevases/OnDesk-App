@@ -1,4 +1,4 @@
-import { createClient } from "./supabase/server";
+import { supabaseAdmin } from "./supabase/admin";
 import { Notification } from "./validations/notification";
 
 interface NewConversation {
@@ -9,9 +9,7 @@ interface NewConversation {
 export class Notifications {
 	async newConversation({ team_id, conversation_id }: NewConversation) {
 		try {
-			const supabase = await createClient();
-
-			const { data, error } = await supabase
+			const { data, error } = await supabaseAdmin
 				.from("notifications")
 				.insert({
 					team_id,

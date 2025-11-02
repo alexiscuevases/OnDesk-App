@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
-import { useTeam } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { TeamMember } from "@/lib/validations/team_member";
+import { useTeamMembers } from "@/hooks/use-team_members";
+import { useTeams } from "@/hooks/use-teams";
 
 interface ChangeRoleDialogProps {
 	children: React.ReactNode;
@@ -21,7 +22,8 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [selectedRole, setSelectedRole] = useState(member.role.toLowerCase());
 	const [isLoading, setIsLoading] = useState(false);
-	const { updateTeamMemberRole } = useTeam();
+	const { currentTeam } = useTeams();
+	const { updateTeamMemberRole } = useTeamMembers(currentTeam?.id);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

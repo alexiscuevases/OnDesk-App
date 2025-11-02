@@ -1,4 +1,4 @@
-import { createClient } from "./supabase/server";
+import { supabaseAdmin } from "./supabase/admin";
 import { Agent } from "./validations/agent";
 import { Conversation } from "./validations/conversation";
 import { Message } from "./validations/message";
@@ -15,10 +15,8 @@ export class AI {
 	 */
 	async generateResponse(conversationId: string) {
 		try {
-			const supabase = await createClient();
-
 			// Obtener conversación
-			const { data: conversation, error: conversationError } = await supabase
+			const { data: conversation, error: conversationError } = await supabaseAdmin
 				.from("conversations")
 				.select("*, agents:agent_id(*)")
 				.eq("id", conversationId)
@@ -31,7 +29,7 @@ export class AI {
 			if (agent.status !== "active") throw new Error("Agent is not active");
 
 			// Obtener historial de conversación (Últimos 20 mensajes)
-			const { data: messages, error: messagesError } = await supabase
+			const { data: messages, error: messagesError } = await supabaseAdmin
 				.from("messages")
 				.select("*")
 				.eq("conversation_id", conversationId)
@@ -41,7 +39,7 @@ export class AI {
 			if (messagesError) throw messagesError;
 
 			// Obtener endpoints del agente
-			const { data: endpoints, error: endpointsError } = await supabase
+			const { data: endpoints, error: endpointsError } = await supabaseAdmin
 				.from("endpoints")
 				.select("*")
 				.eq("agent_id", agent.id)
@@ -258,9 +256,7 @@ export class AI {
 	 *
 	 */
 	async actionExecutor(endpointId: string, params: Record<string, any> = {}) {
-		const supabase = await createClient();
-
-		const { data: endpoint, error: endpointError } = await supabase.from("endpoints").select("*").eq("id", endpointId).single<Endpoint>();
+		const { data: endpoint, error: endpointError } = await supabaseAdmin.from("endpoints").select("*").eq("id", endpointId).single<Endpoint>();
 		if (endpointError) throw endpointError;
 
 		const start = Date.now();

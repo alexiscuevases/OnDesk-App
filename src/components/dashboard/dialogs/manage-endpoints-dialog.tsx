@@ -45,7 +45,6 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 			method: "GET",
 			url: "",
 			headers_schema: {},
-			body_schema: {},
 			params_schema: {},
 			response_schema: {},
 			timeout: 10000,
@@ -95,7 +94,6 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 			const parsedData = {
 				...data,
 				headers_schema: data.headers_schema ? (typeof data.headers_schema === "string" ? JSON.parse(data.headers_schema) : data.headers_schema) : {},
-				body_schema: data.body_schema ? (typeof data.body_schema === "string" ? JSON.parse(data.body_schema) : data.body_schema) : {},
 				params_schema: data.params_schema ? (typeof data.params_schema === "string" ? JSON.parse(data.params_schema) : data.params_schema) : {},
 				response_schema: data.response_schema
 					? typeof data.response_schema === "string"
@@ -208,18 +206,6 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 											{...register("params_schema")}
 										/>
 										<p className="text-xs text-muted-foreground">Define los parámetros de URL. Ejemplo: {`{"id": {"type": "string"}}`}</p>
-									</div>
-
-									<div className="space-y-2">
-										<Label htmlFor="body_schema">Esquema del Body (JSON)</Label>
-										<Textarea
-											id="body_schema"
-											placeholder='{"name": {"type": "string", "required": true}, "email": {"type": "string"}}'
-											className="font-mono text-xs"
-											rows={3}
-											{...register("body_schema")}
-										/>
-										<p className="text-xs text-muted-foreground">Define los campos del body para POST/PUT/PATCH</p>
 									</div>
 
 									<div className="space-y-2">
