@@ -120,6 +120,7 @@ export function useTeams() {
 		currentTeamError: currentTeamError?.message || null,
 		teamsError: teamsError?.message || null,
 		createTeam,
+		isLoadingCreateTeam: createTeamMutation.isPending,
 		createTeamError: createTeamMutation.error?.message || null,
 		switchTeam,
 		fetchCurrentTeam,

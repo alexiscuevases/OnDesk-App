@@ -149,17 +149,15 @@ async function processIncomingMessages(
 				.order("updated_at", { ascending: false })
 				.single<Conversation>();
 
-			let conversationId: string;
-			if (existingConversation) {
-				conversationId = existingConversation.id;
-
+			let currentConversation = existingConversation;
+			if (currentConversation) {
 				// Actualizar la conversación
 				await supabaseAdmin
 					.from("conversations")
 					.update({
 						updated_at: new Date().toISOString(),
 					})
-					.eq("id", conversationId);
+					.eq("id", currentConversation.id);
 			} else {
 				// Crear nueva conversación
 				const { data: newConversation, error: createError } = await supabaseAdmin
@@ -176,40 +174,40 @@ async function processIncomingMessages(
 					})
 					.select("*")
 					.single<Conversation>();
-
-				notifications.newConversation({
-					team_id: connection.team_id,
-					conversation_id: newConversation.id,
-				});
 				if (createError) {
 					console.error("[WhatsApp] Error creating conversation:", createError);
 					continue;
 				}
 
-				conversationId = newConversation.id;
+				notifications.newConversation({
+					team_id: connection.team_id,
+					conversation_id: newConversation.id,
+				});
+
+				currentConversation = newConversation;
 			}
 
 			// Crear el mensaje
 			await supabaseAdmin.from("messages").insert({
-				conversation_id: conversationId,
+				conversation_id: currentConversation.id,
 				role: "user",
 				content,
 				content_type: contentType,
 				// metadata: {
-				// whatsapp_message_id: message.id,
-				// whatsapp_timestamp: message.timestamp,
+				// 	whatsapp_message_id: message.id,
+				// 	whatsapp_timestamp: message.timestamp,
 				// },
 			});
 
-			const aiResponse = await ai.generateResponse(conversationId);
+			const aiResponse = await ai.generateResponse(currentConversation.id);
 			if (aiResponse.message) {
 				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
 				await whatsapp.sendTextMessage(message.from, aiResponse.message);
 
-				const { data, error: messageError } = await supabaseAdmin
+				const { error: messageError } = await supabaseAdmin
 					.from("messages")
 					.insert({
-						conversation_id: conversationId,
+						conversation_id: currentConversation.id,
 						role: "agent",
 						content: aiResponse.message,
 					})

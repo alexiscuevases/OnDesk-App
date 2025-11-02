@@ -14,7 +14,6 @@ import { CreateTeamInput, createTeamSchema } from "@/lib/validations/team";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useState } from "react";
 import { AppConfigs } from "@/configs/app";
 import { useAuth } from "@/components/providers/auth-provider";
 
@@ -22,8 +21,7 @@ function CreateTeamContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const fromDashboard = searchParams.get("from") === "dashboard";
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const { createTeam, createTeamError } = useTeams();
+	const { createTeam, isLoadingCreateTeam, createTeamError } = useTeams();
 	const { profile } = useAuth();
 	const {
 		register,
@@ -41,15 +39,11 @@ function CreateTeamContent() {
 
 	async function onSubmit(data: CreateTeamInput) {
 		try {
-			setIsLoading(true);
-
 			await createTeam(data);
 
 			router.push(`${AppConfigs.url}/dashboard`);
 		} catch (err) {
 			// Error is handled by useTeam hook
-		} finally {
-			setIsLoading(false);
 		}
 	}
 
@@ -89,7 +83,7 @@ function CreateTeamContent() {
 							<Label htmlFor="name">
 								Nombre del equipo <span className="text-destructive">*</span>
 							</Label>
-							<Input id="name" type="text" placeholder="Ej: Mi Empresa" disabled={isLoading} {...register("name")} />
+							<Input id="name" type="text" placeholder="Ej: Mi Empresa" disabled={isLoadingCreateTeam} {...register("name")} />
 							<p className="text-xs text-muted-foreground">El nombre de tu equipo u organización</p>
 							{errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
 						</div>
@@ -99,7 +93,7 @@ function CreateTeamContent() {
 							<Textarea
 								id="description"
 								placeholder="Describe brevemente tu equipo o proyecto..."
-								disabled={isLoading}
+								disabled={isLoadingCreateTeam}
 								{...register("description")}
 								className="resize-none"
 							/>
@@ -108,8 +102,8 @@ function CreateTeamContent() {
 						</div>
 
 						<div className="flex flex-col gap-3 pt-4">
-							<Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-								{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+							<Button type="submit" className="w-full" size="lg" disabled={isLoadingCreateTeam}>
+								{isLoadingCreateTeam && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 								{fromDashboard ? "Crear equipo" : "Continuar a selección de plan"}
 							</Button>
 							{!fromDashboard && (
