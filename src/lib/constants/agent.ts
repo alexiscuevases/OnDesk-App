@@ -23,3 +23,5 @@ export const AGENT_STATUSES = Object.keys(AGENT_STATUSES_OBJECT) as (keyof typeo
 export const AGENT_DEFAULT_TEMPERATURE = 0.7 as const;
 
 export const AGENT_DEFAULT_MAX_TOKENS = 1000 as const;
+
+export const AGENT_DEFAULT_SATISFACTION = 0 as const;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AGENT_DEFAULT_MAX_TOKENS, AGENT_DEFAULT_TEMPERATURE, AGENT_MODELS, AGENT_STATUSES, AGENT_TYPES } from "../constants/agent";
+import { AGENT_DEFAULT_MAX_TOKENS, AGENT_DEFAULT_SATISFACTION, AGENT_DEFAULT_TEMPERATURE, AGENT_MODELS, AGENT_STATUSES, AGENT_TYPES } from "../constants/agent";
 
 export const agentSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
@@ -12,6 +12,7 @@ export const agentSchema = z.object({
 	temperature: z.number().min(0).max(2).default(AGENT_DEFAULT_TEMPERATURE),
 	max_tokens: z.number().min(100).max(4000).default(AGENT_DEFAULT_MAX_TOKENS),
 	status: z.enum(AGENT_STATUSES),
+	satisfaction: z.number().default(AGENT_DEFAULT_SATISFACTION),
 });
 
 export type Agent = z.infer<typeof agentSchema> & {
