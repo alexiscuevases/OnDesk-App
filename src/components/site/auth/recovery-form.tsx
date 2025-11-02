@@ -14,9 +14,8 @@ import { RecoveryPasswordInput, recoveryPasswordSchema } from "@/lib/validations
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export function RecoveryForm() {
-	const [email, setEmail] = useState("");
 	const [success, setSuccess] = useState(false);
-	const { resetPassword, isLoading, error } = useAuth();
+	const { recoveryPassword, isLoading, error } = useAuth();
 
 	const {
 		register,
@@ -28,7 +27,7 @@ export function RecoveryForm() {
 
 	const onSubmit = async (data: RecoveryPasswordInput) => {
 		try {
-			await resetPassword({ email });
+			await recoveryPassword(data);
 
 			setSuccess(true);
 		} catch (err) {
