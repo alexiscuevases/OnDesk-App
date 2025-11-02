@@ -23,6 +23,7 @@ export const conversationSchema = z.object({
 export type Conversation = z.infer<typeof conversationSchema> & {
 	id: string;
 	agents?: Agent;
+	closed_at: string;
 	created_at: string;
 	updated_at: string;
 };

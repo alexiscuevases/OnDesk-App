@@ -7,7 +7,7 @@ export const CONVERSATION_CHANNELS = Object.keys(CONVERSATION_CHANNELS_OBJECT) a
 
 export const CONVERSATION_STATUSES_OBJECT = {
 	open: "Open",
-	resolved: "Resolved",
+	closed: "Closed",
 	pending: "Pending",
 } as const;
 

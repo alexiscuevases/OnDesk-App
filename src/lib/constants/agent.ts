@@ -7,7 +7,7 @@ export const AGENT_TYPES_OBJECT = {
 export const AGENT_TYPES = Object.keys(AGENT_TYPES_OBJECT) as (keyof typeof AGENT_TYPES_OBJECT)[];
 
 export const AGENT_MODELS_OBJECT = {
-	"gpt-4": "GPT-4",
+	"deepseek-chat": "DeepSeek - Chat",
 } as const;
 
 export const AGENT_MODELS = Object.keys(AGENT_MODELS_OBJECT) as (keyof typeof AGENT_MODELS_OBJECT)[];

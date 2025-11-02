@@ -101,6 +101,7 @@ export class AI {
 						- NUNCA inventes o modifiques el formato especificado para las respuestas de las acciones.
 						- SIEMPRE y EN TODO MOMENTO lo descrito en el =SYSTEM PROMPT= tendrá mas prioridad que las acciones.
 						- NUNCA lo descrito en =SYSTEM PROMPT= tendrá mas prioridad que 'Información de la conversación' o 'Información del cliente'.
+						- Al despedirte del usuario, agrega al final del mensaje el siguiente formato (NUNCA lo modifiques): [END_CONVERSATION]
 						====== END | IMPORTANTE ======
 					`,
 				},
@@ -177,8 +178,20 @@ export class AI {
 				}
 			}
 
+			// Logica [END_CONVERSATION]
+			if (/\[END_CONVERSATION\]/i.test(initialResponse)) {
+				const { error: updateError } = await supabaseAdmin
+					.from("conversations")
+					.update({
+						status: "closed",
+						closed_at: new Date().toISOString(),
+					})
+					.eq("id", conversationId);
+				if (updateError) throw updateError;
+			}
+
 			// Si no se requiere ejecutar alguna acción o no se encontró, retornar la respuesta inicial
-			return { success: true, message: initialResponse };
+			return { success: true, message: initialResponse.replace("[END_CONVERSATION]", "") };
 		} catch (err: unknown) {
 			if (err instanceof Error) return { success: false, error: err.message };
 			return { success: false, error: "Unexpected error occurred generating AI response" };
