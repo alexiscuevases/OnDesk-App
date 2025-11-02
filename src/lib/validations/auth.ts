@@ -30,13 +30,13 @@ export const signInSchema = z.object({
 export type SignInInput = z.infer<typeof signInSchema>;
 
 /**
- * ResetPassword
+ * RecoveryPassword
  */
-export const resetPasswordSchema = z.object({
+export const recoveryPasswordSchema = z.object({
 	email: signUpSchema.shape.email,
 });
 
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type RecoveryPasswordInput = z.infer<typeof recoveryPasswordSchema>;
 
 /**
  * UpdatePassword

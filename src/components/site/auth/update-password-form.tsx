@@ -8,46 +8,44 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { UpdatePasswordInput, updatePasswordSchema } from "@/lib/validations/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 export function UpdatePasswordForm() {
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	const [validationError, setValidationError] = useState<string | null>(null);
 	const { updatePassword, isLoading, error } = useAuth();
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setValidationError(null);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<UpdatePasswordInput>({
+		resolver: zodResolver(updatePasswordSchema),
+	});
 
-		// Validate passwords match
-		if (password !== confirmPassword) {
-			setValidationError("Las contraseñas no coinciden");
-			return;
-		}
-
-		// Validate password length
-		if (password.length < 6) {
-			setValidationError("La contraseña debe tener al menos 6 caracteres");
-			return;
-		}
-
+	const onSubmit = async (data: UpdatePasswordInput) => {
 		try {
-			await updatePassword({ password, confirm_password: confirmPassword });
+			await updatePassword(data);
+
+			toast.success("Password changed successful", {
+				description: "Redirecting...",
+			});
 		} catch (err) {
 			// Error is handled by useAuth hook
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-6">
-			{(error || validationError) && (
+		<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+			{error && (
 				<Alert variant="destructive">
 					<AlertCircle className="h-4 w-4" />
-					<AlertDescription>{error || validationError}</AlertDescription>
+					<AlertDescription>{error}</AlertDescription>
 				</Alert>
 			)}
 
@@ -58,11 +56,9 @@ export function UpdatePasswordForm() {
 						id="password"
 						type={showPassword ? "text" : "password"}
 						placeholder="••••••••"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						required
 						disabled={isLoading}
 						className="pr-10"
+						{...register("password")}
 					/>
 					<button
 						type="button"
@@ -71,21 +67,19 @@ export function UpdatePasswordForm() {
 						{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
 					</button>
 				</div>
-				<p className="text-sm text-muted-foreground">Debe tener al menos 8 caracteres</p>
+				{errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
 			</div>
 
 			<div className="space-y-2">
-				<Label htmlFor="confirmPassword">Confirmar contraseña</Label>
+				<Label htmlFor="confirm_password">Confirmar contraseña</Label>
 				<div className="relative">
 					<Input
-						id="confirmPassword"
+						id="confirm_password"
 						type={showConfirmPassword ? "text" : "password"}
 						placeholder="••••••••"
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
-						required
 						disabled={isLoading}
 						className="pr-10"
+						{...register("confirm_password")}
 					/>
 					<button
 						type="button"
@@ -94,10 +88,12 @@ export function UpdatePasswordForm() {
 						{showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
 					</button>
 				</div>
+				{errors.confirm_password && <p className="text-sm text-destructive">{errors.confirm_password.message}</p>}
 			</div>
 
 			<Button type="submit" className="w-full" disabled={isLoading}>
-				{isLoading ? "Actualizando..." : "Actualizar contraseña"}
+				{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+				Update password
 			</Button>
 		</form>
 	);
