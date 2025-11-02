@@ -109,6 +109,9 @@ export function useMessages(conversationId: string) {
 		},
 	});
 
+	const sendMessageByConnectionId = async ({ connectionId, role, to, message }: SendMessageByConnectionId) =>
+		await sendMessageByConnectionIdMutation.mutateAsync({ connectionId, role, to, message });
+
 	const sendMessageByConversationIdMutation = useMutation({
 		mutationFn: async ({ conversationId, role, message }: SendMessageByConversationId) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -131,6 +134,9 @@ export function useMessages(conversationId: string) {
 			queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
 		},
 	});
+
+	const sendMessageByConversationId = async ({ conversationId, role, message }: SendMessageByConversationId) =>
+		await sendMessageByConversationIdMutation.mutateAsync({ conversationId, role, message });
 
 	useEffect(() => {
 		if (!conversationId) return;
@@ -174,7 +180,7 @@ export function useMessages(conversationId: string) {
 		isLoading,
 		error: error?.message || null,
 		fetchMessages,
-		sendMessageByConnectionId: sendMessageByConnectionIdMutation.mutateAsync,
-		sendMessageByConversationId: sendMessageByConversationIdMutation.mutateAsync,
+		sendMessageByConnectionId,
+		sendMessageByConversationId,
 	};
 }

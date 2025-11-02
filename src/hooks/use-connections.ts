@@ -56,6 +56,8 @@ export function useConnections() {
 		},
 	});
 
+	const createConnection = async (input: baseCreateConnectionInput) => await createConnectionMutation.mutateAsync(input);
+
 	const updateConnectionMutation = useMutation({
 		mutationFn: async ({ id, input }: { id: string; input: baseUpdateConnectionInput }) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -75,6 +77,8 @@ export function useConnections() {
 		},
 	});
 
+	const updateConnection = async (id: string, input: baseUpdateConnectionInput) => await updateConnectionMutation.mutateAsync({ id, input });
+
 	const deleteConnectionMutation = useMutation({
 		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -87,13 +91,15 @@ export function useConnections() {
 		},
 	});
 
+	const deleteConnection = async (id: string) => await deleteConnectionMutation.mutateAsync(id);
+
 	return {
 		connections,
 		isLoading,
 		error: error?.message || null,
 		fetchConnections,
-		createConnection: createConnectionMutation.mutateAsync,
-		updateConnection: updateConnectionMutation.mutateAsync,
-		deleteConnection: deleteConnectionMutation.mutateAsync,
+		createConnection,
+		updateConnection,
+		deleteConnection,
 	};
 }

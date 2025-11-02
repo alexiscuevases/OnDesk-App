@@ -87,6 +87,8 @@ export function useTeams() {
 		},
 	});
 
+	const createTeam = async (input: CreateTeamInput) => await createTeamMutation.mutateAsync(input);
+
 	const switchTeamMutation = useMutation({
 		mutationFn: async (teamId: string) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -110,6 +112,8 @@ export function useTeams() {
 		},
 	});
 
+	const switchTeam = async (teamId: string) => await switchTeamMutation.mutateAsync(teamId);
+
 	return {
 		currentTeam,
 		teams,
@@ -117,9 +121,9 @@ export function useTeams() {
 		isLoadingTeams,
 		currentTeamError: currentTeamError?.message || null,
 		teamsError: teamsError?.message || null,
-		createTeam: createTeamMutation.mutateAsync,
+		createTeam,
 		createTeamError: createTeamMutation.error?.message || null,
-		switchTeam: switchTeamMutation.mutateAsync,
+		switchTeam,
 		fetchCurrentTeam,
 		fetchTeams,
 	};

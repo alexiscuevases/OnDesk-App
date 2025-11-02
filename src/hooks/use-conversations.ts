@@ -59,6 +59,8 @@ export function useConversations() {
 		},
 	});
 
+	const deleteConversation = async (id: string) => await deleteConversationMutation.mutateAsync(id);
+
 	const assignAgentMutation = useMutation({
 		mutationFn: async ({ conversationId, agentId }: { conversationId: string; agentId: string }) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -70,6 +72,8 @@ export function useConversations() {
 			queryClient.invalidateQueries({ queryKey: ["conversations", profile?.team_id] });
 		},
 	});
+
+	const assignAgentToConversation = async (conversationId: string, agentId: string) => await assignAgentMutation.mutateAsync({ conversationId, agentId });
 
 	useEffect(() => {
 		if (!profile) return;
@@ -116,7 +120,7 @@ export function useConversations() {
 		error: error?.message || null,
 		fetchConversations,
 		fetchConversationById,
-		deleteConversation: deleteConversationMutation.mutateAsync,
-		assignAgentToConversation: assignAgentMutation.mutateAsync,
+		deleteConversation,
+		assignAgentToConversation,
 	};
 }

@@ -60,6 +60,8 @@ export function useEndpoints(agentId?: string) {
 		},
 	});
 
+	const createEndpoint = async (input: CreateEndpointInput) => await createEndpointMutation.mutateAsync(input);
+
 	const updateEndpointMutation = useMutation({
 		mutationFn: async ({ id, input }: { id: string; input: UpdateEndpointInput }) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -86,6 +88,8 @@ export function useEndpoints(agentId?: string) {
 		},
 	});
 
+	const updateEndpoint = async (id: string, input: UpdateEndpointInput) => await updateEndpointMutation.mutateAsync({ id, input });
+
 	const deleteEndpointMutation = useMutation({
 		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -98,23 +102,70 @@ export function useEndpoints(agentId?: string) {
 		},
 	});
 
+	const deleteEndpoint = async (id: string) => await deleteEndpointMutation.mutateAsync(id);
+
 	const testEndpointMutation = useMutation({
-		mutationFn: async ({ id, data }: { id: string; data?: any }) => {
+		mutationFn: async ({ id, params }: { id: string; params?: any }) => {
 			if (!profile) throw new Error("Not authenticated");
 
-			return await ai.actionExecutor(id, data);
+			const { data: endpoint, error: endpointError } = await supabase.from("endpoints").select("*").eq("id", id).single<Endpoint>();
+			if (endpointError) throw endpointError;
+
+			const start = Date.now();
+
+			try {
+				// Construir la URL con parámetros (para GET, DELETE)
+				let url = endpoint.url;
+				url = url.replace(/\{(\w+)\}/g, (_, key) => {
+					const value = params[key];
+					delete params[key];
+					return encodeURIComponent(value ?? "");
+				});
+
+				if (["GET", "DELETE"].includes(endpoint.method.toUpperCase())) {
+					const query = new URLSearchParams(params).toString();
+					if (query) url += (url.includes("?") ? "&" : "?") + query;
+				}
+
+				// Preparar body (para POST, PUT, PATCH)
+				const body = ["POST", "PUT", "PATCH"].includes(endpoint.method.toUpperCase()) ? JSON.stringify(params) : undefined;
+				const response = await fetch(url, {
+					method: endpoint.method,
+					headers: {
+						"Content-Type": "application/json",
+						...endpoint.headers_schema,
+					},
+					body,
+				});
+				if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+				const data = await response.json().catch(() => ({}));
+				const duration = Date.now() - start;
+
+				return {
+					success: true,
+					data,
+					duration,
+				};
+			} catch (err: unknown) {
+				const duration = Date.now() - start;
+				if (err instanceof Error) return { success: false, error: err.message, duration };
+				return { success: false, error: "Unexpected error occurred executing AI action", duration };
+			}
 		},
 	});
+
+	const testEndpoint = async (id: string, params?: any) => await testEndpointMutation.mutateAsync({ id, params });
 
 	return {
 		endpoints,
 		isLoading,
 		error: error?.message || null,
 		fetchEndpoints,
-		createEndpoint: createEndpointMutation.mutateAsync,
-		updateEndpoint: updateEndpointMutation.mutateAsync,
-		deleteEndpoint: deleteEndpointMutation.mutateAsync,
-		testEndpoint: testEndpointMutation.mutateAsync,
+		createEndpoint,
+		updateEndpoint,
+		deleteEndpoint,
+		testEndpoint,
 		isTestingEndpoint: testEndpointMutation.isPending,
 	};
 }

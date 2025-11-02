@@ -47,6 +47,8 @@ export function useNotifications(fromDashboardHeader = false) {
 		},
 	});
 
+	const markAsRead = async (id: string) => await markAsReadMutation.mutateAsync(id);
+
 	const markAllAsReadMutation = useMutation({
 		mutationFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
@@ -58,6 +60,8 @@ export function useNotifications(fromDashboardHeader = false) {
 			queryClient.invalidateQueries({ queryKey: ["notifications", profile?.team_id] });
 		},
 	});
+
+	const markAllAsRead = async () => await markAllAsReadMutation.mutateAsync();
 
 	const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
@@ -106,7 +110,7 @@ export function useNotifications(fromDashboardHeader = false) {
 		isLoading,
 		error: error?.message || null,
 		fetchNotifications,
-		markAsRead: markAsReadMutation.mutateAsync,
-		markAllAsRead: markAllAsReadMutation.mutateAsync,
+		markAsRead,
+		markAllAsRead,
 	};
 }

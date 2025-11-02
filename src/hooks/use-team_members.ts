@@ -57,8 +57,10 @@ export function useTeamMembers(currentTeamId: string) {
 		},
 	});
 
+	const inviteTeamMember = async (input: InviteTeamMemberInput) => await inviteTeamMemberMutation.mutateAsync(input);
+
 	const updateTeamMemberRoleMutation = useMutation({
-		mutationFn: async ({ id, role }: { id: string; role: string }) => {
+		mutationFn: async ({ id, role }: { id: string; role: TeamMember["role"] }) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data, error: updateError } = await supabase.from("team_members").update({ role }).eq("id", id).select().single<TeamMember>();
@@ -70,6 +72,8 @@ export function useTeamMembers(currentTeamId: string) {
 			queryClient.invalidateQueries({ queryKey: ["team-members", currentTeamId] });
 		},
 	});
+
+	const updateTeamMemberRole = async (id: string, role: TeamMember["role"]) => await updateTeamMemberRoleMutation.mutateAsync({ id, role });
 
 	const removeTeamMemberMutation = useMutation({
 		mutationFn: async (id: string) => {
@@ -83,13 +87,15 @@ export function useTeamMembers(currentTeamId: string) {
 		},
 	});
 
+	const removeTeamMember = async (id: string) => await removeTeamMemberMutation.mutateAsync(id);
+
 	return {
 		teamMembers,
 		isLoading,
 		error: error?.message || null,
 		fetchTeamMembers,
-		inviteTeamMember: inviteTeamMemberMutation.mutateAsync,
-		updateTeamMemberRole: updateTeamMemberRoleMutation.mutateAsync,
-		removeTeamMember: removeTeamMemberMutation.mutateAsync,
+		inviteTeamMember,
+		updateTeamMemberRole,
+		removeTeamMember,
 	};
 }
