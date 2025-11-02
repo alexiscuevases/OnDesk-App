@@ -1,8 +1,9 @@
 interface Plan {
-	id: string;
+	id: "starter" | "professional" | "enterprise";
 	name: string;
 	description: string;
 	priceInCents: number;
+	priceInCentsAnnual: number;
 	features: string[];
 	popular?: boolean;
 }
@@ -13,6 +14,8 @@ interface PlatformConfigs {
 	mails: any;
 }
 
+const ANNUAL_DISCOUNT_PERCENTAGE = 15;
+
 export const platformConfigs: PlatformConfigs = {
 	name: "OnDesk",
 	plans: [
@@ -21,6 +24,7 @@ export const platformConfigs: PlatformConfigs = {
 			name: "Starter",
 			description: "Perfect for small businesses getting started",
 			priceInCents: 2900, // $29/month
+			priceInCentsAnnual: (2900 * 12 * ANNUAL_DISCOUNT_PERCENTAGE) / 100,
 			features: ["Up to 3 AI agents", "1,000 conversations/month", "WhatsApp integration", "Website widget", "Email support", "Basic analytics"],
 		},
 		{
@@ -28,6 +32,7 @@ export const platformConfigs: PlatformConfigs = {
 			name: "Professional",
 			description: "For growing businesses with higher volume",
 			priceInCents: 9900, // $99/month
+			priceInCentsAnnual: (9900 * 12 * ANNUAL_DISCOUNT_PERCENTAGE) / 100,
 			features: [
 				"Up to 10 AI agents",
 				"10,000 conversations/month",
@@ -45,6 +50,7 @@ export const platformConfigs: PlatformConfigs = {
 			name: "Enterprise",
 			description: "For large organizations with custom needs",
 			priceInCents: 29900, // $299/month
+			priceInCentsAnnual: (29900 * 12 * ANNUAL_DISCOUNT_PERCENTAGE) / 100,
 			features: [
 				"Unlimited AI agents",
 				"Unlimited conversations",
