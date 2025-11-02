@@ -58,7 +58,6 @@ export function useConversations() {
 			queryClient.invalidateQueries({ queryKey: ["conversations", profile?.team_id] });
 		},
 	});
-
 	const deleteConversation = async (id: string) => await deleteConversationMutation.mutateAsync(id);
 
 	const assignAgentMutation = useMutation({
@@ -72,7 +71,6 @@ export function useConversations() {
 			queryClient.invalidateQueries({ queryKey: ["conversations", profile?.team_id] });
 		},
 	});
-
 	const assignAgentToConversation = async (conversationId: string, agentId: string) => await assignAgentMutation.mutateAsync({ conversationId, agentId });
 
 	useEffect(() => {

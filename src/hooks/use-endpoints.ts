@@ -58,7 +58,6 @@ export function useEndpoints(agentId?: string) {
 			queryClient.invalidateQueries({ queryKey: ["endpoints", agentId] });
 		},
 	});
-
 	const createEndpoint = async (input: CreateEndpointInput) => await createEndpointMutation.mutateAsync(input);
 
 	const updateEndpointMutation = useMutation({
@@ -86,7 +85,6 @@ export function useEndpoints(agentId?: string) {
 			queryClient.invalidateQueries({ queryKey: ["endpoints", agentId] });
 		},
 	});
-
 	const updateEndpoint = async (id: string, input: UpdateEndpointInput) => await updateEndpointMutation.mutateAsync({ id, input });
 
 	const deleteEndpointMutation = useMutation({
@@ -100,7 +98,6 @@ export function useEndpoints(agentId?: string) {
 			queryClient.invalidateQueries({ queryKey: ["endpoints", agentId] });
 		},
 	});
-
 	const deleteEndpoint = async (id: string) => await deleteEndpointMutation.mutateAsync(id);
 
 	const testEndpointMutation = useMutation({
@@ -153,7 +150,6 @@ export function useEndpoints(agentId?: string) {
 			}
 		},
 	});
-
 	const testEndpoint = async (id: string, params?: any) => await testEndpointMutation.mutateAsync({ id, params });
 
 	return {

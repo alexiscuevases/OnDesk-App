@@ -60,7 +60,6 @@ export function useAgents() {
 			queryClient.invalidateQueries({ queryKey: ["agents", profile?.team_id] });
 		},
 	});
-
 	const createAgent = async (input: CreateAgentInput) => await createAgentMutation.mutateAsync(input);
 
 	const updateAgentMutation = useMutation({
@@ -87,7 +86,6 @@ export function useAgents() {
 			queryClient.invalidateQueries({ queryKey: ["agents", profile?.team_id] });
 		},
 	});
-
 	const updateAgent = async (id: string, input: UpdateAgentInput) => await updateAgentMutation.mutateAsync({ id, input });
 
 	const deleteAgentMutation = useMutation({
@@ -101,7 +99,6 @@ export function useAgents() {
 			queryClient.invalidateQueries({ queryKey: ["agents", profile?.team_id] });
 		},
 	});
-
 	const deleteAgent = async (id: string) => await deleteAgentMutation.mutateAsync(id);
 
 	return {

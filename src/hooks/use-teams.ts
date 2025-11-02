@@ -7,7 +7,7 @@ import type { CreateTeamInput, Team } from "@/lib/validations/team";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export function useTeams() {
-	const { profile } = useAuth();
+	const { profile, refreshProfile } = useAuth();
 	const supabase = createClient();
 	const queryClient = useQueryClient();
 
@@ -86,7 +86,6 @@ export function useTeams() {
 			queryClient.invalidateQueries({ queryKey: ["teams", profile?.id] });
 		},
 	});
-
 	const createTeam = async (input: CreateTeamInput) => await createTeamMutation.mutateAsync(input);
 
 	const switchTeamMutation = useMutation({
@@ -107,11 +106,10 @@ export function useTeams() {
 
 			return true;
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["teams"] });
+		onSuccess: async () => {
+			await refreshProfile();
 		},
 	});
-
 	const switchTeam = async (teamId: string) => await switchTeamMutation.mutateAsync(teamId);
 
 	return {

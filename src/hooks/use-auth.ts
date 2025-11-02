@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { ResetPasswordInput, SignInInput, SignUpInput, UpdatePasswordInput } from "@/lib/validations/auth";
+import type { RecoveryPasswordInput, SignInInput, SignUpInput, UpdatePasswordInput } from "@/lib/validations/auth";
 import { AppConfigs } from "@/configs/app";
 
 export function useAuth() {
@@ -62,7 +62,7 @@ export function useAuth() {
 		}
 	};
 
-	const resetPassword = async (data: ResetPasswordInput) => {
+	const recoveryPassword = async (data: RecoveryPasswordInput) => {
 		setIsLoading(true);
 		setError(null);
 
@@ -106,7 +106,7 @@ export function useAuth() {
 	return {
 		signIn,
 		signUp,
-		resetPassword,
+		recoveryPassword,
 		updatePassword,
 		isLoading,
 		error,

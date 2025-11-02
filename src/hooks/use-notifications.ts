@@ -35,6 +35,8 @@ export function useNotifications(fromDashboardHeader = false) {
 		enabled: !!profile,
 	});
 
+	const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
+
 	const markAsReadMutation = useMutation({
 		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -46,7 +48,6 @@ export function useNotifications(fromDashboardHeader = false) {
 			queryClient.invalidateQueries({ queryKey: ["notifications", profile?.team_id] });
 		},
 	});
-
 	const markAsRead = async (id: string) => await markAsReadMutation.mutateAsync(id);
 
 	const markAllAsReadMutation = useMutation({
@@ -60,10 +61,7 @@ export function useNotifications(fromDashboardHeader = false) {
 			queryClient.invalidateQueries({ queryKey: ["notifications", profile?.team_id] });
 		},
 	});
-
 	const markAllAsRead = async () => await markAllAsReadMutation.mutateAsync();
-
-	const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
 	useEffect(() => {
 		if (!profile) return;

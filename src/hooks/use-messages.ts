@@ -108,7 +108,6 @@ export function useMessages(conversationId: string) {
 			queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
 		},
 	});
-
 	const sendMessageByConnectionId = async ({ connectionId, role, to, message }: SendMessageByConnectionId) =>
 		await sendMessageByConnectionIdMutation.mutateAsync({ connectionId, role, to, message });
 
@@ -134,7 +133,6 @@ export function useMessages(conversationId: string) {
 			queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
 		},
 	});
-
 	const sendMessageByConversationId = async ({ conversationId, role, message }: SendMessageByConversationId) =>
 		await sendMessageByConversationIdMutation.mutateAsync({ conversationId, role, message });
 

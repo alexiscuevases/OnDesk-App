@@ -55,7 +55,6 @@ export function useConnections() {
 			queryClient.invalidateQueries({ queryKey: ["connections", profile?.team_id] });
 		},
 	});
-
 	const createConnection = async (input: baseCreateConnectionInput) => await createConnectionMutation.mutateAsync(input);
 
 	const updateConnectionMutation = useMutation({
@@ -76,7 +75,6 @@ export function useConnections() {
 			queryClient.invalidateQueries({ queryKey: ["connections", profile?.team_id] });
 		},
 	});
-
 	const updateConnection = async (id: string, input: baseUpdateConnectionInput) => await updateConnectionMutation.mutateAsync({ id, input });
 
 	const deleteConnectionMutation = useMutation({
@@ -90,7 +88,6 @@ export function useConnections() {
 			queryClient.invalidateQueries({ queryKey: ["connections", profile?.team_id] });
 		},
 	});
-
 	const deleteConnection = async (id: string) => await deleteConnectionMutation.mutateAsync(id);
 
 	return {

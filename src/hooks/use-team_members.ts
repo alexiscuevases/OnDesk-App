@@ -56,7 +56,6 @@ export function useTeamMembers(currentTeamId: string) {
 			queryClient.invalidateQueries({ queryKey: ["team-members", currentTeamId] });
 		},
 	});
-
 	const inviteTeamMember = async (input: InviteTeamMemberInput) => await inviteTeamMemberMutation.mutateAsync(input);
 
 	const updateTeamMemberRoleMutation = useMutation({
@@ -72,7 +71,6 @@ export function useTeamMembers(currentTeamId: string) {
 			queryClient.invalidateQueries({ queryKey: ["team-members", currentTeamId] });
 		},
 	});
-
 	const updateTeamMemberRole = async (id: string, role: TeamMember["role"]) => await updateTeamMemberRoleMutation.mutateAsync({ id, role });
 
 	const removeTeamMemberMutation = useMutation({
@@ -86,7 +84,6 @@ export function useTeamMembers(currentTeamId: string) {
 			queryClient.invalidateQueries({ queryKey: ["team-members", currentTeamId] });
 		},
 	});
-
 	const removeTeamMember = async (id: string) => await removeTeamMemberMutation.mutateAsync(id);
 
 	return {
