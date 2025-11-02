@@ -61,6 +61,8 @@ export function useAgents() {
 		},
 	});
 
+	const createAgent = async (input: CreateAgentInput) => await createAgentMutation.mutateAsync(input);
+
 	const updateAgentMutation = useMutation({
 		mutationFn: async ({ id, input }: { id: string; input: UpdateAgentInput }) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -86,6 +88,8 @@ export function useAgents() {
 		},
 	});
 
+	const updateAgent = async (id: string, input: UpdateAgentInput) => await updateAgentMutation.mutateAsync({ id, input });
+
 	const deleteAgentMutation = useMutation({
 		mutationFn: async (id: string) => {
 			if (!profile) throw new Error("Not authenticated");
@@ -98,13 +102,15 @@ export function useAgents() {
 		},
 	});
 
+	const deleteAgent = async (id: string) => await deleteAgentMutation.mutateAsync(id);
+
 	return {
 		agents,
 		isLoading,
 		error: error?.message || null,
 		fetchAgents,
-		createAgent: createAgentMutation.mutateAsync,
-		updateAgent: updateAgentMutation.mutateAsync,
-		deleteAgent: deleteAgentMutation.mutateAsync,
+		createAgent,
+		updateAgent,
+		deleteAgent,
 	};
 }

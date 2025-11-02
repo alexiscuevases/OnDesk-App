@@ -74,7 +74,7 @@ export function ConversationsList() {
 					.slice(0, 2);
 
 				return (
-					<Card key={conversation.id} className="hover:bg-accent/50 transition-colors cursor-pointer">
+					<Card key={conversation.id}>
 						<CardHeader className="pb-3">
 							<div className="flex items-start justify-between">
 								<div className="flex items-center gap-3 flex-1">

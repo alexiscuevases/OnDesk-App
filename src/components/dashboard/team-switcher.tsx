@@ -12,19 +12,19 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTeam } from "@/hooks/use-teams";
+import { useTeams } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export function TeamSwitcher() {
 	const router = useRouter();
-	const { currentTeam, allTeams, switchTeam, isLoading } = useTeam();
+	const { currentTeam, teams, switchTeam, isLoadingTeams, isLoadingCurrentTeam } = useTeams();
 	const [switching, setSwitching] = useState(false);
 
 	const handleSelectTeam = async (teamId: string) => {
 		if (teamId === currentTeam?.id) return;
-
 		setSwitching(true);
+
 		try {
 			await switchTeam(teamId);
 
@@ -42,7 +42,7 @@ export function TeamSwitcher() {
 		}
 	};
 
-	if (isLoading || !currentTeam) {
+	if (isLoadingTeams || !isLoadingCurrentTeam) {
 		return (
 			<div className="flex items-center gap-2 px-2 py-1.5">
 				<div className="h-8 w-8 rounded-lg bg-muted animate-pulse" />
@@ -69,7 +69,7 @@ export function TeamSwitcher() {
 			<DropdownMenuContent align="start" className="w-60">
 				<DropdownMenuLabel>Equipos</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				{allTeams.map((team) => (
+				{teams.map((team) => (
 					<DropdownMenuItem key={team.id} onClick={() => handleSelectTeam(team.id)} disabled={switching} className="cursor-pointer">
 						<div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground text-xs font-medium mr-2">
 							{team.name.charAt(0).toUpperCase()}
