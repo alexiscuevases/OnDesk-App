@@ -42,7 +42,7 @@ export function TeamSwitcher() {
 		}
 	};
 
-	if (isLoadingTeams || !isLoadingCurrentTeam) {
+	if (isLoadingTeams || isLoadingCurrentTeam) {
 		return (
 			<div className="flex items-center gap-2 px-2 py-1.5">
 				<div className="h-8 w-8 rounded-lg bg-muted animate-pulse" />
