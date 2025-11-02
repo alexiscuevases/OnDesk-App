@@ -326,15 +326,6 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 																</pre>
 															</div>
 														)}
-
-														{Object.keys(endpoint.body_schema).length > 0 && (
-															<div>
-																<Label className="text-xs text-muted-foreground">Esquema del Body</Label>
-																<pre className="text-xs bg-muted p-2 rounded mt-1 overflow-x-auto">
-																	{JSON.stringify(endpoint.body_schema, null, 2)}
-																</pre>
-															</div>
-														)}
 													</div>
 												)}
 											</div>
