@@ -15,7 +15,7 @@ export function useConnections() {
 		isLoading,
 		error,
 		refetch: fetchConnections,
-	} = useQuery({
+	} = useQuery<Connection[]>({
 		queryKey: ["connections", profile?.team_id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");

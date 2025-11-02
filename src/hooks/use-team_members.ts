@@ -15,7 +15,7 @@ export function useTeamMembers(currentTeamId: string) {
 		isLoading,
 		error,
 		refetch: fetchTeamMembers,
-	} = useQuery({
+	} = useQuery<TeamMember[]>({
 		queryKey: ["team-members", currentTeamId],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");

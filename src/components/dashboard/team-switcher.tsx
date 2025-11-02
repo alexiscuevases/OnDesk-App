@@ -59,9 +59,9 @@ export function TeamSwitcher() {
 				<Button variant="outline" className="w-full justify-between" disabled={switching}>
 					<div className="flex items-center gap-2 truncate">
 						<div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground text-xs font-medium">
-							{currentTeam.name.charAt(0).toUpperCase()}
+							{currentTeam?.name.charAt(0).toUpperCase()}
 						</div>
-						<span className="truncate font-medium">{currentTeam.name}</span>
+						<span className="truncate font-medium">{currentTeam?.name}</span>
 					</div>
 					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>

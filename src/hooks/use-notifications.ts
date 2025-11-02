@@ -16,7 +16,7 @@ export function useNotifications(fromDashboardHeader = false) {
 		isLoading,
 		error,
 		refetch: fetchNotifications,
-	} = useQuery({
+	} = useQuery<Notification[]>({
 		queryKey: ["notifications", profile?.team_id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");

@@ -16,7 +16,7 @@ export function useConversations() {
 		isLoading,
 		error,
 		refetch: fetchConversations,
-	} = useQuery({
+	} = useQuery<Conversation[]>({
 		queryKey: ["conversations", profile?.team_id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");

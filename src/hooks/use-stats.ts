@@ -24,7 +24,7 @@ export function useStats() {
 		isLoading,
 		error,
 		refetch: fetchStats,
-	} = useQuery({
+	} = useQuery<DashboardStats>({
 		queryKey: ["stats", profile?.team_id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");

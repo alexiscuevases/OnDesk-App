@@ -32,7 +32,7 @@ export function useMessages(conversationId: string) {
 		isLoading,
 		error,
 		refetch: fetchMessages,
-	} = useQuery({
+	} = useQuery<Message[]>({
 		queryKey: ["messages", conversationId],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
@@ -123,7 +123,7 @@ export function useMessages(conversationId: string) {
 				.single<Conversation>();
 			if (conversationError || !conversation) throw conversationError ?? new Error("Conversation not exists");
 
-			return await sendMessageByConnectionIdMutation.mutateAsync({
+			return await sendMessageByConnectionId({
 				connectionId: conversation.connection_id,
 				role,
 				to: conversation.customer_phone as string,

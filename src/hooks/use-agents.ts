@@ -15,7 +15,7 @@ export function useAgents() {
 		isLoading,
 		error,
 		refetch: fetchAgents,
-	} = useQuery({
+	} = useQuery<Agent[]>({
 		queryKey: ["agents", profile?.team_id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");

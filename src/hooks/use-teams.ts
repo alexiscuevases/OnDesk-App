@@ -16,7 +16,7 @@ export function useTeams() {
 		isLoading: isLoadingCurrentTeam,
 		error: currentTeamError,
 		refetch: fetchCurrentTeam,
-	} = useQuery({
+	} = useQuery<Team>({
 		queryKey: ["team", profile?.team_id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
@@ -34,7 +34,7 @@ export function useTeams() {
 		isLoading: isLoadingTeams,
 		error: teamsError,
 		refetch: fetchTeams,
-	} = useQuery({
+	} = useQuery<Team[]>({
 		queryKey: ["teams", profile?.id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");

@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import type { Endpoint, CreateEndpointInput, UpdateEndpointInput } from "@/lib/validations/endpoint";
 import { useAuth } from "@/components/providers/auth-provider";
-import { ai } from "@/lib/ai";
 
 export function useEndpoints(agentId?: string) {
 	const { profile } = useAuth();
@@ -16,7 +15,7 @@ export function useEndpoints(agentId?: string) {
 		isLoading,
 		error,
 		refetch: fetchEndpoints,
-	} = useQuery({
+	} = useQuery<Endpoint[]>({
 		queryKey: ["endpoints", agentId],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
