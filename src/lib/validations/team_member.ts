@@ -2,6 +2,9 @@ import { z } from "zod";
 import { Team } from "./team";
 import { TEAM_MEMBER_ROLES, TEAM_MEMBER_STATUSES } from "../constants/team_member";
 
+/**
+ * Base
+ */
 export const teamMemberSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
 	invited_by: z.string().min(1, "'Invited By' is required"),

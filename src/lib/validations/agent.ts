@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { AGENT_DEFAULT_MAX_TOKENS, AGENT_DEFAULT_SATISFACTION, AGENT_DEFAULT_TEMPERATURE, AGENT_MODELS, AGENT_STATUSES, AGENT_TYPES } from "../constants/agent";
 
+/**
+ * Base
+ */
 export const agentSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
 	avatar_url: z.string().optional(),

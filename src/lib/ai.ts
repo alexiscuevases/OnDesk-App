@@ -1,5 +1,4 @@
 import { supabaseAdmin } from "./supabase/admin";
-import { Agent } from "./validations/agent";
 import { Conversation } from "./validations/conversation";
 import { Message } from "./validations/message";
 import { Endpoint } from "./validations/endpoint";
@@ -8,6 +7,11 @@ import { createDeepSeek } from "@ai-sdk/deepseek";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
 if (!DEEPSEEK_API_KEY) throw new Error("Please define all AI environment variables");
+
+export interface MessageForAI {
+	role: "system" | "assistant" | "user";
+	content: string;
+}
 
 export class AI {
 	/**
@@ -24,7 +28,7 @@ export class AI {
 			if (conversationError) throw conversationError;
 
 			// Verificar agente asignado
-			const agent = conversation.agents as Agent;
+			const agent = conversation.agents;
 			if (!agent) throw new Error("No agent assigned to conversation");
 			if (agent.status !== "active") throw new Error("Agent is not active");
 
@@ -63,7 +67,7 @@ export class AI {
 								(endpoint) => `
 									- ${endpoint.name}: ${endpoint.description}
 									ID: ${endpoint.id}
-									${Object.keys(endpoint.params_schema).length > 0 ? `Parámetros requeridos:: ${JSON.stringify(endpoint.params_schema)}` : ""}
+									${Object.keys(endpoint.params_schema).length > 0 ? `Parámetros requeridos: ${JSON.stringify(endpoint.params_schema)}` : ""}
 								`
 							)
 							.join("\n")}
@@ -72,7 +76,7 @@ export class AI {
 					: "";
 
 			// Construir mensajes para la IA
-			const messagesForAI = [
+			const messagesForAI: MessageForAI[] = [
 				{
 					role: "system",
 					content: `
@@ -105,8 +109,8 @@ export class AI {
 						====== END | IMPORTANTE ======
 					`,
 				},
-				...(messages?.map((message) => {
-					let message_role;
+				...(messages.map((message) => {
+					let message_role: MessageForAI["role"];
 					switch (message.role) {
 						case "system":
 							message_role = "system";

@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { Team } from "./team";
 
+/**
+ * Base
+ */
 export const profileSchema = z.object({
 	stripe_customer_id: z.string().optional(),
 	team_id: z.string().optional(),

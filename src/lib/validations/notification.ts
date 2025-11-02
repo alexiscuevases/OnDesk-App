@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { NOTIFICATION_TYPES } from "../constants/notification";
 
+/**
+ * Base
+ */
 export const notificationSchema = z.object({
 	user_id: z.string().min(1, "'User ID' is required"),
 	title: z.string().min(1, "Title is required"),

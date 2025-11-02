@@ -8,6 +8,9 @@ import {
 	CONVERSATION_STATUSES,
 } from "../constants/conversation";
 
+/**
+ * Base
+ */
 export const conversationSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
 	connection_id: z.string().min(1, "'Connection ID' is required"),

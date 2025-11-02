@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { CONNECTION_DEFAULT_STATUS, CONNECTION_STATUSES, CONNECTION_TYPES } from "../constants/connection";
 
+/**
+ * Base
+ */
 export const connectionSchema = z.object({
 	team_id: z.string().min(1, "'Team ID' is required"),
 	name: z.string().min(1, "Name is required"),

@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { TEAM_PLANS, TEAM_STRIPE_SUBSCRIPTION_STATUSES } from "../constants/team";
 
+/**
+ * Base
+ */
 export const teamSchema = z.object({
 	owner_id: z.string().min(1, "'Owner ID' is required"),
 	name: z.string().min(1, "Name is required"),

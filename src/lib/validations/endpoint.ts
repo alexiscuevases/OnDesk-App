@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { ENDPOINT_DEFAULT_RETRY_COUNT, ENDPOINT_DEFAULT_TIMEOUT, ENDPOINT_METHODS } from "../constants/endpoint";
 
+/**
+ * Base
+ */
 export const endpointSchema = z.object({
 	agent_id: z.string().uuid("Agent ID must be a valid UUID"),
 	name: z.string().min(1, "Name is required").max(100),

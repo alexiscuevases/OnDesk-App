@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { MESSAGE_ROLES } from "../constants/message";
 
+/**
+ * Base
+ */
 export const messageSchema = z.object({
 	conversation_id: z.string().min(1, "'Conversation ID' is required"),
 	role: z.enum(MESSAGE_ROLES),
