@@ -30,6 +30,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 	const [testDialogOpen, setTestDialogOpen] = useState(false);
 	const [selectedEndpointForTest, setSelectedEndpointForTest] = useState<Endpoint | null>(null);
 	const [testParams, setTestParams] = useState<Record<string, string>>({});
+	const [testResponse, setTestResponse] = useState<any>(null);
 	const { endpoints, deleteEndpoint, updateEndpoint, createEndpoint, testEndpoint, isTestingEndpoint } = useEndpoints(agentId);
 
 	const {
@@ -92,6 +93,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 	const executeTest = async (endpointId: string, params: Record<string, string>) => {
 		try {
 			const result = await testEndpoint(endpointId, params);
+			setTestResponse(result);
 			if (result.success) {
 				toast.success("Endpoint ejecutado exitosamente", {
 					description: `Duración: ${result.duration}ms`,
@@ -101,6 +103,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 			}
 		} catch (error: any) {
 			toast.error(error.message || "Error al probar el endpoint");
+			setTestResponse(error);
 		}
 	};
 
@@ -328,10 +331,6 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 																	<p className="font-mono">{endpoint.retry_count}</p>
 																</div>
 																<div>
-																	<Label className="text-xs text-muted-foreground">Autenticación</Label>
-																	<p className="font-mono">{endpoint.auth_type}</p>
-																</div>
-																<div>
 																	<Label className="text-xs text-muted-foreground">Parámetros</Label>
 																	<p className="font-mono">{Object.keys(endpoint.params_schema).length}</p>
 																</div>
@@ -427,18 +426,31 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 									{schema.description && <p className="text-xs text-muted-foreground">{schema.description}</p>}
 								</div>
 							))}
+
+							{testResponse && (
+								<div className="mt-4 pt-4 border-t">
+									<Label className="text-sm font-semibold">Respuesta:</Label>
+									<pre className="bg-muted p-3 rounded mt-2 text-xs overflow-auto max-h-[300px] border">
+										{JSON.stringify(testResponse, null, 2)}
+									</pre>
+								</div>
+							)}
 						</div>
 					)}
 
 					<DialogFooter>
-						<Button variant="outline" onClick={() => setTestDialogOpen(false)}>
-							Cancelar
+						<Button
+							variant="outline"
+							onClick={() => {
+								setTestDialogOpen(false);
+								setTestResponse(null);
+							}}>
+							Cerrar
 						</Button>
 						<Button
 							onClick={() => {
 								if (selectedEndpointForTest) {
 									executeTest(selectedEndpointForTest.id, testParams);
-									setTestDialogOpen(false);
 								}
 							}}
 							disabled={isTestingEndpoint}>
