@@ -43,4 +43,4 @@ export class Nodemailer {
 	}
 }
 
-export const nodemailer = new Node();
+export const nodemailer = new Nodemailer();
