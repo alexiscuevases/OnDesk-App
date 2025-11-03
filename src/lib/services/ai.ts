@@ -1,5 +1,3 @@
-"use server";
-
 import { supabaseAdmin } from "../supabase/admin";
 import { Conversation } from "../validations/conversation";
 import { Message } from "../validations/message";

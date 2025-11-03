@@ -1,5 +1,3 @@
-"use server";
-
 import { supabaseAdmin } from "../supabase/admin";
 import { Notification } from "../validations/notification";
 
