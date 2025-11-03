@@ -1,5 +1,7 @@
-import { supabaseAdmin } from "./supabase/admin";
-import { Notification } from "./validations/notification";
+"use server";
+
+import { supabaseAdmin } from "../supabase/admin";
+import { Notification } from "../validations/notification";
 
 interface NewConversation {
 	team_id: string;
@@ -23,9 +25,10 @@ export class Notifications {
 				.single<Notification>();
 			if (error) throw error;
 
-			return data;
+			return { success: true, data };
 		} catch (err: unknown) {
-			throw err;
+			if (err instanceof Error) return { success: false, error: err.message };
+			return { success: false, error: "Unexpected error occurred creating Notification" };
 		}
 	}
 }

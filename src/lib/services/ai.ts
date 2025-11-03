@@ -1,9 +1,12 @@
-import { supabaseAdmin } from "./supabase/admin";
-import { Conversation } from "./validations/conversation";
-import { Message } from "./validations/message";
-import { Endpoint } from "./validations/endpoint";
+"use server";
+
+import { supabaseAdmin } from "../supabase/admin";
+import { Conversation } from "../validations/conversation";
+import { Message } from "../validations/message";
+import { Endpoint } from "../validations/endpoint";
 import { generateText } from "ai";
 import { createDeepSeek } from "@ai-sdk/deepseek";
+import { endpoints as Endpoints_Service } from "./endpoints";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
 if (!DEEPSEEK_API_KEY) throw new Error("Please define all AI environment variables");
@@ -150,7 +153,7 @@ export class AI {
 				const endpoint = endpoints.find((endpoint) => endpoint.id === actionMatch.id);
 				if (endpoint) {
 					// Ejecutar el endpoint
-					const actionResult = await this.actionExecutor(actionMatch.id, actionMatch.parameters);
+					const actionResult = await Endpoints_Service.executor(actionMatch.id, actionMatch.parameters);
 
 					// Agregar el resultado de la ejecución de la acción al contexto de la IA
 					messagesForAI.push({
@@ -267,56 +270,6 @@ export class AI {
 		}
 
 		return parameters;
-	}
-
-	/**
-	 *
-	 */
-	async actionExecutor(endpointId: string, params: Record<string, any> = {}) {
-		const { data: endpoint, error: endpointError } = await supabaseAdmin.from("endpoints").select("*").eq("id", endpointId).single<Endpoint>();
-		if (endpointError) throw endpointError;
-
-		const start = Date.now();
-
-		try {
-			// Construir la URL con parámetros (para GET, DELETE)
-			let url = endpoint.url;
-			url = url.replace(/\{(\w+)\}/g, (_, key) => {
-				const value = params[key];
-				delete params[key];
-				return encodeURIComponent(value ?? "");
-			});
-
-			if (["GET", "DELETE"].includes(endpoint.method.toUpperCase())) {
-				const query = new URLSearchParams(params).toString();
-				if (query) url += (url.includes("?") ? "&" : "?") + query;
-			}
-
-			// Preparar body (para POST, PUT, PATCH)
-			const body = ["POST", "PUT", "PATCH"].includes(endpoint.method.toUpperCase()) ? JSON.stringify(params) : undefined;
-			const response = await fetch(url, {
-				method: endpoint.method,
-				headers: {
-					"Content-Type": "application/json",
-					...endpoint.headers_schema,
-				},
-				body,
-			});
-			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-
-			const data = await response.json().catch(() => ({}));
-			const duration = Date.now() - start;
-
-			return {
-				success: true,
-				data,
-				duration,
-			};
-		} catch (err: unknown) {
-			const duration = Date.now() - start;
-			if (err instanceof Error) return { success: false, error: err.message, duration };
-			return { success: false, error: "Unexpected error occurred executing AI action", duration };
-		}
 	}
 }
 

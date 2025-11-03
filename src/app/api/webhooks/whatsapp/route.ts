@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from "@/lib/whatsapp";
 import { Connection } from "@/lib/validations/connection";
 import { Conversation } from "@/lib/validations/conversation";
-import { notifications } from "@/lib/notifications";
-import { ai } from "@/lib/ai";
+import { notifications } from "@/lib/services/notifications";
+import { ai } from "@/lib/services/ai";
 import { Message } from "@/lib/validations/message";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
