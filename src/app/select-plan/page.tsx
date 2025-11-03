@@ -27,7 +27,6 @@ function SelectPlanContent() {
 	useEffect(() => {
 		if (!teamId) {
 			setError("No se encontró el ID del equipo.");
-			router.push("/dashboard");
 			return;
 		}
 
@@ -89,7 +88,7 @@ function SelectPlanContent() {
 		);
 	}
 
-	if (selectedPlan && isLoading && teamId) {
+	if (selectedPlan && teamId) {
 		return (
 			<div className="min-h-screen bg-background p-6">
 				<div className="mx-auto max-w-4xl">

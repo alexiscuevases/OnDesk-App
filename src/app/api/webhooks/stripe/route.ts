@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { stripe, StripeCheckoutSession, StripeEvent, StripeSubscription } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { Team } from "@/lib/validations/team";
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
 if (!STRIPE_WEBHOOK_SECRET || !STRIPE_WEBHOOK_SECRET) throw new Error("Please define all Stripe environment variables");
@@ -28,12 +29,11 @@ export async function POST(req: Request) {
 				const session = event.data.object as StripeCheckoutSession;
 				console.log("[v0] Checkout session completed:", session.id);
 
-				// Get user ID and team ID from metadata
-				const userId = session.metadata?.supabase_user_id;
+				// Get plan ID and team ID from metadata
 				const teamId = session.metadata?.team_id;
 				const planId = session.metadata?.plan_id;
 
-				if (!userId || !teamId || !planId) {
+				if (!teamId || !planId) {
 					console.error("[Stripe] Missing user ID, team ID or plan ID in session metadata");
 					return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
 				}
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 				console.log("[Stripe] Subscription updated:", subscription.id);
 
 				// Find team by subscription ID
-				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single();
+				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single<Team>();
 				if (team) {
 					const { error } = await supabaseAdmin
 						.from("teams")
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
 				console.log("[Stripe] Subscription deleted:", subscription.id);
 
 				// Find team by subscription ID
-				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single();
+				const { data: team } = await supabaseAdmin.from("teams").select("id").eq("stripe_subscription_id", subscription.id).single<Team>();
 				if (team) {
 					const { error } = await supabaseAdmin
 						.from("teams")

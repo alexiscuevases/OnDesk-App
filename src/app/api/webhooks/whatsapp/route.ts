@@ -195,7 +195,6 @@ async function processIncomingMessages(
 				content_type: contentType,
 				// metadata: {
 				// 	whatsapp_message_id: message.id,
-				// 	whatsapp_timestamp: message.timestamp,
 				// },
 			});
 

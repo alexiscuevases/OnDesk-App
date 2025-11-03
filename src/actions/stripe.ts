@@ -61,7 +61,7 @@ export async function startCheckoutSession(productId: string, teamId: string) {
 		mode: "subscription",
 		return_url: `${AppConfigs.url}/select-plan?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
 		metadata: {
-			supabase_user_id: user.id,
+			user_id: user.id,
 			team_id: teamId,
 			plan_id: productId,
 		},
