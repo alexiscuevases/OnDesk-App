@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppConfigs } from "@/configs/app";
@@ -6,6 +9,8 @@ import { Check } from "lucide-react";
 import Link from "next/link";
 
 export function PricingSection() {
+	const [isAnnual, setIsAnnual] = useState(false);
+
 	return (
 		<section className="py-20 md:py-32">
 			<div className="container">
@@ -15,6 +20,17 @@ export function PricingSection() {
 					<p className="text-lg text-muted-foreground text-pretty leading-relaxed">
 						Choose the perfect plan for your business. All plans include a 14-day free trial.
 					</p>
+				</div>
+
+				<div className="flex justify-center mb-12">
+					<div className="flex items-center gap-4 bg-muted p-1 rounded-lg">
+						<Button variant={!isAnnual ? "default" : "ghost"} size="sm" onClick={() => setIsAnnual(false)}>
+							Monthly
+						</Button>
+						<Button variant={isAnnual ? "default" : "ghost"} size="sm" onClick={() => setIsAnnual(true)}>
+							Annual <span className="ml-2 text-xs bg-accent text-accent-foreground px-2 py-1 rounded">Save 15%</span>
+						</Button>
+					</div>
 				</div>
 
 				{/* Pricing Cards */}
@@ -33,8 +49,8 @@ export function PricingSection() {
 								<CardTitle className="text-2xl">{plan.name}</CardTitle>
 								<CardDescription className="text-base leading-relaxed">{plan.description}</CardDescription>
 								<div className="mt-4">
-									<span className="text-4xl font-bold">${plan.priceInCents / 100}</span>
-									<span className="text-muted-foreground">/month</span>
+									<span className="text-4xl font-bold">${isAnnual ? plan.priceInCentsAnnual / 100 : plan.priceInCents / 100}</span>
+									<span className="text-muted-foreground">/{isAnnual ? "year" : "month"}</span>
 								</div>
 							</CardHeader>
 

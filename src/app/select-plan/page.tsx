@@ -17,9 +17,9 @@ const stripePromise = loadStripe(AppConfigs.stripe.publishableKey);
 
 function SelectPlanContent() {
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
 	const [isVerifying, setIsVerifying] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [isAnnual, setIsAnnual] = useState(false);
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const teamId = searchParams.get("team_id");
@@ -68,7 +68,6 @@ function SelectPlanContent() {
 
 	const handleSelectPlan = (planId: string) => {
 		setSelectedPlan(planId);
-		setIsLoading(true);
 		setError(null);
 	};
 
@@ -96,9 +95,13 @@ function SelectPlanContent() {
 						<h1 className="text-3xl font-bold">Completa tu suscripción</h1>
 						<p className="mt-2 text-muted-foreground">Ingresa tus datos de pago para comenzar</p>
 					</div>
-					<EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret: startCheckout }}>
-						<EmbeddedCheckout />
-					</EmbeddedCheckoutProvider>
+					<Card className="pt-0">
+						<CardContent>
+							<EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret: startCheckout }}>
+								<EmbeddedCheckout />
+							</EmbeddedCheckoutProvider>
+						</CardContent>
+					</Card>
 				</div>
 			</div>
 		);
@@ -110,6 +113,17 @@ function SelectPlanContent() {
 				<div className="mb-12 text-center">
 					<h1 className="text-4xl font-bold">Elige tu plan</h1>
 					<p className="mt-3 text-lg text-muted-foreground">Selecciona el plan perfecto para las necesidades de tu negocio</p>
+				</div>
+
+				<div className="flex justify-center mb-8">
+					<div className="flex items-center gap-4 bg-muted p-1 rounded-lg">
+						<Button variant={!isAnnual ? "default" : "ghost"} size="sm" onClick={() => setIsAnnual(false)}>
+							Mensual
+						</Button>
+						<Button variant={isAnnual ? "default" : "ghost"} size="sm" onClick={() => setIsAnnual(true)}>
+							Anual <span className="ml-2 text-xs bg-accent text-accent-foreground px-2 py-1 rounded">15% desc</span>
+						</Button>
+					</div>
 				</div>
 
 				{error && (
@@ -130,8 +144,8 @@ function SelectPlanContent() {
 								<CardTitle className="text-2xl">{product.name}</CardTitle>
 								<CardDescription>{product.description}</CardDescription>
 								<div className="mt-4">
-									<span className="text-4xl font-bold">${product.priceInCents / 100}</span>
-									<span className="text-muted-foreground">/mes</span>
+									<span className="text-4xl font-bold">${isAnnual ? product.priceInCentsAnnual / 100 : product.priceInCents / 100}</span>
+									<span className="text-muted-foreground">/{isAnnual ? "año" : "mes"}</span>
 								</div>
 							</CardHeader>
 							<CardContent className="space-y-4">

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { Profile } from "@/lib/validations/profile";
+import { AppConfigs } from "@/configs/app";
 
 type AuthContextType = {
 	user: User | null;
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 					setUser(null);
 					setProfile(null);
 
-					router.push("/auth/sign-in");
+					router.push(`${AppConfigs.url}/auth/sign-in`);
 					router.refresh();
 					break;
 
@@ -88,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		setUser(null);
 		setProfile(null);
 
-		router.push("/auth/sign-in");
+		router.push(`${AppConfigs.url}/auth/sign-in`);
 		router.refresh();
 	};
 
