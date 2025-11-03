@@ -120,7 +120,7 @@ export function useMessages(conversationId: string) {
 				.select("*")
 				.eq("id", conversationId)
 				.single<Conversation>();
-			if (conversationError || !conversation) throw conversationError ?? new Error("Conversation not exists");
+			if (conversationError) throw conversationError;
 
 			return await sendMessageByConnectionId({
 				connectionId: conversation.connection_id,
