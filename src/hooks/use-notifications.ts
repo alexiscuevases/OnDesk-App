@@ -5,6 +5,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import type { Notification } from "@/lib/validations/notification";
 import { useAuth } from "@/components/providers/auth-provider";
+import { toast } from "sonner";
+import { AppConfigs } from "@/configs/app";
 
 export function useNotifications(fromDashboardHeader = false) {
 	const { profile } = useAuth();
@@ -82,6 +84,12 @@ export function useNotifications(fromDashboardHeader = false) {
 							const newNotification = payload.new as Notification;
 							const exists = old.some((n) => n.id === newNotification.id);
 							if (exists) return old.map((n) => (n.id === newNotification.id ? newNotification : n));
+
+							toast.info(newNotification.title, { description: newNotification.content });
+
+							const audio = new Audio(`${AppConfigs.url}/sounds/notification.mp3`);
+							audio.play();
+
 							return [newNotification, ...old];
 						});
 					} else if (payload.eventType === "UPDATE") {
