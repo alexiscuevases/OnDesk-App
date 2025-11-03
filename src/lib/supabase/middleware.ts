@@ -70,20 +70,16 @@ export async function updateSession(request: NextRequest) {
 				.single<TeamMember>();
 			if (!teamMember) {
 				// Si no tiene ningún team, redirigir a create-team
-				if (request.nextUrl.pathname !== "/create-team") {
-					const url = `${AppConfigs.url}/create-team`;
-					return NextResponse.redirect(url);
-				}
+				const url = `${AppConfigs.url}/create-team`;
+				return NextResponse.redirect(url);
 			} else {
 				// Si tiene team pero no tiene ninguno seleccionado, seleccionar automáticamente
 				await supabase.from("profiles").update({ team_id: teamMember.team_id }).eq("id", user.id);
 
 				// Redirigir según el estado de la suscripción del team
 				if (!teamMember.teams?.stripe_subscription_status || teamMember.teams?.stripe_subscription_status !== "active") {
-					if (!request.nextUrl.pathname.startsWith("/select-plan")) {
-						const url = `${AppConfigs.url}/select-plan?team_id=${teamMember.team_id}`;
-						return NextResponse.redirect(url);
-					}
+					const url = `${AppConfigs.url}/select-plan?team_id=${teamMember.team_id}`;
+					return NextResponse.redirect(url);
 				}
 			}
 		} else {
@@ -104,10 +100,8 @@ export async function updateSession(request: NextRequest) {
 
 			// Redirigir según el estado de la suscripción del team
 			if (!team.stripe_subscription_status || team.stripe_subscription_status !== "active") {
-				if (!request.nextUrl.pathname.startsWith("/select-plan")) {
-					const url = `${AppConfigs.url}/select-plan?team_id=${team.id}`;
-					return NextResponse.redirect(url);
-				}
+				const url = `${AppConfigs.url}/select-plan?team_id=${team.id}`;
+				return NextResponse.redirect(url);
 			}
 		}
 	}
