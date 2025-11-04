@@ -1,12 +1,16 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera } from "lucide-react";
-import { platformConfigs } from "@/configs/platform";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export default function ProfilePage() {
+	const { profile } = useAuth();
+
 	return (
 		<div className="space-y-8">
 			{/* Header */}
@@ -40,30 +44,19 @@ export default function ProfilePage() {
 						<CardDescription>Update your personal details</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<div className="grid gap-4 sm:grid-cols-2">
-							<div className="space-y-2">
-								<Label htmlFor="first-name">First Name</Label>
-								<Input id="first-name" defaultValue="John" />
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="last-name">Last Name</Label>
-								<Input id="last-name" defaultValue="Doe" />
-							</div>
+						<div className="space-y-2">
+							<Label htmlFor="first-name">Full Name</Label>
+							<Input id="first-name" defaultValue={profile?.full_name} />
 						</div>
 
 						<div className="space-y-2">
 							<Label htmlFor="email">Email</Label>
-							<Input id="email" type="email" defaultValue="john@example.com" />
+							<Input id="email" type="email" defaultValue={profile?.email} />
 						</div>
 
 						<div className="space-y-2">
 							<Label htmlFor="phone">Phone Number</Label>
 							<Input id="phone" type="tel" defaultValue="+1 (555) 123-4567" />
-						</div>
-
-						<div className="space-y-2">
-							<Label htmlFor="bio">Bio</Label>
-							<Input id="bio" defaultValue={`Product Manager at ${platformConfigs.name}`} />
 						</div>
 
 						<Button>Save Changes</Button>
@@ -79,15 +72,15 @@ export default function ProfilePage() {
 				<CardContent className="space-y-4">
 					<div className="space-y-2">
 						<Label htmlFor="language">Language</Label>
-						<Input id="language" defaultValue="English" />
+						<Input id="language" defaultValue="English" disabled />
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="timezone">Timezone</Label>
-						<Input id="timezone" defaultValue="UTC-5 (Eastern Time)" />
+						<Input id="timezone" defaultValue="UTC-5 (Eastern Time)" disabled />
 					</div>
 
-					<Button>Save Preferences</Button>
+					<Button disabled>Save Preferences</Button>
 				</CardContent>
 			</Card>
 		</div>

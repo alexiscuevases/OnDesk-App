@@ -180,5 +180,6 @@ export function useMessages(conversationId: string) {
 		fetchMessages,
 		sendMessageByConnectionId,
 		sendMessageByConversationId,
+		isLoadingSendMessageByConversationId: sendMessageByConversationIdMutation.isPending,
 	};
 }
