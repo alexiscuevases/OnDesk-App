@@ -201,7 +201,9 @@ async function processIncomingMessages(
 			const aiResponse = await ai.generateResponse(currentConversation.id);
 			if (aiResponse.message) {
 				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
-				await whatsapp.sendTextMessage(message.from, aiResponse.message);
+				const whatsappResponse = await whatsapp.sendTextMessage(message.from, aiResponse.message);
+
+				console.log(whatsappResponse);
 
 				const { error: messageError } = await supabaseAdmin
 					.from("messages")
@@ -209,6 +211,8 @@ async function processIncomingMessages(
 						conversation_id: currentConversation.id,
 						role: "agent",
 						content: aiResponse.message,
+						content_type: "text",
+						metadata: {},
 					})
 					.select()
 					.single<Message>();
