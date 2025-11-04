@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MESSAGE_ROLES } from "../constants/message";
+import { MESSAGE_DEFAULT_STATUS, MESSAGE_ROLES, MESSAGE_STATUSES } from "../constants/message";
 
 /**
  * Base
@@ -9,6 +9,8 @@ export const messageSchema = z.object({
 	role: z.enum(MESSAGE_ROLES),
 	content: z.string().min(1, "Content is required"),
 	content_type: z.string().optional(),
+	status: z.enum(MESSAGE_STATUSES).default(MESSAGE_DEFAULT_STATUS),
+	metadata: z.record(z.any(), z.any()).default({}),
 });
 
 export type Message = z.infer<typeof messageSchema> & {

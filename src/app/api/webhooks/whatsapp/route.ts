@@ -193,9 +193,9 @@ async function processIncomingMessages(
 				role: "user",
 				content,
 				content_type: contentType,
-				// metadata: {
-				// 	whatsapp_message_id: message.id,
-				// },
+				metadata: {
+					whatsapp_message_id: message.id,
+				},
 			});
 
 			const aiResponse = await ai.generateResponse(currentConversation.id);
@@ -225,16 +225,75 @@ async function processIncomingMessages(
 /**
  * Procesa actualizaciones de estado de mensajes
  */
-async function processStatusUpdates(statuses: Array<any>, connection: any) {
+async function processStatusUpdates(statuses: Array<any>, connection: Connection) {
 	for (const status of statuses) {
 		try {
 			console.log("[WhatsApp] Message Status update:", {
 				messageId: status.id,
 				recipient: status.recipient_id,
 				status: status.status,
+				timestamp: status.timestamp,
 			});
 
-			console.log("[WhatsApp] Message Status update processed");
+			// Buscar el mensaje en la base de datos por su metadata.whatsapp_message_id
+			const { data: existingMessage, error: findError } = await supabaseAdmin
+				.from("messages")
+				.select("*")
+				.eq("metadata->>whatsapp_message_id", status.id)
+				.single<Message>();
+			if (findError) {
+				console.warn("[WhatsApp] Message not found for status update:", status.id);
+				continue;
+			}
+
+			// Determinar el nuevo estado interno
+			let newStatus: "sent" | "delivered" | "seen" | "failed" | null = null;
+			switch (status.status) {
+				case "sent":
+					newStatus = "sent";
+					break;
+				case "delivered":
+					newStatus = "delivered";
+					break;
+				case "read":
+					newStatus = "seen";
+					break;
+				case "failed":
+					newStatus = "failed";
+					break;
+				default:
+					newStatus = null;
+			}
+
+			if (!newStatus) {
+				console.log("[WhatsApp] Unknown status type, skipping:", status.status);
+				continue;
+			}
+
+			// Actualizar el mensaje
+			const { error: updateError } = await supabaseAdmin
+				.from("messages")
+				.update({
+					status: newStatus,
+					updated_at: new Date().toISOString(),
+				})
+				.eq("id", existingMessage.id);
+			if (updateError) {
+				console.error("[WhatsApp] Error updating message status:", updateError);
+				continue;
+			}
+
+			// Actualizar la conversación si el estado es "read"
+			if (newStatus === "seen") {
+				await supabaseAdmin
+					.from("conversations")
+					.update({
+						updated_at: new Date().toISOString(),
+					})
+					.eq("id", existingMessage.conversation_id);
+			}
+
+			console.log(`[WhatsApp] Message ${status.id} updated to '${newStatus}'`);
 		} catch (error) {
 			console.error("[WhatsApp] Error processing message status update:", error);
 		}
