@@ -86,7 +86,7 @@ export function useMessages(conversationId: string) {
 
 			if (connection.type === "whatsapp") {
 				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
-				await whatsapp.sendTextMessage(to, message);
+				const whatsappResponse = await whatsapp.sendTextMessage(to, message);
 
 				const { data, error: messageError } = await supabase
 					.from("messages")
@@ -94,6 +94,10 @@ export function useMessages(conversationId: string) {
 						conversation_id: currentConversation?.id,
 						role,
 						content: message,
+						content_type: "text",
+						metadata: {
+							whatsapp_message_id: whatsappResponse.messages[0].id,
+						},
 					})
 					.select()
 					.single<Message>();
