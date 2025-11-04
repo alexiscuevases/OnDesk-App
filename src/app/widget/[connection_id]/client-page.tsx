@@ -13,6 +13,7 @@ import { useWidget } from "@/hooks/use-widget";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { formatDate } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Props {
 	connectionId: string;
@@ -146,27 +147,30 @@ export default function WidgetClientPage({ connectionId }: Props) {
 							</>
 						) : (
 							<>
-								<CardContent className="flex-1 space-y-3">
+								<CardContent className="flex-1">
 									{messages.length === 0 ? (
 										<p className="text-sm text-muted-foreground text-center pt-4">How can we help you today?</p>
 									) : (
-										messages.map((message) => (
-											<div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-												<div className="flex flex-col max-w-2/3 gap-2">
-													<div
-														className={`inline-block w-fit rounded-lg px-3 py-2 text-sm wrap-break-words ${
-															message.role === "user"
-																? "bg-primary text-primary-foreground self-end"
-																: "bg-muted text-foreground self-start"
-														}`}>
-														{message.content}
+										<ScrollArea className="space-y-3">
+											{messages.map((message) => (
+												<div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+													<div className="flex flex-col max-w-2/3 gap-2">
+														<div
+															className={`inline-block w-fit rounded-lg px-3 py-2 text-sm wrap-break-words ${
+																message.role === "user"
+																	? "bg-primary text-primary-foreground self-end"
+																	: "bg-muted text-foreground self-start"
+															}`}>
+															{message.content}
+														</div>
+														<span
+															className={`text-xs text-muted-foreground ${message.role === "user" ? "text-right" : "text-left"}`}>
+															{formatDate(message.created_at)}
+														</span>
 													</div>
-													<span className={`text-xs text-muted-foreground ${message.role === "user" ? "text-right" : "text-left"}`}>
-														{formatDate(message.created_at)}
-													</span>
 												</div>
-											</div>
-										))
+											))}
+										</ScrollArea>
 									)}
 								</CardContent>
 
