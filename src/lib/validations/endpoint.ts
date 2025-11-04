@@ -1,6 +1,22 @@
 import { z } from "zod";
 import { ENDPOINT_DEFAULT_RETRY_COUNT, ENDPOINT_DEFAULT_TIMEOUT, ENDPOINT_METHODS } from "../constants/endpoint";
 
+const jsonOrRecord = z.union([
+	z.string().transform((val, ctx) => {
+		if (!val) return {};
+		try {
+			return JSON.parse(val);
+		} catch {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Debe ser un JSON válido",
+			});
+			return z.NEVER;
+		}
+	}),
+	z.record(z.any(), z.any()),
+]);
+
 /**
  * Base
  */
@@ -10,9 +26,9 @@ export const endpointSchema = z.object({
 	description: z.string().min(10, "Description must be at least 10 characters"),
 	method: z.enum(ENDPOINT_METHODS),
 	url: z.string().url("Must be a valid URL"),
-	headers_schema: z.record(z.string(), z.any()).optional().default({}),
-	params_schema: z.record(z.any(), z.any()).optional().default({}),
-	response_schema: z.record(z.any(), z.any()).optional().default({}),
+	headers_schema: jsonOrRecord.optional().default({}),
+	params_schema: jsonOrRecord.optional().default({}),
+	response_schema: jsonOrRecord.optional().default({}),
 	timeout: z.number().min(1000).max(30000).default(ENDPOINT_DEFAULT_TIMEOUT),
 	retry_count: z.number().min(0).max(3).default(ENDPOINT_DEFAULT_RETRY_COUNT),
 	is_active: z.boolean().default(true),

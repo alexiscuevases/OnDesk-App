@@ -328,10 +328,6 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 																	<Label className="text-xs text-muted-foreground">Reintentos</Label>
 																	<p className="font-mono">{endpoint.retry_count}</p>
 																</div>
-																<div>
-																	<Label className="text-xs text-muted-foreground">Parámetros</Label>
-																	<p className="font-mono">{Object.keys(endpoint.params_schema).length}</p>
-																</div>
 															</div>
 
 															{Object.keys(endpoint.params_schema).length > 0 && (
