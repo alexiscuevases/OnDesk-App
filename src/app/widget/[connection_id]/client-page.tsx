@@ -1,72 +1,67 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MessageCircle, Send, X } from "lucide-react";
+import { AlertCircle, Loader2, MessageCircle, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { StartConversationInput, startConversationSchema } from "@/lib/validations/widget";
+import { useWidget } from "@/hooks/use-widget";
+import { Conversation } from "@/lib/validations/conversation";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useMessages } from "@/hooks/use-messages";
 
 interface Props {
 	connectionId: string;
 }
 
 export default function WidgetClientPage({ connectionId }: Props) {
+	const { startConversation, startConversationIsLoading, startConversationError } = useWidget(connectionId);
+	const { messages } = useMessages();
 	const [isOpen, setIsOpen] = useState(false);
 	const [showAnimation, setShowAnimation] = useState(false);
-	const [showStartConversation, setShowStartConversation] = useState(true);
-	const [customerName, setCustomerName] = useState("");
-	const [customerEmail, setCustomerEmail] = useState("");
-	const [messages, setMessages] = useState<Array<{ id: string; role: string; content: string }>>([]);
+	const [conversation, setConversation] = useState<Conversation | null>(null);
 	const [input, setInput] = useState("");
-	const [isLoadingSend, setIsLoadingSend] = useState(false);
 
 	useEffect(() => {
 		setShowAnimation(true);
 	}, []);
 
 	useEffect(() => {
-		if (isOpen)
-			window.parent.postMessage(
-				{
-					type: "WIDGET_RESIZE",
-					width: "400px",
-					height: "600px",
-				},
-				"*"
-			);
-		else
-			window.parent.postMessage(
-				{
-					type: "WIDGET_RESIZE",
-					width: "88px",
-					height: "88px",
-				},
-				"*"
-			);
+		window.parent.postMessage(
+			{
+				type: "WIDGET_RESIZE",
+				width: isOpen ? "400px" : "88px",
+				height: isOpen ? "600px" : "88px",
+			},
+			"*"
+		);
 	}, [isOpen]);
 
-	const handleStartConversation = () => {
-		if (customerName.trim() && customerEmail.trim()) {
-			setShowStartConversation(false);
-			setMessages([]);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<StartConversationInput>({
+		resolver: zodResolver(startConversationSchema),
+	});
+
+	const onSubmit_StartConversation = async (input: StartConversationInput) => {
+		try {
+			const newConversation = await startConversation(input);
+
+			setConversation(newConversation);
 			setInput("");
+		} catch (error) {
+			//
 		}
 	};
 
-	const handleSendMessage = async () => {
-		if (!input.trim()) return;
-
-		const userMessage = {
-			id: Date.now().toString(),
-			role: "user",
-			content: input.trim(),
-		};
-
-		setMessages((prev) => [...prev, userMessage]);
-		setInput("");
-		setIsLoadingSend(true);
-	};
+	const handleSendMessage = async () => {};
 
 	return (
 		<div className="w-full h-full">
@@ -93,21 +88,45 @@ export default function WidgetClientPage({ connectionId }: Props) {
 							<h3 className="font-semibold">Chat Support</h3>
 						</CardHeader>
 
-						{showStartConversation ? (
+						{!conversation ? (
 							<>
 								<CardContent className="flex-1 space-y-3">
+									{startConversationError && (
+										<Alert variant="destructive">
+											<AlertCircle className="h-4 w-4" />
+											<AlertDescription>{startConversationError.message}</AlertDescription>
+										</Alert>
+									)}
+
 									<p className="text-sm font-medium">Start a conversation</p>
-									<Input placeholder="Your name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="text-sm" />
-									<Input
-										placeholder="Your email"
-										type="email"
-										value={customerEmail}
-										onChange={(e) => setCustomerEmail(e.target.value)}
-										className="text-sm"
-									/>
+									<div className="space-y-2">
+										<Label htmlFor="customer_name">Name</Label>
+										<Input
+											id="customer_name"
+											type="text"
+											placeholder="John Doe"
+											disabled={startConversationIsLoading}
+											{...register("customer_name")}
+											className="text-sm"
+										/>
+										{errors.customer_name && <p className="text-sm text-destructive">{errors.customer_name.message}</p>}
+									</div>
+									<div className="space-y-2">
+										<Label htmlFor="customer_email">Email</Label>
+										<Input
+											id="customer_email"
+											type="text"
+											placeholder="tu@email.com"
+											disabled={startConversationIsLoading}
+											{...register("customer_email")}
+											className="text-sm"
+										/>
+										{errors.customer_email && <p className="text-sm text-destructive">{errors.customer_email.message}</p>}
+									</div>
 								</CardContent>
 								<CardFooter>
-									<Button onClick={handleStartConversation} disabled={!customerName.trim() || !customerEmail.trim()} className="w-full">
+									<Button onClick={handleSubmit(onSubmit_StartConversation)} className="w-full">
+										{startConversationIsLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 										Start Chat
 									</Button>
 								</CardFooter>
@@ -143,7 +162,7 @@ export default function WidgetClientPage({ connectionId }: Props) {
 												if (e.key === "Enter" && e.ctrlKey) handleSendMessage();
 											}}
 										/>
-										<Button size="icon" onClick={handleSendMessage} disabled={isLoadingSend || !input.trim()} className="shrink-0">
+										<Button size="icon" onClick={handleSendMessage} className="shrink-0">
 											<Send className="h-4 w-4" />
 										</Button>
 									</div>

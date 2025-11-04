@@ -22,7 +22,7 @@ interface SendMessageByConversationId {
 	message: string;
 }
 
-export function useMessages(conversationId: string) {
+export function useMessages(conversationId: string | null = null) {
 	const { profile } = useAuth();
 	const supabase = createClient();
 	const queryClient = useQueryClient();
