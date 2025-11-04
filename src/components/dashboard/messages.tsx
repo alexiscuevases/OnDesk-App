@@ -9,6 +9,7 @@ import { Conversation } from "@/lib/validations/conversation";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils";
 
 export const Messages = ({ conversation }: { conversation: Conversation }) => {
 	const { messages, isLoading, sendMessageByConversationId, isLoadingSendMessageByConversationId } = useMessages(conversation.id);
@@ -78,7 +79,7 @@ export const Messages = ({ conversation }: { conversation: Conversation }) => {
 												<p className={`text-sm whitespace-pre-wrap ${!isCustomer ? "text-right" : "text-left"}`}>{message.content}</p>
 											</div>
 										</div>
-										<span className="text-xs text-muted-foreground">{new Date(message.created_at).toLocaleTimeString()}</span>
+										<span className="text-xs text-muted-foreground">{formatDate(message.created_at)}</span>
 									</div>
 								</div>
 							);

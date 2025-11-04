@@ -5,11 +5,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquare, Clock } from "lucide-react";
+import { MessageSquare, Clock, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useConversations } from "@/hooks/use-conversations";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatDate_DistanceToNow } from "@/lib/utils";
 
 export function ConversationsList() {
 	const { conversations, isLoading, error } = useConversations();
@@ -42,11 +42,10 @@ export function ConversationsList() {
 
 	if (error) {
 		return (
-			<Card>
-				<CardContent className="p-8 text-center">
-					<p className="text-destructive">Error: {error}</p>
-				</CardContent>
-			</Card>
+			<Alert>
+				<CheckCircle2 className="h-4 w-4" />
+				<AlertDescription>{error}</AlertDescription>
+			</Alert>
 		);
 	}
 
@@ -112,7 +111,7 @@ export function ConversationsList() {
 								<div className="flex flex-col items-end gap-2">
 									<div className="flex items-center gap-1 text-xs text-muted-foreground">
 										<Clock className="h-3 w-3" />
-										<span>{formatDistanceToNow(new Date(conversation.created_at), { addSuffix: true, locale: es })}</span>
+										<span>{formatDate_DistanceToNow(conversation.created_at)}</span>
 									</div>
 									<Badge
 										variant={conversation.status === "open" ? "default" : conversation.status === "closed" ? "secondary" : "outline"}

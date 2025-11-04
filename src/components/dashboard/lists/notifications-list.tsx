@@ -3,12 +3,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Clock, Bell } from "lucide-react";
+import { Clock, Bell, CheckCircle2 } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
-import { getNotificationIcon } from "@/lib/utils";
+import { formatDate_DistanceToNow, getNotificationIcon } from "@/lib/utils";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface NotificationsListProps {
 	filter: "all" | "unread";
@@ -54,11 +53,10 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 
 	if (error) {
 		return (
-			<Card>
-				<CardContent className="p-8 text-center">
-					<p className="text-destructive">Error: {error}</p>
-				</CardContent>
-			</Card>
+			<Alert>
+				<CheckCircle2 className="h-4 w-4" />
+				<AlertDescription>{error}</AlertDescription>
+			</Alert>
 		);
 	}
 
@@ -102,7 +100,7 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 									</div>
 									<div className="flex items-center gap-2 text-xs text-muted-foreground">
 										<Clock className="h-3 w-3" />
-										<span>{formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}</span>
+										<span>{formatDate_DistanceToNow(notification.created_at)}</span>
 									</div>
 								</div>
 							</div>

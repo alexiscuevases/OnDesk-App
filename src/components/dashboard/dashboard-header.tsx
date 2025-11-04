@@ -23,6 +23,7 @@ import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useAuth } from "../providers/auth-provider";
 import { toast } from "sonner";
+import { formatDate_DistanceToNow } from "@/lib/utils";
 
 export function DashboardHeader() {
 	const { toggleSidebar } = useSidebar();
@@ -125,9 +126,7 @@ export function DashboardHeader() {
 													)}
 												</div>
 												<p className="text-xs text-muted-foreground">{notification.content}</p>
-												<span className="text-xs text-muted-foreground">
-													{formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}
-												</span>
+												<span className="text-xs text-muted-foreground">{formatDate_DistanceToNow(notification.created_at)}</span>
 											</DropdownMenuItem>
 										))}
 									</div>

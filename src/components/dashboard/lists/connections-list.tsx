@@ -4,11 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle, Globe, Smartphone, Mail, Check, Plus } from "lucide-react";
+import { MessageCircle, Globe, Smartphone, Mail, Check, Plus, CheckCircle2 } from "lucide-react";
 import { ConnectIntegrationDialog } from "../dialogs/connect-integration-dialog";
 import { ManageIntegrationDialog } from "../dialogs/manage-integration-dialog";
 import { useConnections } from "@/hooks/use-connections";
 import { Connection } from "@/lib/validations/connection";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface Integration {
 	type: Connection["type"];
@@ -78,11 +79,10 @@ export function ConnectionsList() {
 
 	if (error) {
 		return (
-			<Card>
-				<CardContent className="p-8 text-center">
-					<p className="text-destructive">Error: {error}</p>
-				</CardContent>
-			</Card>
+			<Alert>
+				<CheckCircle2 className="h-4 w-4" />
+				<AlertDescription>{error}</AlertDescription>
+			</Alert>
 		);
 	}
 

@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { AlertCircle, Bell, Bot, CheckCircle, TrendingUp, Users } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
@@ -26,4 +26,8 @@ export function getNotificationIcon(type: string) {
 
 export function formatDate(date: string | number | Date) {
 	return format(date, "MMM d, yyyy • h:mm a");
+}
+
+export function formatDate_DistanceToNow(date: string | number | Date) {
+	return formatDistanceToNow(date, { addSuffix: true });
 }

@@ -7,17 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Mail, Loader2, Users } from "lucide-react";
+import { MoreVertical, Mail, Loader2, Users, CheckCircle2 } from "lucide-react";
 import { ChangeRoleDialog } from "../dialogs/change-role-dialog";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
 import { toast } from "sonner";
 import { useTeamMembers } from "@/hooks/use-team_members";
 import { useTeams } from "@/hooks/use-teams";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatDate_DistanceToNow } from "@/lib/utils";
 
 export function TeamMembersList() {
 	const { currentTeam } = useTeams();
-	const { teamMembers, isLoading, error, removeTeamMember } = useTeamMembers(currentTeam?.id);
+	const { teamMembers, isLoading, error, removeTeamMember } = useTeamMembers(currentTeam?.id as string);
 	const [removingId, setRemovingId] = useState<string | null>(null);
 
 	const handleRemove = async (id: string) => {
@@ -61,11 +61,10 @@ export function TeamMembersList() {
 
 	if (error) {
 		return (
-			<Card>
-				<CardContent className="p-8 text-center">
-					<p className="text-destructive">Error: {error}</p>
-				</CardContent>
-			</Card>
+			<Alert>
+				<CheckCircle2 className="h-4 w-4" />
+				<AlertDescription>{error}</AlertDescription>
+			</Alert>
 		);
 	}
 
@@ -114,9 +113,7 @@ export function TeamMembersList() {
 								<div className="flex items-center gap-4">
 									<div className="text-right hidden sm:block">
 										<Badge variant={member.status === "active" ? "default" : "outline"}>{member.role}</Badge>
-										<p className="text-xs text-muted-foreground mt-1">
-											{formatDistanceToNow(new Date(member.created_at), { addSuffix: true, locale: es })}
-										</p>
+										<p className="text-xs text-muted-foreground mt-1">{formatDate_DistanceToNow(member.created_at)}</p>
 									</div>
 
 									<DropdownMenu>

@@ -4,10 +4,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConversations } from "@/hooks/use-conversations";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
+import { formatDate_DistanceToNow } from "@/lib/utils";
 
 export function RecentConversations() {
 	const { conversations, isLoading } = useConversations();
@@ -55,9 +54,7 @@ export function RecentConversations() {
 						<div className="flex-1 space-y-1">
 							<div className="flex items-center justify-between">
 								<p className="text-sm font-medium">{displayName}</p>
-								<span className="text-xs text-muted-foreground">
-									{formatDistanceToNow(new Date(conversation.created_at), { addSuffix: true, locale: es })}
-								</span>
+								<span className="text-xs text-muted-foreground">{formatDate_DistanceToNow(conversation.created_at)}</span>
 							</div>
 							{conversation.customer_email && <p className="text-xs text-muted-foreground line-clamp-1">{conversation.customer_email}</p>}
 							<div className="flex items-center gap-2">

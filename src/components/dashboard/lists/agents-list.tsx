@@ -5,14 +5,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bot, Settings, MoreVertical, Power, Loader2, Trash2 } from "lucide-react";
+import { Bot, Settings, MoreVertical, Power, Loader2, Trash2, CheckCircle2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ConfigureAgentDialog } from "../dialogs/configure-agent-dialog";
 import { useAgents } from "@/hooks/use-agents";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
 import { toast } from "sonner";
 import { Agent } from "@/lib/validations/agent";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatDate_DistanceToNow } from "@/lib/utils";
 
 export function AgentsList() {
 	const [configureAgent, setConfigureAgent] = useState<Agent | null>(null);
@@ -82,11 +82,10 @@ export function AgentsList() {
 
 	if (error) {
 		return (
-			<Card>
-				<CardContent className="p-8 text-center">
-					<p className="text-destructive">Error: {error}</p>
-				</CardContent>
-			</Card>
+			<Alert>
+				<CheckCircle2 className="h-4 w-4" />
+				<AlertDescription>{error}</AlertDescription>
+			</Alert>
 		);
 	}
 
@@ -166,9 +165,7 @@ export function AgentsList() {
 						</CardContent>
 
 						<CardFooter className="flex items-center justify-between border-t border-border pt-4">
-							<span className="text-xs text-muted-foreground">
-								Creado {formatDistanceToNow(new Date(agent.created_at), { addSuffix: true, locale: es })}
-							</span>
+							<span className="text-xs text-muted-foreground">Creado {formatDate_DistanceToNow(agent.created_at)}</span>
 							<Button variant="outline" size="sm" onClick={() => setConfigureAgent(agent)}>
 								Configurar
 							</Button>

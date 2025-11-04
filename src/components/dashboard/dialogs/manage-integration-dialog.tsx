@@ -11,6 +11,7 @@ import { Trash2, ExternalLink } from "lucide-react";
 import { useConnections } from "@/hooks/use-connections";
 import { Connection } from "@/lib/validations/connection";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils";
 
 interface ManageIntegrationDialogProps {
 	children: React.ReactNode;
@@ -34,15 +35,6 @@ export function ManageIntegrationDialog({ children, integration, connections }: 
 	const handleToggleStatus = async (connection: Connection) => {
 		const status = connection.status === "connected" ? "disconnected" : "connected";
 		await updateConnection(connection.id, { status });
-	};
-
-	const formatDate = (dateString: string) => {
-		const date = new Date(dateString);
-		return date.toLocaleDateString("es-ES", {
-			day: "numeric",
-			month: "short",
-			year: "numeric",
-		});
 	};
 
 	return (
