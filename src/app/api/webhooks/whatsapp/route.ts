@@ -203,8 +203,6 @@ async function processIncomingMessages(
 				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
 				const whatsappResponse = await whatsapp.sendTextMessage(message.from, aiResponse.message);
 
-				console.log(whatsappResponse);
-
 				const { error: messageError } = await supabaseAdmin
 					.from("messages")
 					.insert({
@@ -212,7 +210,9 @@ async function processIncomingMessages(
 						role: "agent",
 						content: aiResponse.message,
 						content_type: "text",
-						metadata: {},
+						metadata: {
+							whatsapp_message_id: whatsappResponse.messages[0].id,
+						},
 					})
 					.select()
 					.single<Message>();
