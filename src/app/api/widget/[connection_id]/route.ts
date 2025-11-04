@@ -11,13 +11,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ conn
 	const script = `
         (function() {
             const iframe = document.createElement('iframe');
-            iframe.src = "${AppConfigs.url}/widget/${connectionId}";
+            iframe.src = '${AppConfigs.url}/widget/${connectionId}';
             iframe.style.position = 'fixed';
             iframe.style.bottom = '26px';
             iframe.style.right = '26px';
             iframe.style.width = '0';
             iframe.style.height = '0';
             iframe.style.zIndex = '999999';
+            iframe.style.border = 'none';
+            iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin');
+            iframe.referrerPolicy = 'no-referrer';
             document.body.appendChild(iframe);
 
             window.addEventListener('message', function(event) {
