@@ -199,7 +199,8 @@ async function processIncomingMessages(
 			});
 
 			const aiResponse = await ai.generateResponse(currentConversation.id);
-			if (aiResponse.message) {
+			console.log(aiResponse);
+			if (aiResponse.success) {
 				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
 				await whatsapp.sendTextMessage(message.from, aiResponse.message);
 
