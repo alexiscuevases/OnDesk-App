@@ -1,5 +1,6 @@
 "use client";
 
+import { AppConfigs } from "@/configs/app";
 import { createClient } from "@/lib/supabase/client";
 import { Connection } from "@/lib/validations/connection";
 import { Conversation } from "@/lib/validations/conversation";
@@ -103,6 +104,12 @@ export function useWidget(connectionId: string) {
 							const newMsg = payload.new as Message;
 							const exists = old.find((msg) => msg.id === newMsg.id);
 							if (exists) return old.map((msg) => (msg.id === newMsg.id ? newMsg : msg));
+
+							let audio;
+							if (newMsg.role !== "user") audio = new Audio(`${AppConfigs.url}/sounds/notification.mp3`);
+							else audio = new Audio(`${AppConfigs.url}/sounds/pop.mp3`);
+							audio.play();
+
 							return [...old, newMsg];
 						});
 					} else if (payload.eventType === "UPDATE") {

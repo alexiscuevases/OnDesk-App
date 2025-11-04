@@ -40,8 +40,8 @@ export default function WidgetClientPage({ connectionId }: Props) {
 		window.parent.postMessage(
 			{
 				type: "WIDGET_RESIZE",
-				width: isOpen ? "400px" : "88px",
-				height: isOpen ? "600px" : "88px",
+				width: isOpen ? "calc(384px + 24px)" : "64px",
+				height: isOpen ? "calc(624px + 72px + 24px)" : "64px",
 			},
 			"*"
 		);
@@ -78,7 +78,7 @@ export default function WidgetClientPage({ connectionId }: Props) {
 	return (
 		<div className="w-full h-full">
 			{/* Floating Button */}
-			<div id="widget" className={`fixed bottom-6 right-6 transition-all duration-300 ${showAnimation ? "scale-100 opacity-100" : "scale-0 opacity-0"}`}>
+			<div id="widget" className={`fixed bottom-0 right-0 transition-all duration-300 ${showAnimation ? "scale-100 opacity-100" : "scale-0 opacity-0"}`}>
 				<Button
 					onClick={() => setIsOpen(!isOpen)}
 					size="lg"
@@ -90,7 +90,7 @@ export default function WidgetClientPage({ connectionId }: Props) {
 			{/* Chat Panel */}
 			{isOpen && (
 				<div
-					className="fixed bottom-24 right-6 transition-all duration-300 transform scale-100 opacity-100"
+					className="fixed bottom-18 right-0 transition-all duration-300 transform scale-100 opacity-100"
 					style={{
 						transformOrigin: "bottom right",
 					}}>
