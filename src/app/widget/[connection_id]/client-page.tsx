@@ -12,6 +12,7 @@ import { StartConversationInput, startConversationSchema } from "@/lib/validatio
 import { useWidget } from "@/hooks/use-widget";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatDate } from "@/lib/utils";
 
 interface Props {
 	connectionId: string;
@@ -151,11 +152,18 @@ export default function WidgetClientPage({ connectionId }: Props) {
 									) : (
 										messages.map((message) => (
 											<div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-												<div
-													className={`max-w-xs rounded-lg px-3 py-2 text-sm ${
-														message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
-													}`}>
-													{message.content}
+												<div className="flex flex-col max-w-2/3 gap-2">
+													<div
+														className={`inline-block w-fit rounded-lg px-3 py-2 text-sm break-words ${
+															message.role === "user"
+																? "bg-primary text-primary-foreground self-end"
+																: "bg-muted text-foreground self-start"
+														}`}>
+														{message.content}
+													</div>
+													<span className={`text-xs text-muted-foreground ${message.role === "user" ? "text-right" : "text-left"}`}>
+														{formatDate(message.created_at)}
+													</span>
 												</div>
 											</div>
 										))
