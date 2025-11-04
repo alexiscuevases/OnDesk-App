@@ -10,9 +10,25 @@ import Link from "next/link";
 import { useConversations } from "@/hooks/use-conversations";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { formatDate_DistanceToNow } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { Filters } from "@/app/dashboard/conversations/page";
 
-export function ConversationsList() {
+interface Props {
+	filters: Filters;
+}
+
+export function ConversationsList({ filters }: Props) {
 	const { conversations, isLoading, error } = useConversations();
+	const [filteredConversations, setFilteredConversations] = useState(conversations);
+
+	useEffect(() => {
+		let filtered = conversations;
+
+		if (filters.status !== "all") filtered = filtered.filter((c) => c.status === filters.status);
+		if (filters.channel !== "all") filtered = filtered.filter((c) => c.channel === filters.channel);
+
+		setFilteredConversations(filtered);
+	}, [conversations, filters]);
 
 	if (isLoading) {
 		return (
@@ -49,7 +65,7 @@ export function ConversationsList() {
 		);
 	}
 
-	if (conversations.length === 0) {
+	if (filteredConversations.length === 0) {
 		return (
 			<Card>
 				<CardContent className="p-8 text-center">
@@ -63,7 +79,7 @@ export function ConversationsList() {
 
 	return (
 		<div className="space-y-4">
-			{conversations.map((conversation) => {
+			{filteredConversations.map((conversation) => {
 				const displayName = conversation.customer_name || "Unknown";
 				const initials = displayName
 					.split(" ")

@@ -70,7 +70,7 @@ export function ManageIntegrationDialog({ children, integration, connections }: 
 													</Badge>
 												</div>
 												<p className="text-sm text-muted-foreground">{identifier}</p>
-												<p className="text-xs text-muted-foreground">Conectado {formatDate(connection.created_at)}</p>
+												<p className="text-xs text-muted-foreground">Desde {formatDate(connection.created_at)}</p>
 											</div>
 											<div className="flex items-center gap-2">
 												<Button variant="ghost" size="icon" onClick={() => toast.info("Funcionalidad en desarrollo")}>

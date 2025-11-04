@@ -1,3 +1,5 @@
+"use client";
+
 import { ConversationsList } from "@/components/dashboard/lists/conversations-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Filter, Search } from "lucide-react";
@@ -5,8 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/lib/constants/conversation";
+import { useState } from "react";
+
+export type Filters = {
+	status: string;
+	channel: string;
+};
 
 export default function ConversationsPage() {
+	const [filters, setFilters] = useState<Filters>({
+		status: "all",
+		channel: "all",
+	});
+
 	return (
 		<div className="space-y-8">
 			{/* Header */}
@@ -24,7 +37,7 @@ export default function ConversationsPage() {
 					</div>
 
 					<div className="flex gap-2">
-						<Select defaultValue="all">
+						<Select value={filters.status} onValueChange={(value) => setFilters((f) => ({ ...f, status: value }))}>
 							<SelectTrigger className="w-[140px]">
 								<SelectValue placeholder="Status" />
 							</SelectTrigger>
@@ -35,7 +48,7 @@ export default function ConversationsPage() {
 								))}
 							</SelectContent>
 						</Select>
-						<Select defaultValue="all">
+						<Select value={filters.channel} onValueChange={(value) => setFilters((f) => ({ ...f, channel: value }))}>
 							<SelectTrigger className="w-[140px]">
 								<SelectValue placeholder="Channel" />
 							</SelectTrigger>
@@ -46,15 +59,12 @@ export default function ConversationsPage() {
 								))}
 							</SelectContent>
 						</Select>
-						<Button variant="outline" size="icon">
-							<Filter className="h-4 w-4" />
-						</Button>
 					</div>
 				</CardContent>
 			</Card>
 
 			{/* Conversations List */}
-			<ConversationsList />
+			<ConversationsList filters={filters} />
 		</div>
 	);
 }
