@@ -67,7 +67,7 @@ export function AgentComparison() {
 							<div>
 								<p className="font-medium">{agent.name}</p>
 								<p className="text-sm text-muted-foreground">
-									{agent.status === "active" ? "Activo" : "Inactivo"} • Temp: {agent.temperature}
+									{agent.status === "active" ? "Activo" : "Inactivo"} • Temperature: {agent.temperature}
 								</p>
 							</div>
 							<div className="text-right">
