@@ -12,7 +12,9 @@ import { createWhatsAppAPI } from "@/lib/whatsapp";
 interface SendMessageByConnectionId {
 	connectionId: string;
 	role: Message["role"];
-	to: string;
+	customer_name?: string;
+	customer_email?: string;
+	customer_phone?: string;
 	message: string;
 }
 
@@ -51,14 +53,15 @@ export function useMessages(conversationId: string | null = null) {
 	});
 
 	const sendMessageByConnectionIdMutation = useMutation({
-		mutationFn: async ({ connectionId, role, to, message }: SendMessageByConnectionId) => {
+		mutationFn: async ({ connectionId, role, customer_name, customer_email, customer_phone, message }: SendMessageByConnectionId) => {
 			if (!profile) throw new Error("Not authenticated");
 
 			const { data: connection, error: connectionError } = await supabase.from("connections").select("*").eq("id", connectionId).single<Connection>();
 			if (connectionError) throw connectionError;
 
 			const query = supabase.from("conversations").select("*");
-			if (connection.type === "whatsapp") query.eq("customer_phone", to);
+			if (connection.type === "whatsapp") query.eq("customer_phone", customer_phone);
+			else if (connection.type === "website") query.eq("customer_email", customer_email);
 			const { data: conversation, error: conversationError } = await query.maybeSingle<Conversation>();
 			if (conversationError) throw conversationError;
 
@@ -70,9 +73,9 @@ export function useMessages(conversationId: string | null = null) {
 						team_id: profile.team_id,
 						connection_id: connectionId,
 						agent_id: undefined,
-						customer_name: "",
-						customer_email: "",
-						customer_phone: connection.type === "whatsapp" ? to : "",
+						customer_name,
+						customer_email,
+						customer_phone,
 						channel: connection.type,
 						status: "open",
 						priority: "medium",
@@ -86,7 +89,7 @@ export function useMessages(conversationId: string | null = null) {
 
 			if (connection.type === "whatsapp") {
 				const whatsapp = createWhatsAppAPI(connection.config.phoneNumberId, connection.config.apiKey);
-				const whatsappResponse = await whatsapp.sendTextMessage(to, message);
+				const whatsappResponse = await whatsapp.sendTextMessage(customer_phone, message);
 
 				const { data, error: messageError } = await supabase
 					.from("messages")
@@ -104,6 +107,20 @@ export function useMessages(conversationId: string | null = null) {
 
 				if (messageError) throw messageError;
 				return data;
+			} else if (connection.type === "website") {
+				const { data, error: messageError } = await supabase
+					.from("messages")
+					.insert({
+						conversation_id: currentConversation?.id,
+						role,
+						content: message,
+						content_type: "text",
+					})
+					.select()
+					.single<Message>();
+
+				if (messageError) throw messageError;
+				return data;
 			}
 
 			return null;
@@ -112,8 +129,8 @@ export function useMessages(conversationId: string | null = null) {
 			queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
 		},
 	});
-	const sendMessageByConnectionId = async ({ connectionId, role, to, message }: SendMessageByConnectionId) =>
-		await sendMessageByConnectionIdMutation.mutateAsync({ connectionId, role, to, message });
+	const sendMessageByConnectionId = async ({ connectionId, role, customer_name, customer_email, customer_phone, message }: SendMessageByConnectionId) =>
+		await sendMessageByConnectionIdMutation.mutateAsync({ connectionId, role, customer_name, customer_email, customer_phone, message });
 
 	const sendMessageByConversationIdMutation = useMutation({
 		mutationFn: async ({ conversationId, role, message }: SendMessageByConversationId) => {
@@ -129,7 +146,9 @@ export function useMessages(conversationId: string | null = null) {
 			return await sendMessageByConnectionId({
 				connectionId: conversation.connection_id,
 				role,
-				to: conversation.customer_phone as string,
+				customer_phone: conversation.customer_phone as string,
+				customer_email: conversation.customer_email as string,
+				customer_name: conversation.customer_name as string,
 				message,
 			});
 		},
@@ -183,6 +202,7 @@ export function useMessages(conversationId: string | null = null) {
 		error: error?.message || null,
 		fetchMessages,
 		sendMessageByConnectionId,
+		isLoadingSendMessageByConnectionId: sendMessageByConnectionIdMutation.isPending,
 		sendMessageByConversationId,
 		isLoadingSendMessageByConversationId: sendMessageByConversationIdMutation.isPending,
 	};

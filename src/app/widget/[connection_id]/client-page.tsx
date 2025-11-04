@@ -21,7 +21,7 @@ interface Props {
 
 export default function WidgetClientPage({ connectionId }: Props) {
 	const { startConversation, startConversationIsLoading, startConversationError } = useWidget(connectionId);
-	const { messages } = useMessages();
+	const { messages, sendMessageByConversationId, isLoadingSendMessageByConversationId } = useMessages();
 	const [isOpen, setIsOpen] = useState(false);
 	const [showAnimation, setShowAnimation] = useState(false);
 	const [conversation, setConversation] = useState<Conversation | null>(null);
@@ -61,7 +61,17 @@ export default function WidgetClientPage({ connectionId }: Props) {
 		}
 	};
 
-	const handleSendMessage = async () => {};
+	const onSend = async () => {
+		try {
+			if (!conversation) return;
+
+			await sendMessageByConversationId({ conversationId: conversation.id, role: "user", message: input.trim() });
+
+			setInput("");
+		} catch (err: unknown) {
+			//
+		}
+	};
 
 	return (
 		<div className="w-full h-full">
@@ -155,14 +165,14 @@ export default function WidgetClientPage({ connectionId }: Props) {
 									<div className="flex gap-2 w-full">
 										<Textarea
 											placeholder="Type a message..."
+											className="resize-none text-sm"
 											value={input}
 											onChange={(e) => setInput(e.target.value)}
-											className="resize-none text-sm"
 											onKeyDown={(e) => {
-												if (e.key === "Enter" && e.ctrlKey) handleSendMessage();
+												if (e.key === "Enter" && e.ctrlKey) onSend();
 											}}
 										/>
-										<Button size="icon" onClick={handleSendMessage} className="shrink-0">
+										<Button size="icon" className="shrink-0" onClick={onSend} disabled={isLoadingSendMessageByConversationId}>
 											<Send className="h-4 w-4" />
 										</Button>
 									</div>
