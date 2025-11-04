@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { Languages, Check } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { platformConfigs } from "@/configs/platform";
 
 const languages = [
 	{ code: "en", label: "English", flag: "🇺🇸" },
@@ -14,9 +15,9 @@ export function LanguageSwitcher() {
 	const [isPending, startTransition] = useTransition();
 
 	const getCurrentLocale = () => {
-		if (typeof document === "undefined") return "en";
+		if (typeof document === "undefined") return platformConfigs.defaultLanguage;
 		const match = document.cookie.match(/locale=([^;]+)/);
-		return match ? match[1] : "en";
+		return match ? match[1] : platformConfigs.defaultLanguage;
 	};
 
 	async function setLocale(locale: string) {

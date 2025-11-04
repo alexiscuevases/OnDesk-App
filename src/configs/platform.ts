@@ -12,6 +12,7 @@ interface PlatformConfigs {
 	name: string;
 	plans: Plan[];
 	mails: any;
+	defaultLanguage: string;
 }
 
 const ANNUAL_DISCOUNT_PERCENTAGE = 15;
@@ -71,4 +72,5 @@ export const platformConfigs: PlatformConfigs = {
 		sales: "sales@ondesk.cc",
 		legal: "legal@ondesk.cc",
 	},
+	defaultLanguage: "en",
 };

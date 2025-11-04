@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Users, ArrowLeft } from "lucide-react";
+import { Loader2, Users, ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useTeams } from "@/hooks/use-teams";
 import { CreateTeamInput, createTeamSchema } from "@/lib/validations/team";
@@ -75,6 +75,7 @@ function CreateTeamContent() {
 					<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 						{createTeamError && (
 							<Alert variant="destructive">
+								<AlertCircle className="h-4 w-4" />
 								<AlertDescription>{createTeamError}</AlertDescription>
 							</Alert>
 						)}
