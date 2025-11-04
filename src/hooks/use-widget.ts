@@ -54,6 +54,8 @@ export function useWidget(connectionId: string) {
 			if (conversationError) throw conversationError;
 
 			setConversation(newConversation);
+
+			localStorage.setItem(`conversation-${connectionId}`, JSON.stringify(newConversation));
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["widget", "conversations", conversation?.id] });
@@ -84,6 +86,11 @@ export function useWidget(connectionId: string) {
 		},
 	});
 	const sendMessage = async (message: string) => await sendMessageMutation.mutateAsync(message);
+
+	useEffect(() => {
+		const storedConversation = localStorage.getItem(`conversation-${connectionId}`);
+		if (storedConversation) setConversation(JSON.parse(storedConversation));
+	}, [connectionId]);
 
 	useEffect(() => {
 		if (!conversation) return;
