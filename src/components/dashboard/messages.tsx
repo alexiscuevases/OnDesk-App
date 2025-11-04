@@ -77,9 +77,7 @@ export const Messages = ({ conversation }: { conversation: Conversation }) => {
 													className={`block-inline max-w-2/3 rounded-lg px-4 py-2 ${
 														!isCustomer ? "ml-auto bg-primary text-primary-foreground" : "mr-auto bg-muted text-foreground"
 													}`}>
-													<p className={`text-sm whitespace-pre-wrap ${!isCustomer ? "text-right" : "text-left"}`}>
-														{message.content}
-													</p>
+													<p className="text-sm wrap-break-words">{message.content}</p>
 												</div>
 											</div>
 											<div className={`flex items-center gap-2 ${isCustomer ? "justify-start" : "justify-end"}`}>

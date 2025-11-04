@@ -154,7 +154,7 @@ export default function WidgetClientPage({ connectionId }: Props) {
 											<div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
 												<div className="flex flex-col max-w-2/3 gap-2">
 													<div
-														className={`inline-block w-fit rounded-lg px-3 py-2 text-sm break-words ${
+														className={`inline-block w-fit rounded-lg px-3 py-2 text-sm wrap-break-words ${
 															message.role === "user"
 																? "bg-primary text-primary-foreground self-end"
 																: "bg-muted text-foreground self-start"
