@@ -82,7 +82,7 @@ export const Messages = ({ conversation }: { conversation: Conversation }) => {
 													</p>
 												</div>
 											</div>
-											<div className="flex items-center gap-2 justify-end">
+											<div className={`flex items-center gap-2 ${isCustomer ? "justify-start" : "justify-end"}`}>
 												<span className="text-xs text-muted-foreground">{formatDate(message.created_at)}</span>
 												{!isCustomer && (
 													<>
