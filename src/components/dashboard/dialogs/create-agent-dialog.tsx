@@ -14,6 +14,7 @@ import { useAgents } from "@/hooks/use-agents";
 import { useTeams } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { CreateAgentInput, createAgentSchema } from "@/lib/validations/agent";
+import { AGENT_MODELS_OBJECT, AGENT_STATUSES_OBJECT, AGENT_TYPES_OBJECT } from "@/lib/constants/agent";
 
 export function CreateAgentDialog() {
 	const [open, setOpen] = useState(false);
@@ -30,11 +31,6 @@ export function CreateAgentDialog() {
 		watch,
 	} = useForm<CreateAgentInput>({
 		resolver: zodResolver(createAgentSchema),
-		defaultValues: {
-			model: "gpt-4",
-			status: "training",
-			type: "general",
-		},
 	});
 
 	useEffect(() => {
@@ -94,9 +90,9 @@ export function CreateAgentDialog() {
 									<SelectValue placeholder="Selecciona el tipo de agente" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="sales">Asistente de Ventas</SelectItem>
-									<SelectItem value="support">Soporte al Cliente</SelectItem>
-									<SelectItem value="general">General</SelectItem>
+									{Object.entries(AGENT_TYPES_OBJECT).map(([key, label]) => (
+										<SelectItem value={key}>{label}</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
 							{errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
@@ -119,7 +115,9 @@ export function CreateAgentDialog() {
 									<SelectValue placeholder="Selecciona el modelo de IA" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="gpt-4">GPT-4 (Recomendado)</SelectItem>
+									{Object.entries(AGENT_MODELS_OBJECT).map(([key, label]) => (
+										<SelectItem value={key}>{label}</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
 							{errors.model && <p className="text-xs text-destructive">{errors.model.message}</p>}
@@ -131,9 +129,9 @@ export function CreateAgentDialog() {
 									<SelectValue placeholder="Selecciona el estado" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="active">Active</SelectItem>
-									<SelectItem value="inactive">Inactive</SelectItem>
-									<SelectItem value="training">Training</SelectItem>
+									{Object.entries(AGENT_STATUSES_OBJECT).map(([key, label]) => (
+										<SelectItem value={key}>{label}</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
 							{errors.status && <p className="text-xs text-destructive">{errors.status.message}</p>}

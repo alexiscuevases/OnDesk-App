@@ -17,6 +17,8 @@ import { useEndpoints } from "@/hooks/use-endpoints";
 import { toast } from "sonner";
 import { Agent, UpdateAgentInput, updateAgentSchema } from "@/lib/validations/agent";
 import { ManageEndpointsDialog } from "./manage-endpoints-dialog";
+import { AGENT_MODELS_OBJECT, AGENT_STATUSES_OBJECT, AGENT_TYPES_OBJECT } from "@/lib/constants/agent";
+import { Slider } from "@/components/ui/slider";
 
 interface ConfigureAgentDialogProps {
 	open: boolean;
@@ -90,10 +92,10 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 		}
 	};
 
-	const handleTemperatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = parseFloat(e.target.value);
-		setTemperature(value);
-		setValue("temperature", value);
+	const handleTemperatureChange = (value: number[]) => {
+		const newValue = value[0];
+		setTemperature(newValue);
+		setValue("temperature", newValue);
 	};
 
 	const activeEndpointsCount = endpoints.filter((e) => e.is_active).length;
@@ -141,9 +143,9 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 											<SelectValue placeholder="Selecciona el tipo de agente" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="sales">Asistente de Ventas</SelectItem>
-											<SelectItem value="support">Soporte al Cliente</SelectItem>
-											<SelectItem value="general">General</SelectItem>
+											{Object.entries(AGENT_TYPES_OBJECT).map(([key, label]) => (
+												<SelectItem value={key}>{label}</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
 									{errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
@@ -155,9 +157,9 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 											<SelectValue placeholder="Selecciona el tipo de agente" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="active">Active</SelectItem>
-											<SelectItem value="inactive">Inactive</SelectItem>
-											<SelectItem value="training">Training</SelectItem>
+											{Object.entries(AGENT_STATUSES_OBJECT).map(([key, label]) => (
+												<SelectItem value={key}>{label}</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
 									{errors.status && <p className="text-xs text-destructive">{errors.status.message}</p>}
@@ -250,21 +252,22 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 											<SelectValue placeholder="Selecciona el modelo de IA" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="gpt-4">GPT-4 (Recomendado)</SelectItem>
+											{Object.entries(AGENT_MODELS_OBJECT).map(([key, label]) => (
+												<SelectItem value={key}>{label}</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
 									{errors.model && <p className="text-xs text-destructive">{errors.model.message}</p>}
 								</div>
 								<div className="grid gap-2">
 									<Label htmlFor="edit-temperature">Temperature: {temperature.toFixed(1)}</Label>
-									<input
-										type="range"
+									<Slider
 										id="edit-temperature"
-										min="0"
-										max="1"
-										step="0.1"
-										value={temperature}
-										onChange={handleTemperatureChange}
+										min={0}
+										max={1}
+										step={0.1}
+										value={[temperature]}
+										onValueChange={handleTemperatureChange}
 										className="w-full"
 									/>
 									<p className="text-xs text-muted-foreground">

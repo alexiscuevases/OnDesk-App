@@ -20,10 +20,10 @@ interface ChangeRoleDialogProps {
 
 export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 	const [open, setOpen] = useState(false);
-	const [selectedRole, setSelectedRole] = useState(member.role.toLowerCase());
+	const [selectedRole, setSelectedRole] = useState(member.role);
 	const [isLoading, setIsLoading] = useState(false);
 	const { currentTeam } = useTeams();
-	const { updateTeamMemberRole } = useTeamMembers(currentTeam?.id);
+	const { updateTeamMemberRole } = useTeamMembers(currentTeam?.id as string);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

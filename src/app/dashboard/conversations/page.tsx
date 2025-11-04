@@ -4,7 +4,7 @@ import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CONVERSATION_CHANNELS, CONVERSATION_STATUSES } from "@/lib/constants/conversation";
+import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/lib/constants/conversation";
 
 export default function ConversationsPage() {
 	return (
@@ -30,7 +30,7 @@ export default function ConversationsPage() {
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value="all">All Status</SelectItem>
-								{Object.entries(CONVERSATION_STATUSES).map(([key, status]) => (
+								{Object.entries(CONVERSATION_STATUSES_OBJECT).map(([key, status]) => (
 									<SelectItem value={key}>{status}</SelectItem>
 								))}
 							</SelectContent>
@@ -41,7 +41,7 @@ export default function ConversationsPage() {
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value="all">All Channels</SelectItem>
-								{Object.entries(CONVERSATION_CHANNELS).map(([key, channel]) => (
+								{Object.entries(CONVERSATION_CHANNELS_OBJECT).map(([key, channel]) => (
 									<SelectItem value={key}>{channel}</SelectItem>
 								))}
 							</SelectContent>

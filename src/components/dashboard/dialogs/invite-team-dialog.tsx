@@ -15,12 +15,13 @@ import { useTeams } from "@/hooks/use-teams";
 import { toast } from "sonner";
 import { InviteTeamMemberInput, inviteTeamMemberSchema, TeamMember } from "@/lib/validations/team_member";
 import { useTeamMembers } from "@/hooks/use-team_members";
+import { TEAM_MEMBER_ROLES_OBJECT } from "@/lib/constants/team_member";
 
 export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { currentTeam } = useTeams();
-	const { inviteTeamMember } = useTeamMembers(currentTeam?.id);
+	const { inviteTeamMember } = useTeamMembers(currentTeam?.id as string);
 
 	const {
 		register,
@@ -78,9 +79,9 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="admin">Admin</SelectItem>
-									<SelectItem value="member">Miembro</SelectItem>
-									<SelectItem value="viewer">Viewer</SelectItem>
+									{Object.entries(TEAM_MEMBER_ROLES_OBJECT).map(([key, label]) => (
+										<SelectItem value={key}>{label}</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
 							{errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}

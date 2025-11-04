@@ -93,14 +93,12 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 	const executeTest = async (endpointId: string, params: Record<string, string>) => {
 		try {
 			const result = await testEndpoint(endpointId, params);
+
 			setTestResponse(result);
-			if (result.success) {
-				toast.success("Endpoint ejecutado exitosamente", {
-					description: `Duración: ${result.duration}ms`,
-				});
-			} else {
-				toast.error(`Error: ${result.error}`);
-			}
+
+			toast.success("Endpoint ejecutado exitosamente", {
+				description: `Duración: ${result.duration}ms`,
+			});
 		} catch (error: any) {
 			toast.error(error.message || "Error al probar el endpoint");
 			setTestResponse(error);
