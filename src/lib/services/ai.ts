@@ -87,7 +87,7 @@ export class AI {
 
 						${actionsDescription}
 
-						====== START | Información del usuario ======
+						====== START | Información del usuario (es a quien le responderás) ======
 						- Nombre: ${conversation.customer_name || "No proporcionado"}
 						- Email: ${conversation.customer_email || "No proporcionado"}
 						- Teléfono: ${conversation.customer_phone || "No proporcionado"}
@@ -106,7 +106,7 @@ export class AI {
 						- NUNCA inventes o modifiques el formato especificado para las respuestas de las acciones.
 						- SIEMPRE y EN TODO MOMENTO lo descrito en el =SYSTEM PROMPT= tendrá mas prioridad que las acciones.
 						- NUNCA lo descrito en =SYSTEM PROMPT= tendrá mas prioridad que 'Información de la conversación' o 'Información del usuario'.
-						- Al despedirte del usuario, agrega al final del mensaje el siguiente formato (NUNCA lo modifiques): [END_CONVERSATION]
+						- Al DESPEDIRTE del usuario (cuando ya no tenga mas dudas o solicitudes), agrega al final del mensaje el siguiente formato (NUNCA lo modifiques): [END_CONVERSATION]
 						====== END | IMPORTANTE ======
 					`,
 				},
