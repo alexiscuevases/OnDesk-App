@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { formatDate } from "@/lib/utils";
 
 export const Messages = ({ conversation }: { conversation: Conversation }) => {
-	const { messages, isLoading, sendMessageByConversationId, isLoadingSendMessageByConversationId } = useMessages(conversation.id);
+	const { messages, isLoading, sendMessage, isLoadingSendMessage } = useMessages(conversation.id);
 	const [input, setInput] = useState("");
 	const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,7 +22,7 @@ export const Messages = ({ conversation }: { conversation: Conversation }) => {
 
 	const onSend = async () => {
 		try {
-			await sendMessageByConversationId({ conversationId: conversation.id, role: "agent", message: input.trim() });
+			await sendMessage({ role: "agent", message: input.trim() });
 
 			setInput("");
 		} catch (err: unknown) {
@@ -106,8 +106,8 @@ export const Messages = ({ conversation }: { conversation: Conversation }) => {
 				<div className="border-t border-border p-4">
 					<div className="flex gap-2">
 						<Textarea placeholder="Type a message..." className="min-h-20 resize-none" value={input} onChange={(e) => setInput(e.target.value)} />
-						<Button size="icon" className="shrink-0" onClick={onSend} disabled={isLoadingSendMessageByConversationId}>
-							{isLoadingSendMessageByConversationId ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+						<Button size="icon" className="shrink-0" onClick={onSend} disabled={isLoadingSendMessage}>
+							{isLoadingSendMessage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
 						</Button>
 					</div>
 				</div>

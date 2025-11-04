@@ -11,7 +11,7 @@ if (!NEXT_PUBLIC_SUPABASE_URL || !NEXT_PUBLIC_SUPABASE_ANON_KEY) throw new Error
 
 export async function updateSession(request: NextRequest) {
 	// Permitir rutas publicas
-	const publicRoutes = ["/about", "/api", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap"];
+	const publicRoutes = ["/about", "/api", "/blog", "/contact", "/faq", "/legal", "/pricing", "/roadmap", "/widget"];
 	const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route) || request.nextUrl.pathname === "/");
 	if (isPublicRoute) return NextResponse.next();
 
