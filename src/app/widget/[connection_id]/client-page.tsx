@@ -10,21 +10,26 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StartConversationInput, startConversationSchema } from "@/lib/validations/widget";
 import { useWidget } from "@/hooks/use-widget";
-import { Conversation } from "@/lib/validations/conversation";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useMessages } from "@/hooks/use-messages";
 
 interface Props {
 	connectionId: string;
 }
 
 export default function WidgetClientPage({ connectionId }: Props) {
-	const { startConversation, startConversationIsLoading, startConversationError } = useWidget(connectionId);
-	const { messages, sendMessageByConversationId, isLoadingSendMessageByConversationId } = useMessages();
+	const {
+		messages,
+		conversation,
+		startConversation,
+		startConversationIsLoading,
+		startConversationError,
+		sendMessage,
+		sendMessageIsLoading,
+		sendMessageError,
+	} = useWidget(connectionId);
 	const [isOpen, setIsOpen] = useState(false);
 	const [showAnimation, setShowAnimation] = useState(false);
-	const [conversation, setConversation] = useState<Conversation | null>(null);
 	const [input, setInput] = useState("");
 
 	useEffect(() => {
@@ -52,9 +57,8 @@ export default function WidgetClientPage({ connectionId }: Props) {
 
 	const onSubmit_StartConversation = async (input: StartConversationInput) => {
 		try {
-			const newConversation = await startConversation(input);
+			await startConversation(input);
 
-			setConversation(newConversation);
 			setInput("");
 		} catch (error) {
 			//
@@ -63,9 +67,7 @@ export default function WidgetClientPage({ connectionId }: Props) {
 
 	const onSend = async () => {
 		try {
-			if (!conversation) return;
-
-			await sendMessageByConversationId({ conversationId: conversation.id, role: "user", message: input.trim() });
+			await sendMessage(input.trim());
 
 			setInput("");
 		} catch (err: unknown) {
@@ -172,7 +174,7 @@ export default function WidgetClientPage({ connectionId }: Props) {
 												if (e.key === "Enter" && e.ctrlKey) onSend();
 											}}
 										/>
-										<Button size="icon" className="shrink-0" onClick={onSend} disabled={isLoadingSendMessageByConversationId}>
+										<Button size="icon" className="shrink-0" onClick={onSend} disabled={sendMessageIsLoading}>
 											<Send className="h-4 w-4" />
 										</Button>
 									</div>
