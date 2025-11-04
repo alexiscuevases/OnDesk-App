@@ -15,6 +15,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { useConversations } from "@/hooks/use-conversations";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatDate } from "@/lib/utils";
 
 interface Props {
 	conversation_id: string;
@@ -25,7 +26,6 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 	const { messages } = useMessages(conversation_id);
 	const { fetchConversationById } = useConversations();
 	const [conversation, setConversation] = useState<Conversation | null>(null);
-	const startedAt = conversation?.created_at ? new Date(conversation.created_at).toLocaleString() : "";
 
 	useEffect(() => {
 		if (!profile) return;
@@ -42,11 +42,8 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 				{/* Header */}
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-4">
-						<Skeleton className="h-10 w-10 rounded" />
-						<div className="flex-1">
-							<Skeleton className="h-8 w-48 mb-2" />
-							<Skeleton className="h-4 w-32" />
-						</div>
+						<Skeleton className="h-8 w-10 rounded" />
+						<Skeleton className="h-8 w-48" />
 					</div>
 					<Skeleton className="h-10 w-10 rounded" />
 				</div>
@@ -116,10 +113,7 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 							<ArrowLeft className="h-4 w-4" />
 						</Link>
 					</Button>
-					<div>
-						<h1 className="text-2xl font-bold tracking-tight">Conversation Details</h1>
-						<p className="text-sm text-muted-foreground mt-1">Started {startedAt}</p>
-					</div>
+					<h1 className="text-2xl font-bold tracking-tight">Conversation Details</h1>
 				</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -146,11 +140,11 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 							<h3 className="font-semibold">Customer Information</h3>
 							<div className="flex items-center gap-3">
 								<Avatar className="h-12 w-12">
-									<AvatarImage src={"/placeholder.svg"} alt={conversation?.customer_name || "Customer"} />
+									<AvatarImage src={"/placeholder.svg"} alt={conversation?.customer_name || "Unknown"} />
 									<AvatarFallback>{(conversation?.customer_name || "C").slice(0, 2).toUpperCase()}</AvatarFallback>
 								</Avatar>
 								<div>
-									<p className="font-medium">{conversation?.customer_name || "Unnamed"}</p>
+									<p className="font-medium">{conversation?.customer_name || "Unknown"}</p>
 									<p className="text-sm text-muted-foreground">{conversation?.customer_email || ""}</p>
 									{conversation?.customer_phone ? <p className="text-sm text-muted-foreground">{conversation.customer_phone}</p> : null}
 								</div>
@@ -164,7 +158,7 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 							<div className="space-y-3 text-sm">
 								<div className="flex items-center justify-between">
 									<span className="text-muted-foreground">Status</span>
-									<Badge variant="default">{conversation?.status || "pending"}</Badge>
+									<Badge variant="default">{conversation?.status}</Badge>
 								</div>
 								<div className="flex items-center justify-between">
 									<span className="text-muted-foreground">Channel</span>
@@ -186,7 +180,15 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 								</div>
 								<div className="flex items-center justify-between">
 									<span className="text-muted-foreground">Priority</span>
-									<Badge variant="secondary">{conversation?.priority || "medium"}</Badge>
+									<Badge variant="secondary">{conversation?.priority}</Badge>
+								</div>
+								<div className="flex items-center justify-between">
+									<span className="text-muted-foreground">Started date</span>
+									<span>{formatDate(conversation.created_at)}</span>
+								</div>
+								<div className="flex items-center justify-between">
+									<span className="text-muted-foreground">Updated date</span>
+									<span>{formatDate(conversation.created_at)}</span>
 								</div>
 							</div>
 						</CardContent>
