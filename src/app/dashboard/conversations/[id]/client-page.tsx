@@ -71,7 +71,7 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 							<CardContent className="p-6 space-y-4">
 								<Skeleton className="h-5 w-32" />
 								<div className="flex items-center gap-3">
-									<Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
+									<Skeleton className="h-12 w-12 rounded-full" />
 									<div className="flex-1 space-y-2">
 										<Skeleton className="h-4 w-28" />
 										<Skeleton className="h-3 w-40" />

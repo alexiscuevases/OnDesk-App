@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
-import { TeamMembersList } from "@/components/dashboard/team-members-list";
+import { TeamMembersList } from "@/components/dashboard/lists/team-members-list";
 import { InviteTeamDialog } from "@/components/dashboard/dialogs/invite-team-dialog";
 
 export default function TeamPage() {
