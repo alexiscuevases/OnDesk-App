@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bot, Settings, MoreVertical, Power, Loader2, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ConfigureAgentDialog } from "./dialogs/configure-agent-dialog";
+import { ConfigureAgentDialog } from "../dialogs/configure-agent-dialog";
 import { useAgents } from "@/hooks/use-agents";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";

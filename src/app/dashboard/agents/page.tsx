@@ -1,5 +1,5 @@
 import { CreateAgentDialog } from "@/components/dashboard/dialogs/create-agent-dialog";
-import { AgentsList } from "@/components/dashboard/agents-list";
+import { AgentsList } from "@/components/dashboard/lists/agents-list";
 
 export default function AgentsPage() {
 	return (
