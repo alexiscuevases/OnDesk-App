@@ -250,35 +250,11 @@ async function processStatusUpdates(statuses: Array<any>, connection: Connection
 				continue;
 			}
 
-			// Determinar el nuevo estado interno
-			let newStatus: "sent" | "delivered" | "seen" | "failed" | null = null;
-			switch (status.status) {
-				case "sent":
-					newStatus = "sent";
-					break;
-				case "delivered":
-					newStatus = "delivered";
-					break;
-				case "read":
-					newStatus = "seen";
-					break;
-				case "failed":
-					newStatus = "failed";
-					break;
-				default:
-					newStatus = null;
-			}
-
-			if (!newStatus) {
-				console.log("[WhatsApp] Unknown status type, skipping:", status.status);
-				continue;
-			}
-
 			// Actualizar el mensaje
 			const { error: updateError } = await supabaseAdmin
 				.from("messages")
 				.update({
-					status: newStatus,
+					status: status.status,
 					updated_at: new Date().toISOString(),
 				})
 				.eq("id", existingMessage.id);
@@ -287,17 +263,7 @@ async function processStatusUpdates(statuses: Array<any>, connection: Connection
 				continue;
 			}
 
-			// Actualizar la conversación si el estado es "read"
-			if (newStatus === "seen") {
-				await supabaseAdmin
-					.from("conversations")
-					.update({
-						updated_at: new Date().toISOString(),
-					})
-					.eq("id", existingMessage.conversation_id);
-			}
-
-			console.log(`[WhatsApp] Message ${status.id} updated to '${newStatus}'`);
+			console.log(`[WhatsApp] Message ${status.id} updated to '${status.status}'`);
 		} catch (error) {
 			console.error("[WhatsApp] Error processing message status update:", error);
 		}
