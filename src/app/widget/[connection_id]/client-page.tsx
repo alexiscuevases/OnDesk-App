@@ -8,10 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
-	teamId: string;
+	connectionId: string;
 }
 
-export default function WidgetClientPage({ teamId }: Props) {
+export default function WidgetClientPage({ connectionId }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [showAnimation, setShowAnimation] = useState(false);
 	const [showStartConversation, setShowStartConversation] = useState(true);

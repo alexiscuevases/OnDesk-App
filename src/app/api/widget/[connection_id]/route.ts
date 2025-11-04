@@ -1,22 +1,17 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { Team } from "@/lib/validations/team";
 import { AppConfigs } from "@/configs/app";
+import { Connection } from "@/lib/validations/connection";
 
-export async function GET(request: Request, { params }: { params: Promise<{ team_id: string }> }) {
-	const teamId = (await params).team_id;
-	const { data: connection, error: teamError } = await supabaseAdmin
-		.from("connections")
-		.select("*")
-		.eq("team_id", teamId)
-		.eq("type", "website")
-		.single<Team>();
+export async function GET(request: Request, { params }: { params: Promise<{ connection_id: string }> }) {
+	const connectionId = (await params).connection_id;
+	const { data: connection, error: teamError } = await supabaseAdmin.from("connections").select("*").eq("id", connectionId).single<Connection>();
 	if (teamError || !connection) return new NextResponse("Connection not found", { status: 404 });
 
 	const script = `
         (function() {
             const iframe = document.createElement('iframe');
-            iframe.src = "${AppConfigs.url}/widget?team_id=${teamId}";
+            iframe.src = "${AppConfigs.url}/widget/${connectionId}";
             iframe.style.position = 'fixed';
             iframe.style.bottom = '0';
             iframe.style.right = '0';
