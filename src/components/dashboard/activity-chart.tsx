@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 
 const data = [
