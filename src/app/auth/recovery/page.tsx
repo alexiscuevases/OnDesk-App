@@ -1,4 +1,4 @@
-import { RecoveryForm } from "@/components/site/auth/recovery-form";
+import { RecoveryForm } from "@/components/site/forms/recovery-form";
 import { platformConfigs } from "@/configs/platform";
 import { Bot } from "lucide-react";
 import Link from "next/link";

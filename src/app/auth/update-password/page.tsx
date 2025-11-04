@@ -1,4 +1,4 @@
-import { UpdatePasswordForm } from "@/components/site/auth/update-password-form";
+import { UpdatePasswordForm } from "@/components/site/forms/update-password-form";
 import { platformConfigs } from "@/configs/platform";
 import { Bot } from "lucide-react";
 import Link from "next/link";
