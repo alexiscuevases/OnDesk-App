@@ -115,7 +115,7 @@ export function ConversationsList() {
 										<span>{formatDistanceToNow(new Date(conversation.created_at), { addSuffix: true, locale: es })}</span>
 									</div>
 									<Badge
-										variant={conversation.status === "open" ? "default" : conversation.status === "resolved" ? "secondary" : "outline"}
+										variant={conversation.status === "open" ? "default" : conversation.status === "closed" ? "secondary" : "outline"}
 										className="text-xs">
 										{conversation.status}
 									</Badge>
