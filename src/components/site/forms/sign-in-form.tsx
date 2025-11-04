@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { signInSchema, type SignInInput } from "@/lib/validations/auth";
@@ -37,6 +37,7 @@ export function SignInForm() {
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 			{error && (
 				<Alert variant="destructive">
+					<AlertCircle className="h-4 w-4" />
 					<AlertDescription>{error}</AlertDescription>
 				</Alert>
 			)}
