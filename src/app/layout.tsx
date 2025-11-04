@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { platformConfigs } from "@/configs/platform";
 import { NextIntlClientProvider } from "next-intl";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default async function RootLayout({
 		<html suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<ThemeProvider attribute="class" defaultTheme="ligth" enableSystem disableTransitionOnChange>
-					<NextIntlClientProvider>{children}</NextIntlClientProvider>
+					<NextIntlClientProvider>
+						<QueryProvider>{children}</QueryProvider>
+					</NextIntlClientProvider>
 				</ThemeProvider>
 			</body>
 		</html>
