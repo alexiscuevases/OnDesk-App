@@ -30,13 +30,13 @@ export default async function RootLayout({
 	return (
 		<html suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<ThemeProvider attribute="class" defaultTheme="ligth" enableSystem disableTransitionOnChange>
-					<NextIntlClientProvider>
+				<NextIntlClientProvider>
+					<ThemeProvider attribute="class" defaultTheme="ligth" enableSystem disableTransitionOnChange>
 						<QueryProvider>
 							<AuthProvider>{children}</AuthProvider>
 						</QueryProvider>
-					</NextIntlClientProvider>
-				</ThemeProvider>
+					</ThemeProvider>
+				</NextIntlClientProvider>
 			</body>
 		</html>
 	);
