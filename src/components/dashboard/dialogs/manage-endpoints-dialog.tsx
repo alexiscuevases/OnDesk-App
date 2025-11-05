@@ -58,12 +58,12 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 	});
 
 	const handleDelete = async (id: string) => {
-		if (confirm("¿Estás seguro de que deseas eliminar este endpoint?")) {
+		if (confirm("Are you sure you want to delete this endpoint?")) {
 			try {
 				await deleteEndpoint(id);
-				toast.success("Endpoint eliminado exitosamente");
+				toast.success("Endpoint successfully deleted");
 			} catch (error) {
-				toast.error("Error al eliminar el endpoint");
+				toast.error("Error deleting endpoint");
 			}
 		}
 	};
@@ -71,9 +71,9 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 	const handleToggleStatus = async (endpoint: Endpoint) => {
 		try {
 			await updateEndpoint(endpoint.id, { is_active: !endpoint.is_active });
-			toast.success(endpoint.is_active ? "Endpoint desactivado" : "Endpoint activado");
+			toast.success(endpoint.is_active ? "Endpoint deactivated" : "Endpoint activated");
 		} catch (error) {
-			toast.error("Error al actualizar el endpoint");
+			toast.error("Error updating endpoint");
 		}
 	};
 
@@ -96,11 +96,11 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 
 			setTestResponse(result);
 
-			toast.success("Endpoint ejecutado exitosamente", {
-				description: `Duración: ${result.duration}ms`,
+			toast.success("Endpoint executed successfully", {
+				description: `Duration: ${result.duration}ms`,
 			});
 		} catch (error: any) {
-			toast.error(error.message || "Error al probar el endpoint");
+			toast.error(error.message || "Error testing endpoint");
 			setTestResponse(error);
 		}
 	};
@@ -119,11 +119,11 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 			};
 
 			await createEndpoint(parsedData);
-			toast.success("Endpoint creado exitosamente");
+			toast.success("Endpoint successfully created");
 			reset();
 			setShowCreateForm(false);
 		} catch (error: any) {
-			toast.error(error.message || "Error al crear el endpoint");
+			toast.error(error.message || "Error creating endpoint");
 		}
 	};
 
@@ -147,23 +147,22 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 			<Dialog open={open} onOpenChange={onOpenChange}>
 				<DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
 					<DialogHeader>
-						<DialogTitle>Endpoints de {agentName}</DialogTitle>
-						<DialogDescription>Configura las acciones que puede realizar el agente mediante endpoints personalizados</DialogDescription>
+						<DialogTitle>{agentName} Endpoints</DialogTitle>
+						<DialogDescription>Configure the actions the agent can perform through custom endpoints</DialogDescription>
 					</DialogHeader>
 
 					<div className="space-y-4 py-4">
 						<div className="flex justify-between items-center">
 							<p className="text-sm text-muted-foreground">
-								{endpoints.length} endpoint{endpoints.length !== 1 ? "s" : ""} configurado
-								{endpoints.length !== 1 ? "s" : ""}
+								{endpoints.length} configured endpoint{endpoints.length !== 1 ? "s" : ""}
 							</p>
 							<Button size="sm" onClick={() => setShowCreateForm(!showCreateForm)} variant={showCreateForm ? "outline" : "default"}>
 								{showCreateForm ? (
-									<>Cancelar</>
+									<>Cancel</>
 								) : (
 									<>
 										<Plus className="h-4 w-4 mr-2" />
-										Nuevo Endpoint
+										New Endpoint
 									</>
 								)}
 							</Button>
@@ -175,13 +174,13 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 									<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 										<div className="grid grid-cols-2 gap-4">
 											<div className="space-y-2">
-												<Label htmlFor="name">Nombre *</Label>
-												<Input id="name" placeholder="Ej: Consultar Cliente" {...register("name")} />
+												<Label htmlFor="name">Name *</Label>
+												<Input id="name" placeholder="Ex: Get Customer" {...register("name")} />
 												{errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
 											</div>
 
 											<div className="space-y-2">
-												<Label htmlFor="method">Método *</Label>
+												<Label htmlFor="method">Method *</Label>
 												<Select value={watch("method")} onValueChange={(value: any) => setValue("method", value)}>
 													<SelectTrigger id="method">
 														<SelectValue />
@@ -198,10 +197,10 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 										</div>
 
 										<div className="space-y-2">
-											<Label htmlFor="description">Descripción *</Label>
+											<Label htmlFor="description">Description *</Label>
 											<Textarea
 												id="description"
-												placeholder="Describe qué hace este endpoint (mínimo 10 caracteres)"
+												placeholder="Describe what this endpoint does (at least 10 characters)"
 												{...register("description")}
 											/>
 											{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
@@ -210,12 +209,12 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 										<div className="space-y-2">
 											<Label htmlFor="url">URL *</Label>
 											<Input id="url" placeholder="https://api.example.com/resource/{id}" {...register("url")} />
-											<p className="text-xs text-muted-foreground">Usa {"{id}"} para parámetros en la URL</p>
+											<p className="text-xs text-muted-foreground">Use {"{id}"} for URL parameters</p>
 											{errors.url && <p className="text-xs text-destructive">{errors.url.message}</p>}
 										</div>
 
 										<div className="space-y-2">
-											<Label htmlFor="params_schema">Esquema de Parámetros (JSON)</Label>
+											<Label htmlFor="params_schema">Parameters Schema (JSON)</Label>
 											<Textarea
 												id="params_schema"
 												placeholder='{"id": {"type": "string", "required": true}}'
@@ -223,13 +222,11 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 												rows={3}
 												{...register("params_schema")}
 											/>
-											<p className="text-xs text-muted-foreground">
-												Define los parámetros de URL. Ejemplo: {`{"id": {"type": "string"}}`}
-											</p>
+											<p className="text-xs text-muted-foreground">Define URL parameters. Example: {`{"id": {"type": "string"}}`}</p>
 										</div>
 
 										<div className="space-y-2">
-											<Label htmlFor="headers_schema">Headers Personalizados (JSON)</Label>
+											<Label htmlFor="headers_schema">Custom Headers (JSON)</Label>
 											<Textarea
 												id="headers_schema"
 												placeholder='{"X-Custom-Header": "value"}'
@@ -237,11 +234,11 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 												rows={2}
 												{...register("headers_schema")}
 											/>
-											<p className="text-xs text-muted-foreground">Headers HTTP adicionales (opcional)</p>
+											<p className="text-xs text-muted-foreground">Additional HTTP headers (optional)</p>
 										</div>
 
 										<div className="space-y-2">
-											<Label htmlFor="response_schema">Esquema de Respuesta (JSON)</Label>
+											<Label htmlFor="response_schema">Response Schema (JSON)</Label>
 											<Textarea
 												id="response_schema"
 												placeholder='{"id": "string", "name": "string", "email": "string"}'
@@ -249,7 +246,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 												rows={3}
 												{...register("response_schema")}
 											/>
-											<p className="text-xs text-muted-foreground">Describe la estructura esperada de la respuesta (opcional)</p>
+											<p className="text-xs text-muted-foreground">Describe the expected response structure (optional)</p>
 										</div>
 
 										<div className="grid grid-cols-2 gap-4">
@@ -259,23 +256,23 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 											</div>
 
 											<div className="space-y-2">
-												<Label htmlFor="retry_count">Reintentos</Label>
+												<Label htmlFor="retry_count">Retries</Label>
 												<Input id="retry_count" type="number" min="0" max="3" {...register("retry_count", { valueAsNumber: true })} />
 											</div>
 										</div>
 
 										<div className="flex justify-end gap-2 pt-4 border-t">
 											<Button type="button" variant="outline" onClick={() => setShowCreateForm(false)}>
-												Cancelar
+												Cancel
 											</Button>
 											<Button type="submit" disabled={isSubmitting}>
 												{isSubmitting ? (
 													<>
 														<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-														Creando...
+														Creating...
 													</>
 												) : (
-													"Crear Endpoint"
+													"Create Endpoint"
 												)}
 											</Button>
 										</div>
@@ -288,13 +285,13 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 							<Card className="border-dashed">
 								<CardContent className="flex flex-col items-center justify-center py-12">
 									<Code className="h-12 w-12 text-muted-foreground mb-4" />
-									<p className="text-center text-muted-foreground mb-2">No hay endpoints configurados</p>
+									<p className="text-center text-muted-foreground mb-2">No endpoints configured</p>
 									<p className="text-center text-sm text-muted-foreground mb-4">
-										Agrega endpoints para que el agente pueda consultar, crear, actualizar o eliminar recursos
+										Add endpoints so the agent can query, create, update, or delete resources
 									</p>
 									<Button variant="outline" onClick={() => setShowCreateForm(true)}>
 										<Plus className="h-4 w-4 mr-2" />
-										Crear Primer Endpoint
+										Create First Endpoint
 									</Button>
 								</CardContent>
 							</Card>
@@ -311,7 +308,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 														</Badge>
 														<h4 className="font-medium">{endpoint.name}</h4>
 														<Badge variant={endpoint.is_active ? "default" : "outline"} className="text-xs">
-															{endpoint.is_active ? "Activo" : "Inactivo"}
+															{endpoint.is_active ? "Active" : "Inactive"}
 														</Badge>
 													</div>
 													<p className="text-sm text-muted-foreground">{endpoint.description}</p>
@@ -325,14 +322,14 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 																	<p className="font-mono">{endpoint.timeout}ms</p>
 																</div>
 																<div>
-																	<Label className="text-xs text-muted-foreground">Reintentos</Label>
+																	<Label className="text-xs text-muted-foreground">Retries</Label>
 																	<p className="font-mono">{endpoint.retry_count}</p>
 																</div>
 															</div>
 
 															{Object.keys(endpoint.params_schema).length > 0 && (
 																<div>
-																	<Label className="text-xs text-muted-foreground">Esquema de Parámetros</Label>
+																	<Label className="text-xs text-muted-foreground">Parameters Schema</Label>
 																	<pre className="text-xs bg-muted p-2 rounded mt-1 overflow-x-auto">
 																		{JSON.stringify(endpoint.params_schema, null, 2)}
 																	</pre>
@@ -347,7 +344,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 														variant="ghost"
 														size="icon"
 														onClick={() => toggleExpanded(endpoint.id)}
-														title={expandedEndpoint === endpoint.id ? "Contraer" : "Expandir"}>
+														title={expandedEndpoint === endpoint.id ? "Collapse" : "Expand"}>
 														{expandedEndpoint === endpoint.id ? (
 															<ChevronUp className="h-4 w-4" />
 														) : (
@@ -359,7 +356,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 														size="icon"
 														onClick={() => handleTest(endpoint)}
 														disabled={isTestingEndpoint}
-														title="Probar endpoint">
+														title="Test endpoint">
 														{isTestingEndpoint ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
 													</Button>
 													<Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(endpoint.id)}>
@@ -371,7 +368,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 											<div className="mt-4 pt-4 border-t border-border">
 												<div className="flex items-center justify-between">
 													<Label htmlFor={`status-${endpoint.id}`} className="text-sm">
-														{endpoint.is_active ? "Activo" : "Inactivo"}
+														{endpoint.is_active ? "Active" : "Inactive"}
 													</Label>
 													<Switch
 														id={`status-${endpoint.id}`}
@@ -389,7 +386,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 
 					<DialogFooter>
 						<Button variant="outline" onClick={() => onOpenChange(false)}>
-							Cerrar
+							Close
 						</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -398,8 +395,8 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 			<Dialog open={testDialogOpen} onOpenChange={setTestDialogOpen}>
 				<DialogContent className="sm:max-w-[500px]">
 					<DialogHeader>
-						<DialogTitle>Probar Endpoint: {selectedEndpointForTest?.name}</DialogTitle>
-						<DialogDescription>Ingresa los parámetros requeridos para probar el endpoint</DialogDescription>
+						<DialogTitle>Test Endpoint: {selectedEndpointForTest?.name}</DialogTitle>
+						<DialogDescription>Enter the required parameters to test the endpoint</DialogDescription>
 					</DialogHeader>
 
 					{selectedEndpointForTest && (
@@ -413,7 +410,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 									<Input
 										id={`param-${key}`}
 										type={schema.type === "number" ? "number" : "text"}
-										placeholder={`Ingresa ${key}`}
+										placeholder={`Enter ${key}`}
 										value={testParams[key] || ""}
 										onChange={(e) => setTestParams({ ...testParams, [key]: e.target.value })}
 									/>
@@ -423,7 +420,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 
 							{testResponse && (
 								<div className="mt-4 pt-4 border-t">
-									<Label className="text-sm font-semibold">Respuesta:</Label>
+									<Label className="text-sm font-semibold">Response:</Label>
 									<pre className="bg-muted p-3 rounded mt-2 text-xs overflow-auto max-h-[300px] border">
 										{JSON.stringify(testResponse, null, 2)}
 									</pre>
@@ -439,7 +436,7 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 								setTestDialogOpen(false);
 								setTestResponse(null);
 							}}>
-							Cerrar
+							Close
 						</Button>
 						<Button
 							onClick={() => {
@@ -451,10 +448,10 @@ export function ManageEndpointsDialog({ open, onOpenChange, agentId, agentName }
 							{isTestingEndpoint ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Probando...
+									Testing...
 								</>
 							) : (
-								"Probar"
+								"Test"
 							)}
 						</Button>
 					</DialogFooter>

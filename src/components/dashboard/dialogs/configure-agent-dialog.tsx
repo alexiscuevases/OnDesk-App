@@ -78,14 +78,14 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 		try {
 			await updateAgent(agent.id, data);
 
-			toast.success("Agente actualizado", {
-				description: "Los cambios han sido guardados exitosamente.",
+			toast.success("Agent updated", {
+				description: "The changes have been successfully saved.",
 			});
 
 			onOpenChange(false);
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo actualizar el agente",
+				description: err.message || "The agent could not be updated",
 			});
 		} finally {
 			setIsLoading(false);
@@ -106,8 +106,8 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 				<DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<DialogHeader>
-							<DialogTitle>Configurar Agente: {agent.name}</DialogTitle>
-							<DialogDescription>Personaliza la configuración y comportamiento de tu agente</DialogDescription>
+							<DialogTitle>Configure Agent: {agent.name}</DialogTitle>
+							<DialogDescription>Customize your agent's settings and behavior</DialogDescription>
 						</DialogHeader>
 
 						<Tabs defaultValue="general" className="w-full">
@@ -122,25 +122,25 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 										</Badge>
 									)}
 								</TabsTrigger>
-								<TabsTrigger value="advanced">Avanzado</TabsTrigger>
+								<TabsTrigger value="advanced">Advanced</TabsTrigger>
 							</TabsList>
 
 							<TabsContent value="general" className="space-y-4 mt-4">
 								<div className="grid gap-2">
-									<Label htmlFor="edit-name">Nombre del Agente</Label>
+									<Label htmlFor="edit-name">Agent Name</Label>
 									<Input id="edit-name" {...register("name")} />
 									{errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
 								</div>
 								<div className="grid gap-2">
-									<Label htmlFor="edit-description">Descripción</Label>
+									<Label htmlFor="edit-description">Description</Label>
 									<Input id="edit-description" {...register("description")} />
 									{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
 								</div>
 								<div className="grid gap-2">
-									<Label htmlFor="edit-type">Tipo de Agente</Label>
+									<Label htmlFor="edit-type">Agent Type</Label>
 									<Select value={watch("type")} onValueChange={(value: Agent["type"]) => setValue("type", value)}>
 										<SelectTrigger id="edit-type">
-											<SelectValue placeholder="Selecciona el tipo de agente" />
+											<SelectValue placeholder="Select the agent type" />
 										</SelectTrigger>
 										<SelectContent>
 											{Object.entries(AGENT_TYPES_OBJECT).map(([key, label]) => (
@@ -154,7 +154,7 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 									<Label htmlFor="edit-status">Status</Label>
 									<Select value={watch("status")} onValueChange={(value: Agent["status"]) => setValue("status", value)}>
 										<SelectTrigger id="edit-status">
-											<SelectValue placeholder="Selecciona el tipo de agente" />
+											<SelectValue placeholder="Select the agent status" />
 										</SelectTrigger>
 										<SelectContent>
 											{Object.entries(AGENT_STATUSES_OBJECT).map(([key, label]) => (
@@ -168,16 +168,14 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 
 							<TabsContent value="prompt" className="space-y-4 mt-4">
 								<div className="grid gap-2">
-									<Label htmlFor="edit-prompt">Prompt del Sistema</Label>
+									<Label htmlFor="edit-prompt">System Prompt</Label>
 									<Textarea
 										id="edit-prompt"
-										placeholder="Eres un agente de soporte al cliente útil..."
+										placeholder="You are a helpful customer support agent..."
 										className="min-h-[200px]"
 										{...register("system_prompt")}
 									/>
-									<p className="text-xs text-muted-foreground">
-										Este prompt define la personalidad, conocimiento y comportamiento de tu agente
-									</p>
+									<p className="text-xs text-muted-foreground">This prompt defines your agent’s personality, knowledge, and behavior.</p>
 									{errors.system_prompt && <p className="text-xs text-destructive">{errors.system_prompt.message}</p>}
 								</div>
 							</TabsContent>
@@ -188,11 +186,11 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 										<div className="space-y-1">
 											<div className="flex items-center gap-2">
 												<Webhook className="h-5 w-5 text-primary" />
-												<h3 className="font-semibold">Acciones del Agente</h3>
+												<h3 className="font-semibold">Agent Actions</h3>
 											</div>
 											<p className="text-sm text-muted-foreground">
-												Configura endpoints personalizados para que el agente pueda realizar acciones como consultar, crear, actualizar
-												o eliminar recursos externos.
+												Configure custom endpoints so your agent can perform actions such as retrieving, creating, updating, or deleting
+												external resources.
 											</p>
 										</div>
 									</div>
@@ -200,22 +198,22 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 									<div className="grid grid-cols-2 gap-4 py-4 border-y">
 										<div className="space-y-1">
 											<p className="text-2xl font-bold">{endpoints.length}</p>
-											<p className="text-xs text-muted-foreground">Endpoints totales</p>
+											<p className="text-xs text-muted-foreground">Total endpoints</p>
 										</div>
 										<div className="space-y-1">
 											<p className="text-2xl font-bold text-green-600">{activeEndpointsCount}</p>
-											<p className="text-xs text-muted-foreground">Endpoints activos</p>
+											<p className="text-xs text-muted-foreground">Active endpoints</p>
 										</div>
 									</div>
 
 									<Button type="button" variant="outline" className="w-full" onClick={() => setShowEndpointsDialog(true)}>
 										<Webhook className="h-4 w-4 mr-2" />
-										Gestionar Endpoints
+										Manage Endpoints
 									</Button>
 
 									{endpoints.length > 0 && (
 										<div className="space-y-2">
-											<Label className="text-xs text-muted-foreground">Endpoints recientes</Label>
+											<Label className="text-xs text-muted-foreground">Recent Endpoints</Label>
 											<div className="space-y-2">
 												{endpoints.slice(0, 3).map((endpoint) => (
 													<div key={endpoint.id} className="flex items-center justify-between p-2 rounded-md bg-muted">
@@ -234,7 +232,7 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 															<span className="text-sm">{endpoint.name}</span>
 														</div>
 														<Badge variant={endpoint.is_active ? "default" : "secondary"} className="text-xs">
-															{endpoint.is_active ? "Activo" : "Inactivo"}
+															{endpoint.is_active ? "Active" : "Inactive"}
 														</Badge>
 													</div>
 												))}
@@ -246,10 +244,10 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 
 							<TabsContent value="advanced" className="space-y-4 mt-4">
 								<div className="grid gap-2">
-									<Label htmlFor="edit-model">Modelo de IA</Label>
+									<Label htmlFor="edit-model">AI Model</Label>
 									<Select value={watch("model")} onValueChange={(value: Agent["model"]) => setValue("model", value)}>
 										<SelectTrigger id="edit-model">
-											<SelectValue placeholder="Selecciona el modelo de IA" />
+											<SelectValue placeholder="Select the AI model" />
 										</SelectTrigger>
 										<SelectContent>
 											{Object.entries(AGENT_MODELS_OBJECT).map(([key, label]) => (
@@ -270,14 +268,12 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 										onValueChange={handleTemperatureChange}
 										className="w-full"
 									/>
-									<p className="text-xs text-muted-foreground">
-										Controla la aleatoriedad. Valores más bajos hacen las respuestas más enfocadas
-									</p>
+									<p className="text-xs text-muted-foreground">Controls randomness. Lower values make responses more focused.</p>
 								</div>
 								<div className="grid gap-2">
-									<Label htmlFor="edit-max-tokens">Longitud Máxima de Respuesta</Label>
+									<Label htmlFor="edit-max-tokens">Maximum Response Length</Label>
 									<Input id="edit-max-tokens" type="number" {...register("max_tokens", { valueAsNumber: true })} />
-									<p className="text-xs text-muted-foreground">Número máximo de tokens en la respuesta</p>
+									<p className="text-xs text-muted-foreground">Maximum number of tokens in the response.</p>
 									{errors.max_tokens && <p className="text-xs text-destructive">{errors.max_tokens.message}</p>}
 								</div>
 							</TabsContent>
@@ -285,16 +281,16 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 
 						<DialogFooter className="mt-4">
 							<Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-								Cancelar
+								Cancel
 							</Button>
 							<Button type="submit" disabled={isLoading}>
 								{isLoading ? (
 									<>
 										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-										Guardando...
+										Saving...
 									</>
 								) : (
-									"Guardar Cambios"
+									"Save Changes"
 								)}
 							</Button>
 						</DialogFooter>

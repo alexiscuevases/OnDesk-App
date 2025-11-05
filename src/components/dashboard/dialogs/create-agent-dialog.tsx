@@ -43,15 +43,15 @@ export function CreateAgentDialog() {
 		try {
 			await createAgent(data);
 
-			toast.success("Agente creado", {
-				description: "El agente ha sido creado exitosamente.",
+			toast.success("Agent created", {
+				description: "The agent has been successfully created.",
 			});
 
 			setOpen(false);
 			reset();
 		} catch (error: any) {
 			toast.error("Error", {
-				description: error.message || "No se pudo crear el agente",
+				description: error.message || "Failed to create the agent",
 			});
 		} finally {
 			setIsLoading(false);
@@ -63,31 +63,31 @@ export function CreateAgentDialog() {
 			<DialogTrigger asChild>
 				<Button>
 					<Plus className="mr-2 h-4 w-4" />
-					Crear Agente
+					Create Agent
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[600px]">
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<DialogHeader>
-						<DialogTitle>Crear Nuevo Agente</DialogTitle>
-						<DialogDescription>Configura tu agente de IA con un nombre, descripción y prompt especializado</DialogDescription>
+						<DialogTitle>Create New Agent</DialogTitle>
+						<DialogDescription>Configure your AI agent with a name, description, and specialized prompt</DialogDescription>
 					</DialogHeader>
 					<div className="grid gap-4 py-4">
 						<div className="grid gap-2">
-							<Label htmlFor="name">Nombre del Agente</Label>
-							<Input id="name" placeholder="ej., Bot de Soporte" {...register("name")} />
+							<Label htmlFor="name">Agent Name</Label>
+							<Input id="name" placeholder="e.g., Support Bot" {...register("name")} />
 							{errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
 						</div>
 						<div className="grid gap-2">
-							<Label htmlFor="description">Descripción</Label>
-							<Input id="description" placeholder="Breve descripción de lo que hace este agente" {...register("description")} />
+							<Label htmlFor="description">Description</Label>
+							<Input id="description" placeholder="Brief description of what this agent does" {...register("description")} />
 							{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
 						</div>
 						<div className="grid gap-2">
-							<Label htmlFor="type">Tipo de Agente</Label>
+							<Label htmlFor="type">Agent Type</Label>
 							<Select value={watch("type")} onValueChange={(value) => setValue("type", value as CreateAgentInput["type"])}>
 								<SelectTrigger id="type">
-									<SelectValue placeholder="Selecciona el tipo de agente" />
+									<SelectValue placeholder="Select the agent type" />
 								</SelectTrigger>
 								<SelectContent>
 									{Object.entries(AGENT_TYPES_OBJECT).map(([key, label]) => (
@@ -98,21 +98,21 @@ export function CreateAgentDialog() {
 							{errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
 						</div>
 						<div className="grid gap-2">
-							<Label htmlFor="system_prompt">Prompt del Sistema</Label>
+							<Label htmlFor="system_prompt">System Prompt</Label>
 							<Textarea
 								id="system_prompt"
-								placeholder="Eres un agente de soporte al cliente útil. Tu objetivo es..."
+								placeholder="You are a helpful customer support agent. Your goal is to..."
 								className="min-h-[120px]"
 								{...register("system_prompt")}
 							/>
-							<p className="text-xs text-muted-foreground">Este prompt define la personalidad, conocimiento y comportamiento de tu agente</p>
+							<p className="text-xs text-muted-foreground">This prompt defines the agent’s personality, knowledge, and behavior</p>
 							{errors.system_prompt && <p className="text-xs text-destructive">{errors.system_prompt.message}</p>}
 						</div>
 						<div className="grid gap-2">
-							<Label htmlFor="model">Modelo de IA</Label>
+							<Label htmlFor="model">AI Model</Label>
 							<Select value={watch("model")} onValueChange={(value) => setValue("model", value as CreateAgentInput["model"])}>
 								<SelectTrigger id="model">
-									<SelectValue placeholder="Selecciona el modelo de IA" />
+									<SelectValue placeholder="Select the AI model" />
 								</SelectTrigger>
 								<SelectContent>
 									{Object.entries(AGENT_MODELS_OBJECT).map(([key, label]) => (
@@ -126,7 +126,7 @@ export function CreateAgentDialog() {
 							<Label htmlFor="status">Status</Label>
 							<Select value={watch("status")} onValueChange={(value) => setValue("status", value as CreateAgentInput["status"])}>
 								<SelectTrigger id="status">
-									<SelectValue placeholder="Selecciona el estado" />
+									<SelectValue placeholder="Select the status" />
 								</SelectTrigger>
 								<SelectContent>
 									{Object.entries(AGENT_STATUSES_OBJECT).map(([key, label]) => (
@@ -139,16 +139,16 @@ export function CreateAgentDialog() {
 					</div>
 					<DialogFooter>
 						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-							Cancelar
+							Cancel
 						</Button>
 						<Button type="submit" disabled={isLoading}>
 							{isLoading ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Creando...
+									Creating...
 								</>
 							) : (
-								"Crear Agente"
+								"Create Agent"
 							)}
 						</Button>
 					</DialogFooter>

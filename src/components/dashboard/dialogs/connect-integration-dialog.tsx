@@ -71,15 +71,15 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 				config,
 			});
 
-			toast.success("Conexión creada", {
-				description: "Se ha creado la conexión exitosamente",
+			toast.success("Connection created", {
+				description: "The connection has been successfully created.",
 			});
 
 			setOpen(false);
 			reset();
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo actualizar el agente",
+				description: err.message || "Failed to update the agent",
 			});
 		} finally {
 			setIsLoading(false);
@@ -92,39 +92,39 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 			<DialogContent className="sm:max-w-[500px]">
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<DialogHeader>
-						<DialogTitle>Conectar {integration.name}</DialogTitle>
-						<DialogDescription>Configura los ajustes de integración de {integration.name}</DialogDescription>
+						<DialogTitle>Connect {integration.name}</DialogTitle>
+						<DialogDescription>Configure the integration settings for {integration.name}</DialogDescription>
 					</DialogHeader>
 
 					<div className="space-y-4 py-4">
 						<div className="space-y-2">
-							<Label htmlFor="name">Nombre de la Conexión</Label>
+							<Label htmlFor="name">Connection Name</Label>
 							<Input id="name" placeholder={integration.name} {...register("name")} />
 						</div>
 
 						{integration.type === "whatsapp" && (
 							<>
 								<div className="space-y-2">
-									<Label htmlFor="phoneNumber">Número de Teléfono</Label>
+									<Label htmlFor="phoneNumber">Phone Number</Label>
 									<Input id="phoneNumber" placeholder="+1234567890" {...register("phoneNumber", { required: true })} />
-									{errors.phoneNumber && <p className="text-xs text-destructive">Este campo es requerido</p>}
-									<p className="text-xs text-muted-foreground">Número de teléfono que aparece en WhatsApp Business</p>
+									{errors.phoneNumber && <p className="text-xs text-destructive">This field is required</p>}
+									<p className="text-xs text-muted-foreground">Phone number displayed in WhatsApp Business</p>
 								</div>
 								<div className="space-y-2">
 									<Label htmlFor="phoneNumberId">Phone Number ID</Label>
 									<Input id="phoneNumberId" placeholder="123456789012345" {...register("phoneNumberId", { required: true })} />
-									{errors.phoneNumberId && <p className="text-xs text-destructive">Este campo es requerido</p>}
-									<p className="text-xs text-muted-foreground">ID del número en Meta Business Suite</p>
+									{errors.phoneNumberId && <p className="text-xs text-destructive">This field is required</p>}
+									<p className="text-xs text-muted-foreground">ID of the number in Meta Business Suite</p>
 								</div>
 								<div className="space-y-2">
 									<Label htmlFor="apiKey">Access Token</Label>
 									<Input id="apiKey" type="password" placeholder="EAAxxxxxxxxxxxxx" {...register("apiKey", { required: true })} />
-									{errors.apiKey && <p className="text-xs text-destructive">Este campo es requerido</p>}
-									<p className="text-xs text-muted-foreground">Token de acceso temporal de Meta</p>
+									{errors.apiKey && <p className="text-xs text-destructive">This field is required</p>}
+									<p className="text-xs text-muted-foreground">Temporary access token from Meta</p>
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="accountName">Nombre de la Cuenta</Label>
-									<Input id="accountName" placeholder="Mi Cuenta de Negocio" {...register("accountName")} />
+									<Label htmlFor="accountName">Account Name</Label>
+									<Input id="accountName" placeholder="My Business Account" {...register("accountName")} />
 								</div>
 							</>
 						)}
@@ -132,17 +132,17 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 						{integration.type === "website" && (
 							<>
 								<div className="space-y-2">
-									<Label htmlFor="websiteUrl">URL del Sitio Web</Label>
+									<Label htmlFor="websiteUrl">Website URL</Label>
 									<Input id="websiteUrl" placeholder="https://example.com" {...register("websiteUrl", { required: true })} />
-									{errors.websiteUrl && <p className="text-xs text-destructive">Este campo es requerido</p>}
+									{errors.websiteUrl && <p className="text-xs text-destructive">This field is required</p>}
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="widgetName">Nombre del Widget</Label>
-									<Input id="widgetName" placeholder="Chat de Soporte" {...register("widgetName")} />
+									<Label htmlFor="widgetName">Widget Name</Label>
+									<Input id="widgetName" placeholder="Support Chat" {...register("widgetName")} />
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="welcomeMessage">Mensaje de Bienvenida</Label>
-									<Textarea id="welcomeMessage" placeholder="¡Hola! ¿Cómo puedo ayudarte hoy?" {...register("welcomeMessage")} />
+									<Label htmlFor="welcomeMessage">Welcome Message</Label>
+									<Textarea id="welcomeMessage" placeholder="Hi! How can I help you today?" {...register("welcomeMessage")} />
 								</div>
 							</>
 						)}
@@ -150,16 +150,16 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 
 					<DialogFooter>
 						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-							Cancelar
+							Cancel
 						</Button>
 						<Button type="submit" disabled={isLoading}>
 							{isLoading ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Conectando...
+									Connecting...
 								</>
 							) : (
-								"Conectar"
+								"Connect"
 							)}
 						</Button>
 					</DialogFooter>

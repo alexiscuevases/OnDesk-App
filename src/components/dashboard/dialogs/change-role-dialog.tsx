@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -32,14 +31,14 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 		try {
 			await updateTeamMemberRole(member.id, selectedRole);
 
-			toast.success("Rol actualizado", {
-				description: `El rol de ${member.email} ha sido actualizado a ${selectedRole}.`,
+			toast.success("Role updated", {
+				description: `${member.email}'s role has been updated to ${selectedRole}.`,
 			});
 
 			setOpen(false);
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo actualizar el rol",
+				description: err.message || "Failed to update role",
 			});
 		} finally {
 			setIsLoading(false);
@@ -52,8 +51,8 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 			<DialogContent className="sm:max-w-[450px]">
 				<form onSubmit={handleSubmit}>
 					<DialogHeader>
-						<DialogTitle>Cambiar Rol</DialogTitle>
-						<DialogDescription>Actualizar el rol para {member.email}</DialogDescription>
+						<DialogTitle>Change Role</DialogTitle>
+						<DialogDescription>Update the role for {member.email}</DialogDescription>
 					</DialogHeader>
 
 					<div className="py-6">
@@ -65,7 +64,7 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 										Admin
 									</Label>
 									<p className="text-sm text-muted-foreground">
-										Puede gestionar miembros del equipo, agentes y todas las configuraciones. No puede eliminar el workspace.
+										Can manage team members, agents, and all settings. Cannot delete the workspace.
 									</p>
 								</div>
 							</div>
@@ -74,10 +73,10 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 								<RadioGroupItem value="member" id="member" />
 								<div className="space-y-1 leading-none">
 									<Label htmlFor="member" className="font-medium cursor-pointer">
-										Miembro
+										Member
 									</Label>
 									<p className="text-sm text-muted-foreground">
-										Puede crear y gestionar agentes, ver conversaciones y acceder a análisis. No puede gestionar equipo o facturación.
+										Can create and manage agents, view conversations, and access analytics. Cannot manage team or billing.
 									</p>
 								</div>
 							</div>
@@ -86,11 +85,9 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 								<RadioGroupItem value="viewer" id="viewer" />
 								<div className="space-y-1 leading-none">
 									<Label htmlFor="viewer" className="font-medium cursor-pointer">
-										Observador
+										Viewer
 									</Label>
-									<p className="text-sm text-muted-foreground">
-										Solo puede ver conversaciones y análisis. No puede crear o modificar agentes.
-									</p>
+									<p className="text-sm text-muted-foreground">Can only view conversations and analytics. Cannot create or modify agents.</p>
 								</div>
 							</div>
 						</RadioGroup>
@@ -98,16 +95,16 @@ export function ChangeRoleDialog({ children, member }: ChangeRoleDialogProps) {
 
 					<DialogFooter>
 						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-							Cancelar
+							Cancel
 						</Button>
 						<Button type="submit" disabled={isLoading}>
 							{isLoading ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Actualizando...
+									Updating...
 								</>
 							) : (
-								"Actualizar Rol"
+								"Update Role"
 							)}
 						</Button>
 					</DialogFooter>

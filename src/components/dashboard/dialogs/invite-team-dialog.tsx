@@ -40,15 +40,15 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 		try {
 			await inviteTeamMember({ ...data, team_id: currentTeam?.id as string });
 
-			toast.success("Invitación enviada", {
-				description: `Se ha enviado una invitación a ${data.email}.`,
+			toast.success("Invitation sent", {
+				description: `An invitation has been sent to ${data.email}.`,
 			});
 
 			setOpen(false);
 			reset();
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo enviar la invitación",
+				description: err.message || "Failed to send the invitation",
 			});
 		} finally {
 			setIsLoading(false);
@@ -61,48 +61,48 @@ export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 			<DialogContent>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<DialogHeader>
-						<DialogTitle>Invitar Miembro del Equipo</DialogTitle>
-						<DialogDescription>Envía una invitación para unirse a tu espacio de trabajo</DialogDescription>
+						<DialogTitle>Invite Team Member</DialogTitle>
+						<DialogDescription>Send an invitation to join your workspace</DialogDescription>
 					</DialogHeader>
 
 					<div className="space-y-4 py-4">
 						<div className="space-y-2">
-							<Label htmlFor="invite-email">Dirección de Email</Label>
-							<Input id="invite-email" type="email" placeholder="colega@ejemplo.com" {...register("email")} />
+							<Label htmlFor="invite-email">Email Address</Label>
+							<Input id="invite-email" type="email" placeholder="colleague@example.com" {...register("email")} />
 							{errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="invite-role">Rol</Label>
+							<Label htmlFor="invite-role">Role</Label>
 							<Select value={watch("role")} onValueChange={(value: TeamMember["role"]) => setValue("role", value)}>
 								<SelectTrigger id="invite-role">
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
 									{Object.entries(TEAM_MEMBER_ROLES_OBJECT).map(([key, label]) => (
-										<SelectItem value={key}>{label}</SelectItem>
+										<SelectItem key={key} value={key}>
+											{label}
+										</SelectItem>
 									))}
 								</SelectContent>
 							</Select>
 							{errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}
-							<p className="text-xs text-muted-foreground">
-								Los Admins pueden gestionar miembros del equipo y configuraciones. Los Miembros pueden crear y gestionar agentes.
-							</p>
+							<p className="text-xs text-muted-foreground">Admins can manage team members and settings. Members can create and manage agents.</p>
 						</div>
 					</div>
 
 					<DialogFooter>
 						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-							Cancelar
+							Cancel
 						</Button>
 						<Button type="submit" disabled={isLoading}>
 							{isLoading ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Enviando...
+									Sending...
 								</>
 							) : (
-								"Enviar Invitación"
+								"Send Invitation"
 							)}
 						</Button>
 					</DialogFooter>

@@ -27,7 +27,7 @@ export function ManageIntegrationDialog({ children, integration, connections }: 
 	const { deleteConnection, updateConnection } = useConnections();
 
 	const handleDelete = async (id: string) => {
-		if (confirm("¿Estás seguro de que deseas eliminar esta conexión?")) {
+		if (confirm("Are you sure you want to delete this connection?")) {
 			await deleteConnection(id);
 		}
 	};
@@ -42,13 +42,13 @@ export function ManageIntegrationDialog({ children, integration, connections }: 
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="sm:max-w-[600px]">
 				<DialogHeader>
-					<DialogTitle>Gestionar {integration.name}</DialogTitle>
-					<DialogDescription>Ver y administrar tus cuentas conectadas</DialogDescription>
+					<DialogTitle>Manage {integration.name}</DialogTitle>
+					<DialogDescription>View and manage your connected accounts</DialogDescription>
 				</DialogHeader>
 
 				<div className="space-y-4 py-4">
 					{connections.length === 0 ? (
-						<p className="text-center text-muted-foreground">No hay conexiones configuradas</p>
+						<p className="text-center text-muted-foreground">No connections configured</p>
 					) : (
 						connections.map((connection) => {
 							const config = connection.config as any;
@@ -63,17 +63,17 @@ export function ManageIntegrationDialog({ children, integration, connections }: 
 													<h4 className="font-medium">{connection.name}</h4>
 													<Badge variant={connection.status === "connected" ? "default" : "outline"} className="text-xs">
 														{connection.status === "connected"
-															? "Conectado"
+															? "Connected"
 															: connection.status === "error"
 															? "Error"
-															: "Desconectado"}
+															: "Disconnected"}
 													</Badge>
 												</div>
 												<p className="text-sm text-muted-foreground">{identifier}</p>
-												<p className="text-xs text-muted-foreground">Desde {formatDate(connection.created_at)}</p>
+												<p className="text-xs text-muted-foreground">Since {formatDate(connection.created_at)}</p>
 											</div>
 											<div className="flex items-center gap-2">
-												<Button variant="ghost" size="icon" onClick={() => toast.info("Funcionalidad en desarrollo")}>
+												<Button variant="ghost" size="icon" onClick={() => toast.info("Feature in development")}>
 													<ExternalLink className="h-4 w-4" />
 												</Button>
 												<Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(connection.id)}>
@@ -85,7 +85,7 @@ export function ManageIntegrationDialog({ children, integration, connections }: 
 										<div className="mt-4 pt-4 border-t border-border space-y-3">
 											<div className="flex items-center justify-between">
 												<Label htmlFor={`status-${connection.id}`} className="text-sm">
-													{connection.status === "connected" ? "Conectado" : "Desconectado"}
+													{connection.status === "connected" ? "Connected" : "Disconnected"}
 												</Label>
 												<Switch
 													id={`status-${connection.id}`}
@@ -103,7 +103,7 @@ export function ManageIntegrationDialog({ children, integration, connections }: 
 
 				<DialogFooter>
 					<Button variant="outline" onClick={() => setOpen(false)}>
-						Cerrar
+						Close
 					</Button>
 				</DialogFooter>
 			</DialogContent>
