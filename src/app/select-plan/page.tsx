@@ -26,7 +26,7 @@ function SelectPlanContent() {
 
 	useEffect(() => {
 		if (!teamId) {
-			setError("No se encontró el ID del equipo.");
+			setError("Team ID not found.");
 			return;
 		}
 
@@ -34,7 +34,7 @@ function SelectPlanContent() {
 		const errorParam = searchParams.get("error");
 
 		if (errorParam === "payment_failed") {
-			setError("El pago falló. Por favor, intenta de nuevo.");
+			setError("Payment failed. Please try again.");
 			return;
 		}
 
@@ -53,7 +53,7 @@ function SelectPlanContent() {
 				} else {
 					// Failed after retries
 					setIsVerifying(false);
-					setError("La verificación del pago está tomando más tiempo del esperado. Por favor, actualiza la página o contacta a soporte.");
+					setError("Payment verification is taking longer than expected. Please refresh the page or contact support.");
 				}
 			};
 
@@ -79,8 +79,8 @@ function SelectPlanContent() {
 						<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
 							<Loader2 className="h-6 w-6 animate-spin text-primary" />
 						</div>
-						<CardTitle>Verificando tu pago</CardTitle>
-						<CardDescription>Por favor espera mientras confirmamos tu suscripción. Esto solo tomará unos segundos.</CardDescription>
+						<CardTitle>Verifying your payment</CardTitle>
+						<CardDescription>Please wait while we confirm your subscription. This will only take a few seconds.</CardDescription>
 					</CardHeader>
 				</Card>
 			</div>
@@ -92,8 +92,8 @@ function SelectPlanContent() {
 			<div className="min-h-screen bg-background p-6">
 				<div className="mx-auto max-w-4xl">
 					<div className="mb-8 text-center">
-						<h1 className="text-3xl font-bold">Completa tu suscripción</h1>
-						<p className="mt-2 text-muted-foreground">Ingresa tus datos de pago para comenzar</p>
+						<h1 className="text-3xl font-bold">Complete your subscription</h1>
+						<p className="mt-2 text-muted-foreground">Enter your payment details to get started</p>
 					</div>
 					<Card className="pt-0">
 						<CardContent>
@@ -111,17 +111,17 @@ function SelectPlanContent() {
 		<div className="min-h-screen bg-background p-6">
 			<div className="mx-auto max-w-6xl">
 				<div className="mb-12 text-center">
-					<h1 className="text-4xl font-bold">Elige tu plan</h1>
-					<p className="mt-3 text-lg text-muted-foreground">Selecciona el plan perfecto para las necesidades de tu negocio</p>
+					<h1 className="text-4xl font-bold">Choose your plan</h1>
+					<p className="mt-3 text-lg text-muted-foreground">Select the perfect plan for your business needs</p>
 				</div>
 
 				<div className="flex justify-center mb-8">
 					<div className="flex items-center gap-4 bg-muted p-1 rounded-lg">
 						<Button variant={!isAnnual ? "default" : "ghost"} size="sm" onClick={() => setIsAnnual(false)}>
-							Mensual
+							Monthly
 						</Button>
 						<Button variant={isAnnual ? "default" : "ghost"} size="sm" onClick={() => setIsAnnual(true)}>
-							Anual <span className="ml-2 text-xs bg-accent text-accent-foreground px-2 py-1 rounded">15% desc</span>
+							Annual <span className="ml-2 text-xs bg-accent text-accent-foreground px-2 py-1 rounded">15% off</span>
 						</Button>
 					</div>
 				</div>
@@ -137,7 +137,7 @@ function SelectPlanContent() {
 						<Card key={product.id} className={`relative ${product.popular ? "border-accent shadow-lg" : ""}`}>
 							{product.popular && (
 								<div className="absolute -top-4 left-1/2 -translate-x-1/2">
-									<span className="rounded-full bg-accent px-4 py-1 text-sm font-medium text-accent-foreground">Más Popular</span>
+									<span className="rounded-full bg-accent px-4 py-1 text-sm font-medium text-accent-foreground">Most Popular</span>
 								</div>
 							)}
 							<CardHeader>
@@ -145,7 +145,7 @@ function SelectPlanContent() {
 								<CardDescription>{product.description}</CardDescription>
 								<div className="mt-4">
 									<span className="text-4xl font-bold">${isAnnual ? product.priceInCentsAnnual / 100 : product.priceInCents / 100}</span>
-									<span className="text-muted-foreground">/{isAnnual ? "año" : "mes"}</span>
+									<span className="text-muted-foreground">/{isAnnual ? "year" : "month"}</span>
 								</div>
 							</CardHeader>
 							<CardContent className="space-y-4">
@@ -162,7 +162,7 @@ function SelectPlanContent() {
 									variant={product.popular ? "default" : "outline"}
 									onClick={() => handleSelectPlan(product.id)}
 									disabled={!teamId}>
-									Comenzar
+									Get Started
 								</Button>
 							</CardContent>
 						</Card>
