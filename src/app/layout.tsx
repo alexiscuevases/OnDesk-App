@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { platformConfigs } from "@/configs/platform";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { AuthProvider } from "@/components/providers/auth-provider";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -32,9 +31,7 @@ export default async function RootLayout({
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<NextIntlClientProvider>
 					<ThemeProvider attribute="class" defaultTheme="ligth" enableSystem disableTransitionOnChange>
-						<QueryProvider>
-							<AuthProvider>{children}</AuthProvider>
-						</QueryProvider>
+						<QueryProvider>{children}</QueryProvider>
 					</ThemeProvider>
 				</NextIntlClientProvider>
 			</body>

@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AppConfigs } from "@/configs/app";
-import { useAuth } from "@/components/providers/auth-provider";
+import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
 
 function CreateTeamContent() {
 	const searchParams = useSearchParams();
@@ -120,13 +120,15 @@ function CreateTeamContent() {
 
 export default function CreateTeamPage() {
 	return (
-		<Suspense
-			fallback={
-				<div className="min-h-screen bg-background flex items-center justify-center p-6">
-					<Loader2 className="h-8 w-8 animate-spin text-accent" />
-				</div>
-			}>
-			<CreateTeamContent />
-		</Suspense>
+		<AuthProvider>
+			<Suspense
+				fallback={
+					<div className="min-h-screen bg-background flex items-center justify-center p-6">
+						<Loader2 className="h-8 w-8 animate-spin text-accent" />
+					</div>
+				}>
+				<CreateTeamContent />
+			</Suspense>
+		</AuthProvider>
 	);
 }
