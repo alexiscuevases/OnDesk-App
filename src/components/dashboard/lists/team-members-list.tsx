@@ -24,12 +24,12 @@ export function TeamMembersList() {
 		setRemovingId(id);
 		try {
 			await removeTeamMember(id);
-			toast.success("Miembro eliminado", {
-				description: "Se ha eliminado correctamente",
+			toast.success("Member removed", {
+				description: "Successfully removed",
 			});
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo eliminar el miembro",
+				description: err.message || "Failed to remove member",
 			});
 		} finally {
 			setRemovingId(null);
@@ -73,8 +73,8 @@ export function TeamMembersList() {
 			<Card>
 				<CardContent className="p-8 text-center">
 					<Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<h3 className="text-lg font-semibold mb-2">No hay miembros del equipo todavía</h3>
-					<p className="text-muted-foreground">Invita a tu primer miembro del equipo para colaborar.</p>
+					<h3 className="text-lg font-semibold mb-2">No team members yet</h3>
+					<p className="text-muted-foreground">Invite your first team member to collaborate.</p>
 				</CardContent>
 			</Card>
 		);
@@ -104,7 +104,7 @@ export function TeamMembersList() {
 										<div className="flex items-center gap-2 mt-1">
 											<Mail className="h-3 w-3 text-muted-foreground" />
 											<p className="text-xs text-muted-foreground">
-												{member.status === "pending" ? "Invitación pendiente" : "Miembro activo"}
+												{member.status === "pending" ? "Pending invitation" : "Active member"}
 											</p>
 										</div>
 									</div>
@@ -124,12 +124,12 @@ export function TeamMembersList() {
 										</DropdownMenuTrigger>
 										<DropdownMenuContent align="end">
 											<ChangeRoleDialog member={member}>
-												<DropdownMenuItem onSelect={(e) => e.preventDefault()}>Cambiar Rol</DropdownMenuItem>
+												<DropdownMenuItem onSelect={(e) => e.preventDefault()}>Change Role</DropdownMenuItem>
 											</ChangeRoleDialog>
-											{member.status === "pending" && <DropdownMenuItem>Reenviar Invitación</DropdownMenuItem>}
+											{member.status === "pending" && <DropdownMenuItem>Resend Invitation</DropdownMenuItem>}
 											<DropdownMenuSeparator />
 											<DropdownMenuItem className="text-destructive" onClick={() => handleRemove(member.id)}>
-												{member.status === "pending" ? "Cancelar Invitación" : "Eliminar Miembro"}
+												{member.status === "pending" ? "Cancel Invitation" : "Remove Member"}
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>

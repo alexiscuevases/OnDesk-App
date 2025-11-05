@@ -22,27 +22,27 @@ const availableIntegrations: Integration[] = [
 	{
 		type: "whatsapp",
 		name: "WhatsApp Business",
-		description: "Conecta tus agentes a WhatsApp para mensajería con clientes",
+		description: "Connect your agents to WhatsApp for customer messaging",
 		icon: MessageCircle,
 	},
 	{
 		type: "website",
-		name: "Widget de Sitio Web",
-		description: "Integra un widget de chat en tu sitio web",
+		name: "Website Widget",
+		description: "Embed a chat widget into your website",
 		icon: Globe,
 	},
 	{
 		// @ts-expect-error
 		type: "sms",
 		name: "SMS",
-		description: "Envía y recibe mensajes SMS con tus agentes",
+		description: "Send and receive SMS messages with your agents",
 		icon: Smartphone,
 	},
 	{
 		// @ts-expect-error
 		type: "email",
 		name: "Email",
-		description: "Maneja emails de clientes con respuestas impulsadas por IA",
+		description: "Handle customer emails with AI-powered responses",
 		icon: Mail,
 	},
 ];
@@ -111,7 +111,7 @@ export function ConnectionsList() {
 										<CardTitle className="text-lg">{integration.name}</CardTitle>
 										<Badge variant={isConnected ? "default" : "outline"} className="mt-1 text-xs">
 											{isConnected && <Check className="mr-1 h-3 w-3" />}
-											{isConnected ? "Conectado" : "Disponible"}
+											{isConnected ? "Connected" : "Available"}
 										</Badge>
 									</div>
 								</div>
@@ -123,7 +123,7 @@ export function ConnectionsList() {
 
 							{isConnected && (
 								<p className="text-sm text-muted-foreground">
-									{connectedCount} {connectedCount === 1 ? "cuenta conectada" : "cuentas conectadas"}
+									{connectedCount} {connectedCount === 1 ? "connected account" : "connected accounts"}
 								</p>
 							)}
 
@@ -137,7 +137,7 @@ export function ConnectionsList() {
 											}}
 											connections={connectionsByType[integration.type]}>
 											<Button variant="outline" size="sm" className="flex-1 bg-transparent">
-												Administrar
+												Manage
 											</Button>
 										</ManageIntegrationDialog>
 										<ConnectIntegrationDialog
@@ -157,7 +157,7 @@ export function ConnectionsList() {
 											type: integration.type,
 										}}>
 										<Button size="sm" className="flex-1">
-											Conectar
+											Connect
 										</Button>
 									</ConnectIntegrationDialog>
 								)}

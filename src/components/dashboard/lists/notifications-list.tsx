@@ -24,7 +24,7 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 				await markAsRead(notificationId);
 			} catch (err: any) {
 				toast.error("Error", {
-					description: err.message || "No se pudo actualizar la notificación",
+					description: err.message || "Failed to update the notification",
 				});
 			}
 		}
@@ -65,7 +65,7 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 			<Card>
 				<CardContent className="p-8 text-center">
 					<Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<p className="text-muted-foreground">{filter === "unread" ? "No hay notificaciones sin leer" : "No hay notificaciones para mostrar"}</p>
+					<p className="text-muted-foreground">{filter === "unread" ? "No unread notifications" : "No notifications to display"}</p>
 				</CardContent>
 			</Card>
 		);
@@ -94,7 +94,7 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 										</div>
 										{!notification.read && (
 											<Badge variant="default" className="text-xs">
-												Nuevo
+												New
 											</Badge>
 										)}
 									</div>

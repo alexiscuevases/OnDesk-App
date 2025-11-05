@@ -70,8 +70,8 @@ export function ConversationsList({ filters }: Props) {
 			<Card>
 				<CardContent className="p-8 text-center">
 					<MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<h3 className="text-lg font-semibold mb-2">No hay conversaciones todavía</h3>
-					<p className="text-muted-foreground">Las conversaciones con clientes aparecerán aquí.</p>
+					<h3 className="text-lg font-semibold mb-2">No conversations yet</h3>
+					<p className="text-muted-foreground">Customer conversations will appear here.</p>
 				</CardContent>
 			</Card>
 		);
@@ -101,7 +101,7 @@ export function ConversationsList({ filters }: Props) {
 											<h3 className="font-semibold text-sm">{displayName}</h3>
 											{conversation.status === "open" && (
 												<Badge variant="default" className="h-5 px-1.5 text-xs">
-													Nuevo
+													New
 												</Badge>
 											)}
 										</div>
@@ -142,7 +142,7 @@ export function ConversationsList({ filters }: Props) {
 								<Button variant="outline" size="sm" asChild>
 									<Link href={`/dashboard/conversations/${conversation.id}`}>
 										<MessageSquare className="mr-2 h-3 w-3" />
-										Ver Conversación
+										View Conversation
 									</Link>
 								</Button>
 							</div>

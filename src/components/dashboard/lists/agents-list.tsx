@@ -25,12 +25,12 @@ export function AgentsList() {
 			const newStatus = agent.status === "active" ? "inactive" : "active";
 			await updateAgent(agent.id, { status: newStatus });
 
-			toast.success("Agente actualizado", {
-				description: `El agente ha sido ${newStatus === "active" ? "activado" : "desactivado"} exitosamente.`,
+			toast.success("Updated agent", {
+				description: `The agent has been ${newStatus === "active" ? "activated" : "deactivated"} successfully.`,
 			});
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo actualizar el agente",
+				description: err.message || "The agent could not be updated.",
 			});
 		} finally {
 			setLoadingAction(null);
@@ -42,12 +42,12 @@ export function AgentsList() {
 		try {
 			await deleteAgent(agentId);
 
-			toast.success("Agente eliminado", {
-				description: "El agente ha sido eliminado exitosamente.",
+			toast.success("Agent removed", {
+				description: "The agent has been successfully removed.",
 			});
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo eliminar el agente",
+				description: err.message || "The agent could not be removed.",
 			});
 		} finally {
 			setLoadingAction(null);
@@ -94,8 +94,8 @@ export function AgentsList() {
 			<Card>
 				<CardContent className="p-8 text-center">
 					<Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<h3 className="text-lg font-semibold mb-2">No hay agentes todavía</h3>
-					<p className="text-muted-foreground mb-4">Crea tu primer agente para empezar a automatizar conversaciones.</p>
+					<h3 className="text-lg font-semibold mb-2">There are no agents yet.</h3>
+					<p className="text-muted-foreground mb-4">Create your first agent to start automating conversations.</p>
 				</CardContent>
 			</Card>
 		);
@@ -133,16 +133,16 @@ export function AgentsList() {
 									<DropdownMenuContent align="end">
 										<DropdownMenuItem onClick={() => setConfigureAgent(agent)}>
 											<Settings className="mr-2 h-4 w-4" />
-											Configurar
+											Configure
 										</DropdownMenuItem>
 										<DropdownMenuItem onClick={() => handleToggleStatus(agent)}>
 											<Power className="mr-2 h-4 w-4" />
-											{agent.status === "active" ? "Desactivar" : "Activar"}
+											{agent.status === "active" ? "Deactivate" : "Activate"}
 										</DropdownMenuItem>
 										<DropdownMenuSeparator />
 										<DropdownMenuItem variant="destructive" onClick={() => handleDeleteAgent(agent.id)}>
 											<Trash2 className="mr-2 h-4 w-4" />
-											Eliminar
+											Delete
 										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenu>
@@ -150,24 +150,24 @@ export function AgentsList() {
 						</CardHeader>
 
 						<CardContent className="flex-1">
-							<CardDescription className="leading-relaxed">{agent.description || "Sin descripción"}</CardDescription>
+							<CardDescription className="leading-relaxed">{agent.description || "No description"}</CardDescription>
 
 							<div className="mt-4 space-y-2">
 								<div className="flex items-center gap-2 text-sm">
-									<span className="text-muted-foreground text-xs">Modelo: {agent.model}</span>
+									<span className="text-muted-foreground text-xs">Model: {agent.model}</span>
 								</div>
 								<div className="flex items-center gap-2 text-sm">
 									<span className="text-muted-foreground text-xs">
-										Temp: {agent.temperature} | Tokens: {agent.max_tokens}
+										Temp: {agent.temperature} | Max Tokens: {agent.max_tokens}
 									</span>
 								</div>
 							</div>
 						</CardContent>
 
 						<CardFooter className="flex items-center justify-between border-t border-border pt-4">
-							<span className="text-xs text-muted-foreground">Creado {formatDate_DistanceToNow(agent.created_at)}</span>
+							<span className="text-xs text-muted-foreground">Since {formatDate_DistanceToNow(agent.created_at)}</span>
 							<Button variant="outline" size="sm" onClick={() => setConfigureAgent(agent)}>
-								Configurar
+								Configure
 							</Button>
 						</CardFooter>
 					</Card>
