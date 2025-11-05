@@ -33,7 +33,7 @@ export function RecentConversations() {
 		return (
 			<div className="text-center py-8">
 				<MessageSquare className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-				<p className="text-sm text-muted-foreground">No hay conversaciones recientes</p>
+				<p className="text-sm text-muted-foreground">There are no recent conversations.</p>
 			</div>
 		);
 	}

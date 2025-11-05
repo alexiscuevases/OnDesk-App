@@ -50,7 +50,7 @@ export function UpdatePasswordForm() {
 			)}
 
 			<div className="space-y-2">
-				<Label htmlFor="password">Nueva contraseña</Label>
+				<Label htmlFor="password">New password</Label>
 				<div className="relative">
 					<Input
 						id="password"
@@ -71,7 +71,7 @@ export function UpdatePasswordForm() {
 			</div>
 
 			<div className="space-y-2">
-				<Label htmlFor="confirm_password">Confirmar contraseña</Label>
+				<Label htmlFor="confirm_password">Confirm password</Label>
 				<div className="relative">
 					<Input
 						id="confirm_password"

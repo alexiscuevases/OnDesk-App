@@ -16,16 +16,16 @@ export default function UpdatePasswordPage() {
 							</div>
 							<span className="text-xl font-semibold">{platformConfigs.name}</span>
 						</Link>
-						<h1 className="text-3xl font-bold tracking-tight">Restablecer contraseña</h1>
-						<p className="mt-2 text-sm text-muted-foreground">Ingresa tu nueva contraseña para restablecer el acceso a tu cuenta</p>
+						<h1 className="text-3xl font-bold tracking-tight">Recover password</h1>
+						<p className="mt-2 text-sm text-muted-foreground">Enter your new password to restore access to your account</p>
 					</div>
 
 					<UpdatePasswordForm />
 
 					<p className="mt-6 text-center text-sm text-muted-foreground">
-						¿Recordaste tu contraseña?{" "}
+						Did you remember your password?{" "}
 						<Link href="/auth/sign-in" className="font-medium text-primary hover:underline">
-							Iniciar sesión
+							Sign In
 						</Link>
 					</p>
 				</div>
@@ -36,9 +36,9 @@ export default function UpdatePasswordPage() {
 				<div className="absolute inset-0 from-accent/20 via-background to-background" />
 				<div className="relative flex h-full items-center justify-center p-12">
 					<div className="max-w-md space-y-6 text-center">
-						<h2 className="text-4xl font-bold text-balance">Crea una nueva contraseña segura</h2>
+						<h2 className="text-4xl font-bold text-balance">Create a new secure password</h2>
 						<p className="text-lg text-muted-foreground text-pretty leading-relaxed">
-							Elige una contraseña fuerte para proteger tu cuenta de {platformConfigs.name} y mantener tus datos seguros.
+							Choose a strong password to protect your {platformConfigs.name} account and keep your data secure.
 						</p>
 					</div>
 				</div>

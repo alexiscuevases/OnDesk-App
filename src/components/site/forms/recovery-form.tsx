@@ -39,9 +39,7 @@ export function RecoveryForm() {
 		return (
 			<Alert>
 				<CheckCircle2 className="h-4 w-4" />
-				<AlertDescription>
-					Te hemos enviado un correo electrónico con las instrucciones para restablecer tu contraseña. Por favor, revisa tu bandeja de entrada.
-				</AlertDescription>
+				<AlertDescription>We have sent you an email with instructions on how to reset your password. Please check your inbox.</AlertDescription>
 			</Alert>
 		);
 	}
@@ -57,13 +55,13 @@ export function RecoveryForm() {
 
 			<div className="space-y-2">
 				<Label htmlFor="email">Email</Label>
-				<Input id="email" type="email" placeholder="tu@email.com" disabled={isLoading} {...register("email")} />
+				<Input id="email" type="email" placeholder="your@email.com" disabled={isLoading} {...register("email")} />
 				{errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
 			</div>
 
 			<Button type="submit" className="w-full" disabled={isLoading}>
 				{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-				Enviar enlace de recuperación
+				Send recovery link
 			</Button>
 		</form>
 	);

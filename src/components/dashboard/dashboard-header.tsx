@@ -16,8 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNotifications } from "@/hooks/use-notifications";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
 import { useTheme } from "next-themes";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -40,7 +38,7 @@ export function DashboardHeader() {
 				await markAsRead(notificationId);
 			} catch (err: any) {
 				toast.error("Error", {
-					description: err.message || "No se pudo actualizar la notificación",
+					description: err.message || "The notification could not be updated.",
 				});
 			}
 		}
@@ -51,7 +49,7 @@ export function DashboardHeader() {
 			await markAllAsRead();
 		} catch (err: any) {
 			toast.error("Error", {
-				description: err.message || "No se pudo actualizar las notificaciones",
+				description: err.message || "Notifications could not be updated.",
 			});
 		}
 	};
@@ -68,7 +66,7 @@ export function DashboardHeader() {
 				<CardContent className="px-0 flex items-center gap-2">
 					<div className="relative w-full">
 						<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-						<Input placeholder="Buscar agentes, conversaciones..." className="pl-9" />
+						<Input placeholder="Search for agents, conversations..." className="pl-9" />
 					</div>
 
 					<DropdownMenu>
@@ -82,7 +80,7 @@ export function DashboardHeader() {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="w-96">
 							<DropdownMenuLabel className="flex items-center justify-between">
-								<span>Notificaciones</span>
+								<span>Notifications</span>
 								<div className="flex items-center gap-2">
 									{unreadCount > 0 && (
 										<Button
@@ -91,11 +89,11 @@ export function DashboardHeader() {
 											className="h-auto px-2 py-1 text-xs text-primary"
 											onClick={handleMarkAllAsRead}
 											disabled={isLoading}>
-											Marcar todas como leídas
+											Mark all as read
 										</Button>
 									)}
 									<Button variant="ghost" size="sm" className="h-auto px-2 py-1 text-xs text-primary" asChild>
-										<Link href="/dashboard/notifications">Ver todas</Link>
+										<Link href="/dashboard/notifications">See all</Link>
 									</Button>
 								</div>
 							</DropdownMenuLabel>
@@ -108,7 +106,7 @@ export function DashboardHeader() {
 								) : recentNotifications.length === 0 ? (
 									<div className="flex flex-col items-center justify-center py-8 text-center">
 										<Bell className="h-8 w-8 text-muted-foreground mb-2" />
-										<p className="text-sm text-muted-foreground">No hay notificaciones</p>
+										<p className="text-sm text-muted-foreground">There are no notifications.</p>
 									</div>
 								) : (
 									<div className="space-y-1">
@@ -121,7 +119,7 @@ export function DashboardHeader() {
 													<p className="text-sm font-medium">{notification.title}</p>
 													{!notification.read && (
 														<Badge variant="default" className="text-xs">
-															Nuevo
+															New
 														</Badge>
 													)}
 												</div>
@@ -135,7 +133,7 @@ export function DashboardHeader() {
 							<DropdownMenuSeparator />
 							<div className="p-2">
 								<Button variant="outline" size="sm" className="w-full bg-transparent" asChild>
-									<Link href="/dashboard/notifications">Ver todas las notificaciones</Link>
+									<Link href="/dashboard/notifications">View all notifications</Link>
 								</Button>
 							</div>
 						</DropdownMenuContent>

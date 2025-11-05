@@ -54,7 +54,7 @@ export default function DashboardPage() {
 				<Button asChild>
 					<Link href="/dashboard/agents">
 						<Plus className="mr-2 h-4 w-4" />
-						Crear Agente
+						Create Agent
 					</Link>
 				</Button>
 			</div>
@@ -82,7 +82,7 @@ export default function DashboardPage() {
 										) : (
 											<ArrowDownRight className="h-3 w-3 text-red-500" />
 										)}
-										{stat.change} desde el mes pasado
+										{stat.change} since last month
 									</p>
 								</>
 							)}
@@ -95,8 +95,8 @@ export default function DashboardPage() {
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
 				<Card className="col-span-4">
 					<CardHeader>
-						<CardTitle>Vista General de Actividad</CardTitle>
-						<CardDescription>Conversaciones de tus agentes en los últimos 7 días</CardDescription>
+						<CardTitle>Activity Overview</CardTitle>
+						<CardDescription>Conversations from your agents in the last 7 days</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<ActivityChart />
@@ -105,8 +105,8 @@ export default function DashboardPage() {
 
 				<Card className="col-span-3">
 					<CardHeader>
-						<CardTitle>Conversaciones Recientes</CardTitle>
-						<CardDescription>Últimas interacciones con tus agentes</CardDescription>
+						<CardTitle>Recent Conversations</CardTitle>
+						<CardDescription>Latest interactions with your agents</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<RecentConversations />

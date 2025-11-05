@@ -13,8 +13,8 @@ export function AgentComparison() {
 		return (
 			<Card>
 				<CardHeader>
-					<CardTitle>Comparación de Agentes</CardTitle>
-					<CardDescription>Métricas de rendimiento de todos los agentes</CardDescription>
+					<CardTitle>Comparison of Agents</CardTitle>
+					<CardDescription>Performance metrics for all agents</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
 					{[1, 2, 3].map((i) => (
@@ -35,12 +35,12 @@ export function AgentComparison() {
 		return (
 			<Card>
 				<CardHeader>
-					<CardTitle>Comparación de Agentes</CardTitle>
-					<CardDescription>Métricas de rendimiento de todos los agentes</CardDescription>
+					<CardTitle>Comparison of Agents</CardTitle>
+					<CardDescription>Performance metrics for all agents</CardDescription>
 				</CardHeader>
 				<CardContent className="p-8 text-center">
 					<Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<p className="text-muted-foreground">No hay agentes para comparar</p>
+					<p className="text-muted-foreground">There are no agents to compare</p>
 				</CardContent>
 			</Card>
 		);
@@ -57,8 +57,8 @@ export function AgentComparison() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Comparación de Agentes</CardTitle>
-				<CardDescription>Métricas de rendimiento de todos los agentes</CardDescription>
+				<CardTitle>Comparison of Agents</CardTitle>
+				<CardDescription>Performance metrics for all agents</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
 				{agentsWithMetrics.map((agent) => (
@@ -67,12 +67,12 @@ export function AgentComparison() {
 							<div>
 								<p className="font-medium">{agent.name}</p>
 								<p className="text-sm text-muted-foreground">
-									{agent.status === "active" ? "Activo" : "Inactivo"} • Temperature: {agent.temperature}
+									{agent.status === "active" ? "Active" : "Inactive"} • Temperature: {agent.temperature}
 								</p>
 							</div>
 							<div className="text-right">
 								<p className="font-semibold">{agent.satisfaction}%</p>
-								<p className="text-xs text-muted-foreground">rendimiento</p>
+								<p className="text-xs text-muted-foreground">performance</p>
 							</div>
 						</div>
 						<Progress value={agent.satisfaction} className="h-2" />

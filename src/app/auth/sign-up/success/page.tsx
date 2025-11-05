@@ -11,16 +11,16 @@ export default function SignUpSuccessPage() {
 					<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent">
 						<Mail className="h-6 w-6 text-accent-foreground" />
 					</div>
-					<CardTitle className="text-2xl">Revisa tu correo electrónico</CardTitle>
-					<CardDescription>Te hemos enviado un enlace de confirmación</CardDescription>
+					<CardTitle className="text-2xl">Check your email</CardTitle>
+					<CardDescription>We have sent you a confirmation link.</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<p className="text-sm text-muted-foreground text-center leading-relaxed">
-						Por favor revisa tu correo electrónico y haz clic en el enlace de confirmación para activar tu cuenta. Una vez confirmado, podrás crear
-						tu equipo y seleccionar tu plan.
+						Please check your email and click on the confirmation link to activate your account. Once confirmed, you will be able to create your
+						team and select your plan.
 					</p>
 					<Button asChild className="w-full">
-						<Link href="/auth/sign-in">Ir a Iniciar Sesión</Link>
+						<Link href="/auth/sign-in">Go to Sign In</Link>
 					</Button>
 				</CardContent>
 			</Card>

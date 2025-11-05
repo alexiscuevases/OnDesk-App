@@ -16,16 +16,16 @@ export default function RecoveryPage() {
 							</div>
 							<span className="text-xl font-semibold">{platformConfigs.name}</span>
 						</Link>
-						<h1 className="text-3xl font-bold tracking-tight">Recuperar contraseña</h1>
-						<p className="mt-2 text-sm text-muted-foreground">Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña</p>
+						<h1 className="text-3xl font-bold tracking-tight">Recover password</h1>
+						<p className="mt-2 text-sm text-muted-foreground">Enter your email address and we will send you a link to reset your password</p>
 					</div>
 
 					<RecoveryForm />
 
 					<p className="mt-6 text-center text-sm text-muted-foreground">
-						¿Recordaste tu contraseña?{" "}
+						Did you remember your password?{" "}
 						<Link href="/auth/sign-in" className="font-medium text-primary hover:underline">
-							Iniciar sesión
+							Sign In
 						</Link>
 					</p>
 				</div>
@@ -36,9 +36,9 @@ export default function RecoveryPage() {
 				<div className="absolute inset-0 from-accent/20 via-background to-background" />
 				<div className="relative flex h-full items-center justify-center p-12">
 					<div className="max-w-md space-y-6 text-center">
-						<h2 className="text-4xl font-bold text-balance">Recupera el acceso a tu cuenta</h2>
+						<h2 className="text-4xl font-bold text-balance">Regain access to your account</h2>
 						<p className="text-lg text-muted-foreground text-pretty leading-relaxed">
-							No te preocupes, te ayudaremos a recuperar el acceso a tu cuenta de {platformConfigs.name} en pocos pasos.
+							Don't worry, we'll help you regain access to your {platformConfigs.name} account in just a few steps.
 						</p>
 					</div>
 				</div>

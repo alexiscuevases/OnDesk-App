@@ -10,28 +10,28 @@ export function AnalyticsOverview() {
 
 	const statCards = [
 		{
-			title: "Total Conversaciones",
+			title: "Total Conversations",
 			value: stats?.totalConversations.toLocaleString() || "0",
 			change: `${(stats?.conversationsChange as number) > 0 ? "+" : ""}${stats?.conversationsChange}%`,
 			trend: (stats?.conversationsChange as number) >= 0 ? "up" : "down",
 			icon: MessageSquare,
 		},
 		{
-			title: "Agentes Activos",
+			title: "Active Agents",
 			value: stats?.activeAgents.toString() || "0",
 			change: `${(stats?.agentsChange as number) > 0 ? "+" : ""}${stats?.agentsChange}%`,
 			trend: (stats?.agentsChange as number) >= 0 ? "up" : "down",
 			icon: Users,
 		},
 		{
-			title: "Tiempo de Respuesta Promedio",
+			title: "Average Response Time",
 			value: stats?.avgResponseTime || "0s",
 			change: `${(stats?.responseTimeChange as number) > 0 ? "+" : ""}${stats?.responseTimeChange}%`,
 			trend: (stats?.responseTimeChange as number) <= 0 ? "up" : "down",
 			icon: Clock,
 		},
 		{
-			title: "Tasa de Satisfacción",
+			title: "Satisfaction Rate",
 			value: `${stats?.satisfactionRate.toFixed(1) || "0"}%`,
 			change: `${(stats?.satisfactionChange as number) > 0 ? "+" : ""}${stats?.satisfactionChange}%`,
 			trend: (stats?.satisfactionChange as number) >= 0 ? "up" : "down",
@@ -71,7 +71,7 @@ export function AnalyticsOverview() {
 						<div className="flex items-center gap-1 text-xs mt-1">
 							{stat.trend === "up" ? <TrendingUp className="h-3 w-3 text-green-500" /> : <TrendingDown className="h-3 w-3 text-red-500" />}
 							<span className={stat.trend === "up" ? "text-green-500" : "text-red-500"}>{stat.change}</span>
-							<span className="text-muted-foreground">desde el mes pasado</span>
+							<span className="text-muted-foreground">since last month</span>
 						</div>
 					</CardContent>
 				</Card>

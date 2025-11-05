@@ -27,7 +27,7 @@ export const Messages = ({ conversation }: { conversation: Conversation }) => {
 			setInput("");
 		} catch (err: unknown) {
 			toast.error("Error", {
-				description: err instanceof Error ? err.message : "Error al enviar mensaje",
+				description: err instanceof Error ? err.message : "Error sending message",
 			});
 		}
 	};

@@ -130,7 +130,7 @@ export default function WidgetClientPage({ connectionId }: Props) {
 										<Input
 											id="customer_email"
 											type="text"
-											placeholder="tu@email.com"
+											placeholder="your@email.com"
 											disabled={startConversationIsLoading}
 											{...register("customer_email")}
 											className="text-sm"

@@ -56,7 +56,7 @@ function CreateTeamContent() {
 							<Button variant="ghost" size="sm" asChild>
 								<Link href="/dashboard">
 									<ArrowLeft className="h-4 w-4 mr-2" />
-									Volver al dashboard
+									Back to dashboard
 								</Link>
 							</Button>
 						</div>
@@ -64,11 +64,9 @@ function CreateTeamContent() {
 					<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
 						<Users className="h-6 w-6 text-accent" />
 					</div>
-					<CardTitle className="text-3xl">{fromDashboard ? "Crear nuevo equipo" : "Crea tu equipo"}</CardTitle>
+					<CardTitle className="text-3xl">{fromDashboard ? "Create new team" : "Build your team"}</CardTitle>
 					<CardDescription>
-						{fromDashboard
-							? "Configura un nuevo espacio de trabajo para tu organización"
-							: "Configura tu espacio de trabajo para comenzar a utilizar los agentes de IA"}
+						{fromDashboard ? "Set up a new workspace for your organization" : "Set up your workspace to start using AI agents"}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -84,32 +82,32 @@ function CreateTeamContent() {
 							<Label htmlFor="name">
 								Nombre del equipo <span className="text-destructive">*</span>
 							</Label>
-							<Input id="name" type="text" placeholder="Ej: Mi Empresa" disabled={isLoadingCreateTeam} {...register("name")} />
-							<p className="text-xs text-muted-foreground">El nombre de tu equipo u organización</p>
+							<Input id="name" type="text" placeholder="Example: My Company" disabled={isLoadingCreateTeam} {...register("name")} />
+							<p className="text-xs text-muted-foreground">The name of your team or organization</p>
 							{errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="description">Descripción (opcional)</Label>
+							<Label htmlFor="description">Description (optional)</Label>
 							<Textarea
 								id="description"
-								placeholder="Describe brevemente tu equipo o proyecto..."
+								placeholder="Briefly describe your team or project...."
 								disabled={isLoadingCreateTeam}
 								{...register("description")}
 								className="resize-none"
 							/>
-							<p className="text-xs text-muted-foreground">Ayuda a tu equipo a entender el propósito del workspace</p>
+							<p className="text-xs text-muted-foreground">Help your team understand the purpose of the workspace</p>
 							{errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
 						</div>
 
 						<div className="flex flex-col gap-3 pt-4">
 							<Button type="submit" className="w-full" size="lg" disabled={isLoadingCreateTeam}>
 								{isLoadingCreateTeam && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-								{fromDashboard ? "Crear equipo" : "Continuar a selección de plan"}
+								{fromDashboard ? "Build a team" : "Continue to plan selection"}
 							</Button>
 							{!fromDashboard && (
 								<p className="text-xs text-center text-muted-foreground">
-									Después de crear tu equipo, podrás seleccionar el plan que mejor se adapte a tus necesidades
+									After creating your team, you can select the plan that best suits your needs.
 								</p>
 							)}
 						</div>

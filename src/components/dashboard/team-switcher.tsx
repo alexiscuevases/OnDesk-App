@@ -28,14 +28,14 @@ export function TeamSwitcher() {
 		try {
 			await switchTeam(teamId);
 
-			toast.success("Equipo cambiado", {
-				description: "Se ha cambiado el equipo correctamente",
+			toast.success("Team changed", {
+				description: "The team has been changed correctly.",
 			});
 
 			router.refresh();
 		} catch (error: any) {
 			toast.error("Error", {
-				description: error.message || "No se pudo cambiar de equipo",
+				description: error.message || "Unable to switch teams",
 			});
 		} finally {
 			setSwitching(false);
@@ -81,7 +81,7 @@ export function TeamSwitcher() {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={() => router.push("/create-team?from=dashboard")} className="cursor-pointer" disabled={switching}>
 					<Plus className="mr-2 h-4 w-4" />
-					Crear nuevo equipo
+					Create new team
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

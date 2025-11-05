@@ -2,10 +2,9 @@
 
 import { ConversationsList } from "@/components/dashboard/lists/conversations-list";
 import { Card, CardContent } from "@/components/ui/card";
-import { Filter, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/lib/constants/conversation";
 import { useState } from "react";
 
