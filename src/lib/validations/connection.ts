@@ -31,15 +31,15 @@ export const baseConnectionSchema = z.object({
 
 const whatsappSchema = baseConnectionSchema.extend({
 	type: z.literal("whatsapp"),
-	phoneNumber: z.string().min(1, "Número de teléfono requerido"),
-	phoneNumberId: z.string().min(1, "Phone Number ID requerido"),
-	apiKey: z.string().min(1, "Access Token requerido"),
+	phoneNumber: z.string().min(1, "Phone number required"),
+	phoneNumberId: z.string().min(1, "Phone Number ID required"),
+	apiKey: z.string().min(1, "Access Token required"),
 	accountName: z.string().optional(),
 });
 
 const websiteSchema = baseConnectionSchema.extend({
 	type: z.literal("website"),
-	websiteUrl: z.string().url("Debe ser una URL válida"),
+	websiteUrl: z.string().url("Must be a valid URL"),
 	widgetName: z.string().optional(),
 	welcomeMessage: z.string().optional(),
 });

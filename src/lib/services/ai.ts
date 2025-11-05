@@ -56,23 +56,24 @@ export class AI {
 			const actionsDescription =
 				endpoints && endpoints.length > 0
 					? `
-						====== INICIO | ACCIONES DISPONIBLES ======
-						Tienes acceso a las siguientes acciones para ayudar al usuario.
-						Cuando necesites usar una, responde EXACTAMENTE en este formato (IGNORA los parentesis, son instrucciones para tí):
-						[USE_ACTION: id_de_la_acción] (OBLIGATORIO, siempre)
-						[PARAMETERS: {"param1": "value", "param2": "value"}] (OBLIGATORIO, si hay parametros requeridos)
+						====== START | AVAILABLE ACTIONS ======
+						You have access to the following actions to help the user.
+						When you need to use one, respond EXACTLY in this format (IGNORE the parentheses, they are instructions for you):
+						[USE_ACTION: action_id] (MANDATORY, always)
+						[PARAMETERS: {"param1": "value", "param2": "value"}] (MANDATORY, if required parameters exist)
 
-						Lista de Acciones:
+						List of Actions:
 						${endpoints
 							.map(
 								(endpoint) => `
 									- ${endpoint.name}: ${endpoint.description}
 									ID: ${endpoint.id}
-									${Object.keys(endpoint.params_schema).length > 0 ? `Parámetros requeridos: ${JSON.stringify(endpoint.params_schema)}` : ""}
+									${Object.keys(endpoint.params_schema).length > 0 ? `Required parameters: ${JSON.stringify(endpoint.params_schema)}` : ""}
 								`
 							)
 							.join("\n")}
-						====== FINAL | ACCIONES DISPONIBLES ======
+						====== END | AVAILABLE ACTIONS ======
+
 					`
 					: "";
 
@@ -87,27 +88,28 @@ export class AI {
 
 						${actionsDescription}
 
-						====== START | Información del usuario (es a quien le responderás) ======
-						- Nombre: ${conversation.customer_name || "No proporcionado"}
-						- Email: ${conversation.customer_email || "No proporcionado"}
-						- Teléfono: ${conversation.customer_phone || "No proporcionado"}
-						====== END | Información del usuario ======
+						====== START | User Information (this is the person you will respond to) ======
+						- Name: ${conversation.customer_name || "Not provided"}
+						- Email: ${conversation.customer_email || "Not provided"}
+						- Phone: ${conversation.customer_phone || "Not provided"}
+						====== END | User Information ======
 
-						====== START | Información de la conversación ======
-						- Canal: ${conversation.channel}
-						- Prioridad: ${conversation.priority}
-						====== END | Información de la conversación ======
+						====== START | Conversation Information ======
+						- Channel: ${conversation.channel}
+						- Priority: ${conversation.priority}
+						====== END | Conversation Information ======
 
-						====== START | IMPORTANTE ======
-						- LIMÍTATE a responder al último mensaje del usuario de manera profesional y sútil (utiliza el resto de mensajes para alimentarte).
-						- LIMÍTATE al comportamiento descrito en la sección =SYSTEM PROMPT=.
-						- Si necesitas ejecutar una acción, en la respuesta utiliza el formato exacto especificado arriba con el ID de la acción.
-						- NUNCA inventes o modifiques los IDs de las acciones.
-						- NUNCA inventes o modifiques el formato especificado para las respuestas de las acciones.
-						- SIEMPRE y EN TODO MOMENTO lo descrito en el =SYSTEM PROMPT= tendrá mas prioridad que las acciones.
-						- NUNCA lo descrito en =SYSTEM PROMPT= tendrá mas prioridad que 'Información de la conversación' o 'Información del usuario'.
-						- Al DESPEDIRTE del usuario (cuando ya no tenga mas dudas o solicitudes), agrega al final del mensaje el siguiente formato (NUNCA lo modifiques): [END_CONVERSATION]
-						====== END | IMPORTANTE ======
+						====== START | IMPORTANT ======
+						- LIMIT your response to the user's last message in a professional and subtle manner (use the rest of the messages as context).
+						- LIMIT yourself to the behavior described in the =SYSTEM PROMPT= section.
+						- If you need to execute an action, use the exact format specified above with the action ID in your response.
+						- NEVER invent or modify action IDs.
+						- NEVER invent or modify the specified format for action responses.
+						- ALWAYS and AT ALL TIMES, what is described in the =SYSTEM PROMPT= takes higher priority than the actions.
+						- NEVER should what is described in =SYSTEM PROMPT= take higher priority than 'Conversation Information' or 'User Information'.
+						- When saying goodbye to the user (when they have no more questions or requests), add the following format at the end of the message (NEVER modify it): [END_CONVERSATION]
+						====== END | IMPORTANT ======
+
 					`,
 				},
 				...(messages.map((message) => {
@@ -162,12 +164,12 @@ export class AI {
 					messagesForAI.push({
 						role: "system",
 						content: `
-							====== START | RESULTADO DE LA ACCIÓN "${endpoint.name}" ======
-							${actionResult.success ? `✓ Éxito (${actionResult.duration}ms) Respuesta: ${JSON.stringify(actionResult.data, null, 2)}` : `✗ Error: ${actionResult.error}`}
+							====== START | ACTION RESULT "${endpoint.name}" ======
+							${actionResult.success ? `✓ Success (${actionResult.duration}ms) Response: ${JSON.stringify(actionResult.data, null, 2)}` : `✗ Error: ${actionResult.error}`}
 
-							- Ahora responde al usuario basándote en este resultado.
-							- NO repitas el formato del resultado, solo proporciona una respuesta natural y útil.
-							====== END | RESULTADO DE LA ACCIÓN ======
+							- Now respond to the user based on this result.
+							- DO NOT repeat the result format, just provide a natural and helpful response.
+							====== END | ACTION RESULT ======
 						`,
 					});
 

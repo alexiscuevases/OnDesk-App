@@ -9,7 +9,7 @@ const jsonOrRecord = z.union([
 		} catch {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: "Debe ser un JSON válido",
+				message: "Must be valid JSON",
 			});
 			return z.NEVER;
 		}
