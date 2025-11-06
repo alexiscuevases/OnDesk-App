@@ -144,7 +144,9 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 										</SelectTrigger>
 										<SelectContent>
 											{Object.entries(AGENT_TYPES_OBJECT).map(([key, label]) => (
-												<SelectItem value={key}>{label}</SelectItem>
+												<SelectItem key={key} value={key}>
+													{label}
+												</SelectItem>
 											))}
 										</SelectContent>
 									</Select>
@@ -158,7 +160,9 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 										</SelectTrigger>
 										<SelectContent>
 											{Object.entries(AGENT_STATUSES_OBJECT).map(([key, label]) => (
-												<SelectItem value={key}>{label}</SelectItem>
+												<SelectItem key={key} value={key}>
+													{label}
+												</SelectItem>
 											))}
 										</SelectContent>
 									</Select>
@@ -251,7 +255,9 @@ export function ConfigureAgentDialog({ open, onOpenChange, agent }: ConfigureAge
 										</SelectTrigger>
 										<SelectContent>
 											{Object.entries(AGENT_MODELS_OBJECT).map(([key, label]) => (
-												<SelectItem value={key}>{label}</SelectItem>
+												<SelectItem key={key} value={key}>
+													{label}
+												</SelectItem>
 											))}
 										</SelectContent>
 									</Select>

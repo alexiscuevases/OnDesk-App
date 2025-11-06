@@ -43,7 +43,9 @@ export default function ConversationsPage() {
 							<SelectContent>
 								<SelectItem value="all">All Status</SelectItem>
 								{Object.entries(CONVERSATION_STATUSES_OBJECT).map(([key, status]) => (
-									<SelectItem value={key}>{status}</SelectItem>
+									<SelectItem key={key} value={key}>
+										{status}
+									</SelectItem>
 								))}
 							</SelectContent>
 						</Select>
@@ -54,7 +56,9 @@ export default function ConversationsPage() {
 							<SelectContent>
 								<SelectItem value="all">All Channels</SelectItem>
 								{Object.entries(CONVERSATION_CHANNELS_OBJECT).map(([key, channel]) => (
-									<SelectItem value={key}>{channel}</SelectItem>
+									<SelectItem key={key} value={key}>
+										{channel}
+									</SelectItem>
 								))}
 							</SelectContent>
 						</Select>
