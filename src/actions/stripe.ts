@@ -59,6 +59,9 @@ export async function startCheckoutSession(productId: string, teamId: string) {
 			},
 		],
 		mode: "subscription",
+		subscription_data: {
+			trial_period_days: 14,
+		},
 		return_url: `${AppConfigs.url}/select-plan?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
 		metadata: {
 			user_id: user.id,

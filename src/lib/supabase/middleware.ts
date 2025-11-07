@@ -99,7 +99,7 @@ export async function updateSession(request: NextRequest) {
 			}
 
 			// Redirigir según el estado de la suscripción del team
-			if (!team.stripe_subscription_status || team.stripe_subscription_status !== "active") {
+			if (!team.stripe_subscription_status || !["active", "trialing"].includes(team.stripe_subscription_status)) {
 				const url = `${AppConfigs.url}/select-plan?team_id=${team.id}`;
 				return NextResponse.redirect(url);
 			}
