@@ -1,8 +1,8 @@
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Bot, Target, Users, Zap } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowRight, Bot, Target, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { platformConfigs } from "@/configs/platform";
 
@@ -25,7 +25,7 @@ export default function AboutPage() {
 				</section>
 
 				{/* Mission Section */}
-				<section className="border-y border-border bg-muted/30 py-16 md:py-24">
+				<section className="border-y border-border bg-card py-16 md:py-24">
 					<div className="container">
 						<div className="mx-auto max-w-3xl">
 							<h2 className="text-3xl font-bold tracking-tight text-center mb-6">Our Mission</h2>
@@ -87,22 +87,27 @@ export default function AboutPage() {
 				</section>
 
 				{/* CTA Section */}
-				<section className="border-t border-border bg-muted/30 py-16 md:py-24">
+				<section className="py-20 md:py-32">
 					<div className="container">
-						<div className="mx-auto max-w-3xl text-center">
-							<h2 className="text-3xl font-bold tracking-tight mb-6">Ready to Get Started?</h2>
-							<p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-								Join thousands of businesses already using {platformConfigs.name} to transform their customer engagement.
-							</p>
-							<div className="flex flex-col sm:flex-row gap-4 justify-center">
-								<Button size="lg" asChild>
-									<Link href="/auth/sign-up">Start Free Trial</Link>
-								</Button>
-								<Button size="lg" variant="outline" asChild>
-									<Link href="/contact">Contact Sales</Link>
-								</Button>
-							</div>
-						</div>
+						<Card className="mx-auto max-w-3xl p-8 md:p-12">
+							<CardContent className="text-center">
+								<h2 className="mb-4 text-3xl font-bold tracking-tight text-balance sm:text-4xl md:text-5xl">Ready to Get Started?</h2>
+								<p className="mb-8 text-lg text-muted-foreground text-pretty leading-relaxed">
+									Join thousands of businesses already using {platformConfigs.name} to transform their customer engagement.
+								</p>
+								<div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+									<Button size="lg" className="gap-2" asChild>
+										<Link href="/auth/sign-up">
+											Start Free Trial
+											<ArrowRight className="h-4 w-4" />
+										</Link>
+									</Button>
+									<Button size="lg" variant="outline" asChild>
+										<Link href="/contact">Contact Sales</Link>
+									</Button>
+								</div>
+							</CardContent>
+						</Card>
 					</div>
 				</section>
 			</main>
