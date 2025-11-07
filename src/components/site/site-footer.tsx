@@ -4,7 +4,7 @@ import { platformConfigs } from "@/configs/platform";
 
 export function SiteFooter() {
 	return (
-		<footer className="bg-card shadow-xs">
+		<footer className="bg-card">
 			<div className="container py-12 md:py-16">
 				<div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
 					{/* Brand */}
