@@ -104,15 +104,20 @@ export async function verifyCheckoutSession(sessionId: string, teamId: string) {
 			if (!user) return { success: false, error: "Not authenticated" };
 
 			// Verificar que el team tenga una suscripción activa
-			const { data: team } = await supabase
+			const { data: team, error: teamError } = await supabase
 				.from("teams")
 				.select("stripe_subscription_id, stripe_subscription_status")
 				.eq("id", teamId)
 				.eq("owner_id", user.id)
 				.single<Team>();
+			if (teamError)
+				return {
+					success: false,
+					error: teamError.message,
+				};
 
 			// If webhook hasn't processed yet, wait a bit and check again
-			if (!team?.stripe_subscription_id || team.stripe_subscription_status !== "active") return { success: false, pending: true };
+			if (!team.stripe_subscription_status || !["active", "trialing"].includes(team.stripe_subscription_status)) return { success: false, pending: true };
 			return { success: true };
 		}
 
