@@ -53,7 +53,7 @@ function CreateTeamContent() {
 				<CardHeader className="text-center">
 					{fromDashboard && (
 						<div className="flex justify-start mb-4">
-							<Button variant="ghost" size="sm" asChild>
+							<Button variant="secondary" size="sm" asChild>
 								<Link href="/dashboard">
 									<ArrowLeft className="h-4 w-4 mr-2" />
 									Back to dashboard
@@ -62,7 +62,7 @@ function CreateTeamContent() {
 						</div>
 					)}
 					<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
-						<Users className="h-6 w-6 text-accent" />
+						<Users className="h-6 w-6 text-primary" />
 					</div>
 					<CardTitle className="text-3xl">{fromDashboard ? "Create new team" : "Build your team"}</CardTitle>
 					<CardDescription>

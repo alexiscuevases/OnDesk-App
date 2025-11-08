@@ -53,8 +53,8 @@
   --popover-foreground: var(--foreground); /* Changed */
   --primary: oklch(.6 .2 250); /* Changed */
   --primary-foreground: var(--card); /* Changed */
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: var(--foreground); /* Changed */
+  --secondary: var(--accent); /* Changed */
+  --secondary-foreground: var(--accent-foreground); /* Changed */
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(.6 .2 250 / 0.075); /* Changed */
