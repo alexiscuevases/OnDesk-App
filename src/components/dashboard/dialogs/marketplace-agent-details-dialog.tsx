@@ -7,14 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Star, Download, Clock, User, Package, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import type { MarketplaceAgent } from "../lists/marketplace-list";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Marketplace } from "@/lib/validations/marketplace";
+import { formatDate_DistanceToNow } from "@/lib/utils";
 
 interface MarketplaceAgentDetailsDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	agent: MarketplaceAgent;
+	agent: Marketplace;
 }
 
 export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: MarketplaceAgentDetailsDialogProps) {
@@ -51,9 +52,7 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 			<DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<div className="flex items-start gap-4">
-						<div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">
-							<agent.icon className="h-8 w-8 text-primary" />
-						</div>
+						<div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">{/* Icon */}</div>
 						<div className="flex-1">
 							<DialogTitle className="text-2xl">{agent.name}</DialogTitle>
 							<DialogDescription className="mt-1">by {agent.author}</DialogDescription>
@@ -84,11 +83,11 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 					<TabsContent value="overview" className="space-y-4 mt-4">
 						<div>
 							<h3 className="font-semibold mb-2">About this agent</h3>
-							<p className="text-sm text-muted-foreground leading-relaxed">{agent.longDescription}</p>
+							<p className="text-sm text-muted-foreground leading-relaxed">{agent.description}</p>
 						</div>
 
 						<div className="flex flex-wrap gap-2">
-							{agent.tags.map((tag) => (
+							{agent.tags?.map((tag) => (
 								<Badge key={tag} variant="outline">
 									{tag}
 								</Badge>
@@ -110,7 +109,7 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 									<Clock className="h-4 w-4" />
 									<span className="text-xs">Updated</span>
 								</div>
-								<p className="text-sm font-medium">{agent.lastUpdated}</p>
+								<p className="text-sm font-medium">{formatDate_DistanceToNow(agent.updated_at)}</p>
 							</div>
 							<div className="space-y-1">
 								<div className="flex items-center gap-2 text-muted-foreground">
@@ -126,9 +125,9 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 						<div>
 							<h3 className="font-semibold mb-3">What this agent can do</h3>
 							<div className="space-y-2">
-								{agent.capabilities.map((capability, index) => (
+								{agent.capabilities?.map((capability, index) => (
 									<div key={index} className="flex items-start gap-2">
-										<CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+										<CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
 										<span className="text-sm text-muted-foreground">{capability}</span>
 									</div>
 								))}
@@ -143,9 +142,9 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 						</Alert>
 
 						<div className="space-y-2">
-							{agent.requirements.map((requirement, index) => (
+							{agent.requirements?.map((requirement, index) => (
 								<div key={index} className="flex items-start gap-2 p-3 rounded-lg bg-muted">
-									<AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
+									<AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 shrink-0" />
 									<span className="text-sm">{requirement}</span>
 								</div>
 							))}

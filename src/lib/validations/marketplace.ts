@@ -9,6 +9,7 @@ export const marketplaceSchema = z.object({
 	avatar_url: z.url().optional(),
 	name: z.string().min(1, "Name is required"),
 	description: z.string().optional(),
+	featured: z.boolean().optional(),
 	category: z.enum(MARKETPLACE_CATEGORIES),
 	tags: z.array(z.string()).optional(),
 	rating: z.number().optional(),

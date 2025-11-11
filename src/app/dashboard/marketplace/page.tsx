@@ -47,7 +47,7 @@ export default function MarketplacePage() {
 						<TabsList>
 							{categories.map((category) => (
 								<TabsTrigger key={category} value={category} className="capitalize">
-									{category === "all" ? "All Agents" : category}
+									{category}
 								</TabsTrigger>
 							))}
 						</TabsList>
