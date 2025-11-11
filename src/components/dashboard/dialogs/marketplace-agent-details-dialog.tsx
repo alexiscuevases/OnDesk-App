@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +9,12 @@ import { Separator } from "@/components/ui/separator";
 import { Star, Download, Clock, User, Package, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Marketplace } from "@/lib/validations/marketplace";
+import { InstallMarketplaceInput, installMarketplaceInputSchema, Marketplace } from "@/lib/validations/marketplace";
 import { formatDate_DistanceToNow } from "@/lib/utils";
+import { useMarketplace } from "@/hooks/use-marketplace";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/components/providers/auth-provider";
 
 interface MarketplaceAgentDetailsDialogProps {
 	open: boolean;
@@ -19,31 +23,39 @@ interface MarketplaceAgentDetailsDialogProps {
 }
 
 export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: MarketplaceAgentDetailsDialogProps) {
-	const [isInstalling, setIsInstalling] = useState(false);
-	const [isInstalled, setIsInstalled] = useState(false);
+	const { profile } = useAuth();
+	const { installMarketplaceItem } = useMarketplace();
 
-	const handleInstall = async () => {
-		setIsInstalling(true);
+	const {
+		handleSubmit,
+		formState: { isSubmitting, errors },
+		setValue,
+	} = useForm<InstallMarketplaceInput>({
+		resolver: zodResolver(installMarketplaceInputSchema),
+		defaultValues: {
+			avatar_url: agent.avatar_url || undefined,
+			name: agent.name,
+			description: agent.description,
+			agent_system_prompt: agent.agent_system_prompt,
+			agent_endpoints: agent.agent_endpoints || [],
+		},
+	});
 
+	useEffect(() => {
+		if (profile?.team_id) setValue("team_id", profile.team_id);
+	}, [profile, setValue]);
+
+	const onSubmit = async (data: InstallMarketplaceInput) => {
 		try {
-			// Simulate installation process
-			await new Promise((resolve) => setTimeout(resolve, 2000));
-
-			setIsInstalled(true);
-			toast.success("Agent installed", {
-				description: `${agent.name} has been successfully installed to your workspace.`,
+			await installMarketplaceItem(data);
+			toast.success("Agent installed successfully", {
+				description: `${agent.name} has been added to your workspace.`,
 			});
-
-			// Close dialog after a short delay
-			setTimeout(() => {
-				onOpenChange(false);
-			}, 1500);
+			onOpenChange(false);
 		} catch (err: any) {
 			toast.error("Installation failed", {
-				description: err.message || "The agent could not be installed. Please try again.",
+				description: err.message || "Could not install agent. Please try again.",
 			});
-		} finally {
-			setIsInstalling(false);
 		}
 	};
 
@@ -152,29 +164,26 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 					</TabsContent>
 				</Tabs>
 
-				<DialogFooter>
-					<Button variant="outline" onClick={() => onOpenChange(false)} disabled={isInstalling}>
-						Close
-					</Button>
-					<Button onClick={handleInstall} disabled={isInstalling || isInstalled}>
-						{isInstalling ? (
-							<>
-								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Installing...
-							</>
-						) : isInstalled ? (
-							<>
-								<CheckCircle2 className="mr-2 h-4 w-4" />
-								Installed
-							</>
-						) : (
-							<>
-								<Download className="mr-2 h-4 w-4" />
-								Install Agent
-							</>
-						)}
-					</Button>
-				</DialogFooter>
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+							Close
+						</Button>
+						<Button type="submit" disabled={isSubmitting}>
+							{isSubmitting ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Installing...
+								</>
+							) : (
+								<>
+									<Download className="mr-2 h-4 w-4" />
+									Install Agent
+								</>
+							)}
+						</Button>
+					</DialogFooter>
+				</form>
 			</DialogContent>
 		</Dialog>
 	);
