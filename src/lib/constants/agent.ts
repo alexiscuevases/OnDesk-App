@@ -17,6 +17,7 @@ export const AGENT_STATUSES_OBJECT = {
 } as const;
 export const AGENT_STATUSES = Object.keys(AGENT_STATUSES_OBJECT) as (keyof typeof AGENT_STATUSES_OBJECT)[];
 
+export const AGENT_DEFAULT_MODEL = "deepseek-chat" as const;
 export const AGENT_DEFAULT_TEMPERATURE = 0.7 as const;
 export const AGENT_DEFAULT_MAX_TOKENS = 1000 as const;
 export const AGENT_DEFAULT_SATISFACTION = 0 as const;

@@ -1,5 +1,13 @@
 import { z } from "zod";
-import { AGENT_DEFAULT_MAX_TOKENS, AGENT_DEFAULT_SATISFACTION, AGENT_DEFAULT_TEMPERATURE, AGENT_MODELS, AGENT_STATUSES, AGENT_TYPES } from "../constants/agent";
+import {
+	AGENT_DEFAULT_MAX_TOKENS,
+	AGENT_DEFAULT_MODEL,
+	AGENT_DEFAULT_SATISFACTION,
+	AGENT_DEFAULT_TEMPERATURE,
+	AGENT_MODELS,
+	AGENT_STATUSES,
+	AGENT_TYPES,
+} from "../constants/agent";
 
 /**
  * Base
@@ -10,7 +18,7 @@ export const agentSchema = z.object({
 	name: z.string().min(1, "Name is required"),
 	description: z.string().optional(),
 	type: z.enum(AGENT_TYPES),
-	model: z.enum(AGENT_MODELS),
+	model: z.enum(AGENT_MODELS).default(AGENT_DEFAULT_MODEL),
 	system_prompt: z.string().min(10, "System prompt must be at least 10 characters"),
 	temperature: z.number().min(0).max(2).default(AGENT_DEFAULT_TEMPERATURE),
 	max_tokens: z.number().min(100).max(4000).default(AGENT_DEFAULT_MAX_TOKENS),
@@ -33,7 +41,7 @@ export const createAgentSchema = z.object({
 	name: agentSchema.shape.name,
 	description: agentSchema.shape.description,
 	type: agentSchema.shape.type,
-	model: agentSchema.shape.model,
+	model: agentSchema.shape.model.optional(),
 	system_prompt: agentSchema.shape.system_prompt,
 	temperature: agentSchema.shape.temperature.optional(),
 	max_tokens: agentSchema.shape.max_tokens.optional(),

@@ -25,3 +25,17 @@ export type Marketplace = z.infer<typeof marketplaceSchema> & {
 	created_at: string;
 	updated_at: string;
 };
+
+/**
+ *  Install Marketplace
+ */
+export const installMarketplaceInputSchema = z.object({
+	team_id: z.string().uuid("Team ID must be a valid UUID"),
+	avatar_url: marketplaceSchema.shape.avatar_url,
+	name: marketplaceSchema.shape.name,
+	description: marketplaceSchema.shape.description,
+	agent_system_prompt: marketplaceSchema.shape.agent_system_prompt,
+	agent_endpoints: marketplaceSchema.shape.agent_endpoints,
+});
+
+export type InstallMarketplaceInput = z.infer<typeof installMarketplaceInputSchema>;
