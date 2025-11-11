@@ -38,6 +38,7 @@ export function useEndpoints(agentId?: string) {
 				.from("endpoints")
 				.insert({
 					agent_id: input.agent_id,
+					marketplace_id: input.marketplace_id,
 					name: input.name,
 					description: input.description,
 					method: input.method,

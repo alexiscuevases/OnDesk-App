@@ -21,7 +21,8 @@ const jsonOrRecord = z.union([
  * Base
  */
 export const endpointSchema = z.object({
-	agent_id: z.string().uuid("Agent ID must be a valid UUID"),
+	agent_id: z.string().uuid("'Agent ID' must be a valid UUID").optional(),
+	marketplace_id: z.string().uuid("'Marketplace ID' must be a valid UUID").optional(),
 	name: z.string().min(1, "Name is required").max(100),
 	description: z.string().min(10, "Description must be at least 10 characters"),
 	method: z.enum(ENDPOINT_METHODS),
@@ -45,6 +46,7 @@ export type Endpoint = z.infer<typeof endpointSchema> & {
  */
 export const createEndpointSchema = z.object({
 	agent_id: endpointSchema.shape.agent_id,
+	marketplace_id: endpointSchema.shape.marketplace_id,
 	name: endpointSchema.shape.name,
 	description: endpointSchema.shape.description,
 	method: endpointSchema.shape.method,
