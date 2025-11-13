@@ -23,6 +23,7 @@ export const marketplaceSchema = z.object({
 
 export type Marketplace = z.infer<typeof marketplaceSchema> & {
 	id: string;
+	author?: {};
 	created_at: string;
 	updated_at: string;
 };

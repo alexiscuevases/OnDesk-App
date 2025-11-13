@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Star } from "lucide-react";
+import { Bot, Plug, Star } from "lucide-react";
 import { MarketplaceAgentDetailsDialog } from "../dialogs/marketplace-agent-details-dialog";
 import type { MarketplaceFilters } from "@/app/dashboard/marketplace/page";
 import { Marketplace } from "@/lib/validations/marketplace";
@@ -98,7 +98,9 @@ function AgentCard({ agent, featured = false, onSelect }: AgentCardProps) {
 
 			<CardHeader>
 				<div className="flex items-start gap-3">
-					<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">{/* Icon */}</div>
+					<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+						{agent.avatar_url ? <img src={agent.avatar_url} width={80} height={80} alt={agent.name} /> : <Plug className="text-primary" />}
+					</div>
 					<div className="flex-1 min-w-0">
 						<CardTitle className="text-lg line-clamp-1">{agent.name}</CardTitle>
 						<div className="flex items-center gap-3 mt-1">

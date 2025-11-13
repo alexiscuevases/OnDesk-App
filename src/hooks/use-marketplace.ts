@@ -21,7 +21,7 @@ export function useMarketplace() {
 
 			const { data, error: fetchError } = await supabase
 				.from("marketplace")
-				.select("*")
+				.select("*, author:author_id(*)")
 				.order("created_at", { ascending: false })
 				.returns<Marketplace[]>();
 			if (fetchError) throw fetchError;

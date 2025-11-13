@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Star, Download, Clock, User, Package, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Star, Download, Clock, User, Package, CheckCircle2, AlertCircle, Loader2, Plug } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Marketplace } from "@/lib/validations/marketplace";
@@ -61,10 +61,12 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 			<DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<div className="flex items-start gap-4">
-						<div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">{/* Icon */}</div>
+						<div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">
+							{agent.avatar_url ? <img src={agent.avatar_url} width={80} height={80} alt={agent.name} /> : <Plug className="text-primary" />}
+						</div>
 						<div className="flex-1">
 							<DialogTitle className="text-2xl">{agent.name}</DialogTitle>
-							<DialogDescription className="mt-1">by {agent.author}</DialogDescription>
+							<DialogDescription className="mt-1">by {agent.author.name}</DialogDescription>
 							<div className="flex items-center gap-4 mt-2">
 								<div className="flex items-center gap-1">
 									<Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
@@ -125,7 +127,7 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 									<User className="h-4 w-4" />
 									<span className="text-xs">Author</span>
 								</div>
-								<p className="text-sm font-medium">{agent.author}</p>
+								<p className="text-sm font-medium">{agent.author.name}</p>
 							</div>
 						</div>
 					</TabsContent>
