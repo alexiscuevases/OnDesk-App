@@ -29,12 +29,13 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 
 	const {
 		handleSubmit,
-		formState: { isSubmitting },
+		formState: { isSubmitting, errors },
 		setValue,
 	} = useForm<CreateIntegrationInput>({
 		resolver: zodResolver(createIntegrationSchema),
 		defaultValues: {
 			marketplace_id: agent.id,
+			config: {},
 		},
 	});
 

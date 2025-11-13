@@ -3,8 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/providers/auth-provider";
-import { Endpoint } from "@/lib/validations/endpoint";
 import { CreateIntegrationInput, Integration } from "@/lib/validations/integration";
+import { Marketplace } from "@/lib/validations/marketplace";
 
 export function useIntegrations() {
 	const { profile } = useAuth();
@@ -37,14 +37,41 @@ export function useIntegrations() {
 		mutationFn: async (input: CreateIntegrationInput) => {
 			if (!profile) throw new Error("Not authenticated");
 
-			const { data, error: integrationError } = await supabase.from("integrations").insert({
-				team_id: input.team_id,
-				marketplace_id: input.marketplace_id,
-				config: input.config,
-			});
+			const { data: marketplace, error: marketplaceError } = await supabase
+				.from("marketplace")
+				.select("*")
+				.eq("id", input.marketplace_id)
+				.single<Marketplace>();
+			if (marketplaceError) throw marketplaceError;
+
+			const { data: integrationExists } = await supabase
+				.from("integrations")
+				.select("*")
+				.eq("team_id", input.team_id)
+				.eq("marketplace_id", input.marketplace_id)
+				.single();
+			if (integrationExists) throw new Error("Integration already installed");
+
+			const { data: newIntegration, error: integrationError } = await supabase
+				.from("integrations")
+				.insert({
+					team_id: input.team_id,
+					marketplace_id: input.marketplace_id,
+					config: input.config,
+				})
+				.select("*")
+				.single<Integration>();
 			if (integrationError) throw integrationError;
 
-			return data;
+			await supabase
+				.from("marketplace")
+				.update({
+					installs: marketplace.installs + 1,
+				})
+				.eq("id", input.marketplace_id)
+				.single();
+
+			return newIntegration;
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["marketplace", profile?.team_id] });
