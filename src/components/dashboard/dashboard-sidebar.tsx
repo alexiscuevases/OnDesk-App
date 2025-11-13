@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bot, Home, Users, MessageSquare, Settings, BarChart3, Plug, Bell, Store } from "lucide-react";
+import { Bot, Home, Users, MessageSquare, Settings, BarChart3, Plug, Store, Nfc } from "lucide-react";
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,15 +20,15 @@ import { platformConfigs } from "@/configs/platform";
 
 const mainNavItems = [
 	{ title: "Home", href: "/dashboard", icon: Home },
-	{ title: "Agents", href: "/dashboard/agents", icon: Bot },
+	{ title: "AI Agents", href: "/dashboard/agents", icon: Bot },
 	{ title: "Conversations", href: "/dashboard/conversations", icon: MessageSquare },
 	{ title: "Marketplace", href: "/dashboard/marketplace", icon: Store },
 	{ title: "Analysis", href: "/dashboard/analysis", icon: BarChart3 },
-	{ title: "Notifications", href: "/dashboard/notifications", icon: Bell },
 ];
 
 const settingsNavItems = [
-	{ title: "Connections", href: "/dashboard/connections", icon: Plug },
+	{ title: "Connections", href: "/dashboard/connections", icon: Nfc },
+	{ title: "Integrations", href: "/dashboard/integrations", icon: Plug },
 	{ title: "Team Members", href: "/dashboard/team", icon: Users },
 	{ title: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

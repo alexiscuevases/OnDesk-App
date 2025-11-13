@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -9,12 +9,13 @@ import { Separator } from "@/components/ui/separator";
 import { Star, Download, Clock, User, Package, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InstallMarketplaceInput, installMarketplaceInputSchema, Marketplace } from "@/lib/validations/marketplace";
+import { Marketplace } from "@/lib/validations/marketplace";
 import { formatDate_DistanceToNow } from "@/lib/utils";
-import { useMarketplace } from "@/hooks/use-marketplace";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/components/providers/auth-provider";
+import { useIntegrations } from "@/hooks/use-integrations";
+import { CreateIntegrationInput, createIntegrationSchema } from "@/lib/validations/integration";
 
 interface MarketplaceAgentDetailsDialogProps {
 	open: boolean;
@@ -24,20 +25,16 @@ interface MarketplaceAgentDetailsDialogProps {
 
 export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: MarketplaceAgentDetailsDialogProps) {
 	const { profile } = useAuth();
-	const { installMarketplaceItem } = useMarketplace();
+	const { createIntegration } = useIntegrations();
 
 	const {
 		handleSubmit,
-		formState: { isSubmitting, errors },
+		formState: { isSubmitting },
 		setValue,
-	} = useForm<InstallMarketplaceInput>({
-		resolver: zodResolver(installMarketplaceInputSchema),
+	} = useForm<CreateIntegrationInput>({
+		resolver: zodResolver(createIntegrationSchema),
 		defaultValues: {
-			avatar_url: agent.avatar_url || undefined,
-			name: agent.name,
-			description: agent.description,
-			agent_system_prompt: agent.agent_system_prompt,
-			agent_endpoints: agent.agent_endpoints || [],
+			marketplace_id: agent.id,
 		},
 	});
 
@@ -45,9 +42,9 @@ export function MarketplaceAgentDetailsDialog({ open, onOpenChange, agent }: Mar
 		if (profile?.team_id) setValue("team_id", profile.team_id);
 	}, [profile, setValue]);
 
-	const onSubmit = async (data: InstallMarketplaceInput) => {
+	const onSubmit = async (data: CreateIntegrationInput) => {
 		try {
-			await installMarketplaceItem(data);
+			await createIntegration(data);
 			toast.success("Agent installed successfully", {
 				description: `${agent.name} has been added to your workspace.`,
 			});
