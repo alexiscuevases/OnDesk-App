@@ -28,7 +28,7 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html suppressHydrationWarning>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+			<body className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`} suppressHydrationWarning>
 				<NextIntlClientProvider>
 					<ThemeProvider attribute="class" defaultTheme="ligth" enableSystem disableTransitionOnChange>
 						<QueryProvider>{children}</QueryProvider>
