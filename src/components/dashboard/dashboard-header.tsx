@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bell, Search, Menu, Loader2, Sun, Moon, LogOut } from "lucide-react";
+import { Bell, Search, Menu, Loader2, Sun, Moon, LogOut, Settings, User, MonitorCog } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 import {
 	DropdownMenu,
@@ -148,9 +148,18 @@ export function DashboardHeader() {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setTheme("light")}>
+								<Sun />
+								Light
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setTheme("dark")}>
+								<Moon />
+								Dark
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setTheme("system")}>
+								<MonitorCog />
+								System
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 
@@ -172,10 +181,16 @@ export function DashboardHeader() {
 							</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem asChild>
-								<Link href="/dashboard/profile">Profile</Link>
+								<Link href="/dashboard/profile">
+									<User className="mr-2 h-4 w-4" />
+									<span>Profile</span>
+								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link href="/dashboard/settings">Settings</Link>
+								<Link href="/dashboard/settings">
+									<Settings className="mr-2 h-4 w-4" />
+									<span>Settings</span>
+								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem variant="destructive" onClick={signOut}>

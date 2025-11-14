@@ -11,7 +11,7 @@ export function SiteHeader() {
 	const t = useTranslations("Header");
 
 	return (
-		<header className="sticky top-0 z-50 w-full backdrop-blur-md">
+		<header className="sticky top-0 z-50 w-full bg-background border border-border">
 			<div className="container flex h-16 items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Link href="/" className="flex items-center gap-2">
