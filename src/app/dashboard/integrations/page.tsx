@@ -1,19 +1,19 @@
 "use client";
 
-import { MarketplaceList } from "@/components/dashboard/lists/marketplace-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { IntegrationsList } from "@/components/dashboard/lists/integrations-list";
 
-export type MarketplaceFilters = {
+export type IntegrationsFilters = {
 	searchQuery: string;
 	category: string;
 };
 
-export default function MarketplacePage() {
-	const [filters, setFilters] = useState<MarketplaceFilters>({
+export default function IntegrationsPage() {
+	const [filters, setFilters] = useState<IntegrationsFilters>({
 		searchQuery: "",
 		category: "all",
 	});
@@ -24,7 +24,7 @@ export default function MarketplacePage() {
 		<div className="space-y-8">
 			{/* Header */}
 			<div>
-				<h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
+				<h1 className="text-3xl font-bold tracking-tight">Integrations</h1>
 				<p className="text-muted-foreground mt-1">Discover and install pre-built agents to enhance your automation</p>
 			</div>
 
@@ -55,8 +55,8 @@ export default function MarketplacePage() {
 				</CardContent>
 			</Card>
 
-			{/* Marketplace List */}
-			<MarketplaceList filters={filters} />
+			{/* Integrations List */}
+			<IntegrationsList filters={filters} />
 		</div>
 	);
 }
