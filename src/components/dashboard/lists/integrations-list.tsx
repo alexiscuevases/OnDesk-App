@@ -20,7 +20,7 @@ export function IntegrationsList({ filters }: IntegrationsListProps) {
 
 	const filteredAgents = marketplace.filter((agent) => {
 		const matchesSearch =
-			agent.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+			agent.name?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
 			agent.description?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
 			agent.tags?.some((tag) => tag.toLowerCase().includes(filters.searchQuery.toLowerCase()));
 
