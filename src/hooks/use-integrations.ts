@@ -17,7 +17,7 @@ export function useIntegrations() {
 		error,
 		refetch: fetchIntegrations,
 	} = useQuery<Integration[]>({
-		queryKey: ["marketplace", profile?.team_id],
+		queryKey: ["integrations", profile?.team_id],
 		queryFn: async () => {
 			if (!profile) throw new Error("Not authenticated");
 
