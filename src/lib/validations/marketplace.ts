@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MARKETPLACE_CATEGORIES } from "../constants/marketplace";
+import { MarketplaceAuthor } from "./marketplace_author";
 
 /**
  * Base
@@ -23,7 +24,7 @@ export const marketplaceSchema = z.object({
 
 export type Marketplace = z.infer<typeof marketplaceSchema> & {
 	id: string;
-	author?: {};
+	author?: MarketplaceAuthor;
 	created_at: string;
 	updated_at: string;
 };

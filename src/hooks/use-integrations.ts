@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/providers/auth-provider";
-import { CreateIntegrationInput, Integration } from "@/lib/validations/integration";
+import { CreateIntegrationInput, Integration, UpdateIntegrationInput } from "@/lib/validations/integration";
 import { Marketplace } from "@/lib/validations/marketplace";
 
 export function useIntegrations() {
@@ -23,7 +23,8 @@ export function useIntegrations() {
 
 			const { data, error: fetchError } = await supabase
 				.from("integrations")
-				.select("*")
+				.select("*, marketplace:marketplace_id(*, author:author_id(*))")
+				.eq("team_id", profile.team_id)
 				.order("created_at", { ascending: false })
 				.returns<Integration[]>();
 			if (fetchError) throw fetchError;
@@ -80,11 +81,31 @@ export function useIntegrations() {
 	});
 	const createIntegration = async (input: CreateIntegrationInput) => await createIntegrationMutation.mutateAsync(input);
 
+	const updateIntegrationMutation = useMutation({
+		mutationFn: async ({ id, input }: { id: string; input: UpdateIntegrationInput }) => {
+			if (!profile) throw new Error("Not authenticated");
+
+			const updateData: UpdateIntegrationInput = {};
+			if (input.config) updateData.config = input.config;
+			if (input.status) updateData.status = input.status;
+
+			const { data, error: updateError } = await supabase.from("integrations").update(updateData).eq("id", id).select().single<Integration>();
+			if (updateError) throw updateError;
+
+			return data;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["integrations", profile?.team_id] });
+		},
+	});
+	const updateIntegration = async (id: string, input: UpdateIntegrationInput) => await updateIntegrationMutation.mutateAsync({ id, input });
+
 	return {
 		integrations,
 		isLoading,
 		error: error?.message || null,
 		fetchIntegrations,
 		createIntegration,
+		updateIntegration,
 	};
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CONNECTION_DEFAULT_STATUS, CONNECTION_STATUSES } from "../constants/connection";
+import { Marketplace } from "./marketplace";
 
 /**
  * Base
@@ -13,12 +14,13 @@ export const integrationSchema = z.object({
 
 export type Integration = z.infer<typeof integrationSchema> & {
 	id: string;
+	marketplace?: Marketplace;
 	created_at: string;
 	updated_at: string;
 };
 
 /**
- *  Install Marketplace
+ *  Create Integration
  */
 export const createIntegrationSchema = z.object({
 	team_id: integrationSchema.shape.team_id,
@@ -28,3 +30,15 @@ export const createIntegrationSchema = z.object({
 });
 
 export type CreateIntegrationInput = z.infer<typeof createIntegrationSchema>;
+
+/**
+ *  Update Integration
+ */
+export const updateIntegrationSchema = z
+	.object({
+		status: integrationSchema.shape.status,
+		config: integrationSchema.shape.config,
+	})
+	.partial();
+
+export type UpdateIntegrationInput = z.infer<typeof updateIntegrationSchema>;

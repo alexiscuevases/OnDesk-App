@@ -5,56 +5,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bot, Plug, Star } from "lucide-react";
-import { MarketplaceAgentDetailsDialog } from "../dialogs/marketplace-agent-details-dialog";
-import { Marketplace } from "@/lib/validations/marketplace";
-import { useMarketplace } from "@/hooks/use-marketplace";
 import { IntegrationsFilters } from "@/app/dashboard/integrations/page";
+import { Integration } from "@/lib/validations/integration";
+import { useIntegrations } from "@/hooks/use-integrations";
+import { IntegrationDetailsDialog } from "../dialogs/integration-details-dialog";
 
 interface IntegrationsListProps {
 	filters: IntegrationsFilters;
 }
 
 export function IntegrationsList({ filters }: IntegrationsListProps) {
-	const [selectedAgent, setSelectedAgent] = useState<Marketplace | null>(null);
-	const { marketplace } = useMarketplace();
+	const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
+	const { integrations } = useIntegrations();
 
-	const filteredAgents = marketplace.filter((agent) => {
+	const filteredIntegrations = integrations.filter((integration) => {
 		const matchesSearch =
-			agent.name?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-			agent.description?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-			agent.tags?.some((tag) => tag.toLowerCase().includes(filters.searchQuery.toLowerCase()));
+			integration.marketplace?.name?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+			integration.marketplace?.description?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+			integration.marketplace?.tags?.some((tag) => tag.toLowerCase().includes(filters.searchQuery.toLowerCase()));
 
-		const matchesCategory = filters.category === "all" || agent.category === filters.category;
+		const matchesCategory = filters.category === "all" || integration.marketplace?.category === filters.category;
 		return matchesSearch && matchesCategory;
 	});
-
-	const featuredAgents = filteredAgents.filter((agent) => agent.featured);
 
 	return (
 		<>
 			<div className="space-y-6">
-				{/* Featured Section */}
-				{featuredAgents.length > 0 && filters.category === "all" && !filters.searchQuery && (
-					<div className="space-y-4">
-						<div className="flex items-center gap-2">
-							<Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-							<h2 className="text-xl font-semibold">Featured Agents</h2>
-						</div>
-						<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-							{featuredAgents.map((agent) => (
-								<AgentCard key={agent.id} agent={agent} featured onSelect={setSelectedAgent} />
-							))}
-						</div>
-					</div>
-				)}
-
-				{/* All Agents Grid */}
+				{/* All Integrations Grid */}
 				<div className="space-y-4">
-					{featuredAgents.length > 0 && filters.category === "all" && !filters.searchQuery && <h2 className="text-xl font-semibold">All Agents</h2>}
-					{filteredAgents.length > 0 ? (
+					{filters.category === "all" && !filters.searchQuery && <h2 className="text-xl font-semibold">All Agents</h2>}
+					{filteredIntegrations.length > 0 ? (
 						<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-							{filteredAgents.map((agent) => (
-								<AgentCard key={agent.id} agent={agent} onSelect={setSelectedAgent} />
+							{filteredIntegrations.map((integration) => (
+								<IntegrationCard key={integration.id} integration={integration} onSelect={setSelectedIntegration} />
 							))}
 						</div>
 					) : (
@@ -71,20 +54,27 @@ export function IntegrationsList({ filters }: IntegrationsListProps) {
 				</div>
 			</div>
 
-			{selectedAgent && (
-				<MarketplaceAgentDetailsDialog open={!!selectedAgent} onOpenChange={(open) => !open && setSelectedAgent(null)} agent={selectedAgent} />
+			{selectedIntegration && (
+				<IntegrationDetailsDialog
+					open={!!selectedIntegration}
+					onOpenChange={(open) => !open && setSelectedIntegration(null)}
+					integration={selectedIntegration}
+				/>
 			)}
 		</>
 	);
 }
 
-interface AgentCardProps {
-	agent: Marketplace;
+interface IntegrationCardProps {
+	integration: Integration;
 	featured?: boolean;
-	onSelect: (agent: Marketplace) => void;
+	onSelect: (agent: Integration) => void;
 }
 
-function AgentCard({ agent, featured = false, onSelect }: AgentCardProps) {
+function IntegrationCard({ integration, featured = false, onSelect }: IntegrationCardProps) {
+	const marketplace = integration.marketplace;
+	if (!marketplace) return null;
+
 	return (
 		<Card className="relative overflow-hidden hover:shadow-lg transition-shadow">
 			{featured && (
@@ -99,26 +89,30 @@ function AgentCard({ agent, featured = false, onSelect }: AgentCardProps) {
 			<CardHeader>
 				<div className="flex items-start gap-3">
 					<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-						{agent.avatar_url ? <img src={agent.avatar_url} width={80} height={80} alt={agent.name} /> : <Plug className="text-primary" />}
+						{marketplace.avatar_url ? (
+							<img src={marketplace.avatar_url} width={80} height={80} alt={marketplace.name} />
+						) : (
+							<Plug className="text-primary" />
+						)}
 					</div>
 					<div className="flex-1 min-w-0">
-						<CardTitle className="text-lg line-clamp-1">{agent.name}</CardTitle>
+						<CardTitle className="text-lg line-clamp-1">{marketplace.name}</CardTitle>
 						<div className="flex items-center gap-3 mt-1">
 							<div className="flex items-center gap-1">
 								<Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-								<span className="text-xs text-muted-foreground">{agent.rating}</span>
+								<span className="text-xs text-muted-foreground">{marketplace.rating}</span>
 							</div>
-							<span className="text-xs text-muted-foreground">{agent.installs} installs</span>
+							<span className="text-xs text-muted-foreground">{marketplace.installs} installs</span>
 						</div>
 					</div>
 				</div>
 			</CardHeader>
 
 			<CardContent className="space-y-4">
-				<CardDescription className="line-clamp-2 leading-relaxed">{agent.description}</CardDescription>
+				<CardDescription className="line-clamp-2 leading-relaxed">{marketplace.description}</CardDescription>
 
 				<div className="flex flex-wrap gap-1.5">
-					{agent.tags?.map((tag) => (
+					{marketplace.tags?.map((tag) => (
 						<Badge key={tag} variant="outline" className="text-xs">
 							{tag}
 						</Badge>
@@ -126,10 +120,10 @@ function AgentCard({ agent, featured = false, onSelect }: AgentCardProps) {
 				</div>
 
 				<div className="flex gap-2 pt-2">
-					<Button size="sm" className="flex-1" onClick={() => onSelect(agent)}>
+					<Button size="sm" className="flex-1" onClick={() => onSelect(integration)}>
 						Install
 					</Button>
-					<Button size="sm" variant="outline" onClick={() => onSelect(agent)}>
+					<Button size="sm" variant="outline" onClick={() => onSelect(integration)}>
 						Details
 					</Button>
 				</div>
