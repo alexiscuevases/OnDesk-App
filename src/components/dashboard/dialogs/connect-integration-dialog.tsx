@@ -47,17 +47,62 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 		if (currentTeam?.id) setValue("team_id", currentTeam.id);
 	}, [currentTeam, setValue]);
 
+	const startWhatsappSignup = () => {
+		const url = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}&redirect_uri=${encodeURIComponent(
+			process.env.NEXT_PUBLIC_META_REDIRECT_URI!
+		)}&scope=business_management,whatsapp_business_messaging`;
+
+		const popup = window.open(url, "_blank", "width=600,height=800");
+
+		// Poll para recibir los datos del backend (cuando el callback termine)
+		const listener = (event: MessageEvent) => {
+			if (event.data.type === "META_WHATSAPP_CONNECTED") {
+				popup?.close();
+				window.removeEventListener("message", listener);
+				finishWhatsappConnection(event.data.payload);
+			}
+		};
+
+		window.addEventListener("message", listener);
+	};
+
+	const finishWhatsappConnection = async (metaData: any) => {
+		setIsLoading(true);
+		try {
+			await createConnection({
+				team_id: currentTeam!.id,
+				name: integration.name,
+				type: "whatsapp",
+				status: "connected",
+				config: {
+					phoneNumber: metaData.phone_number,
+					phoneNumberId: metaData.phone_number_id,
+					apiKey: metaData.api_key,
+					accountName: metaData.account_name,
+				},
+			});
+
+			toast.success("WhatsApp connected", {
+				description: "The WhatsApp account has been linked successfully.",
+			});
+
+			setOpen(false);
+			reset();
+		} catch (err: any) {
+			toast.error("Error", {
+				description: err.message,
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const onSubmit = async (data: CreateConnectionInput) => {
 		setIsLoading(true);
 		try {
 			const config: any = {};
 
-			if (integration.type === "whatsapp") {
-				config.phoneNumber = data.phoneNumber;
-				config.phoneNumberId = data.phoneNumberId;
-				config.apiKey = data.apiKey;
-				config.accountName = data.accountName;
-			} else if (integration.type === "website") {
+			if (integration.type === "website") {
 				config.websiteUrl = data.websiteUrl;
 				config.widgetName = data.widgetName;
 				config.welcomeMessage = data.welcomeMessage;
@@ -103,30 +148,20 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 						</div>
 
 						{integration.type === "whatsapp" && (
-							<>
-								<div className="space-y-2">
-									<Label htmlFor="phoneNumber">Phone Number</Label>
-									<Input id="phoneNumber" placeholder="+1234567890" {...register("phoneNumber", { required: true })} />
-									{errors.phoneNumber && <p className="text-xs text-destructive">This field is required</p>}
-									<p className="text-xs text-muted-foreground">Phone number displayed in WhatsApp Business</p>
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="phoneNumberId">Phone Number ID</Label>
-									<Input id="phoneNumberId" placeholder="123456789012345" {...register("phoneNumberId", { required: true })} />
-									{errors.phoneNumberId && <p className="text-xs text-destructive">This field is required</p>}
-									<p className="text-xs text-muted-foreground">ID of the number in Meta Business Suite</p>
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="apiKey">Access Token</Label>
-									<Input id="apiKey" type="password" placeholder="EAAxxxxxxxxxxxxx" {...register("apiKey", { required: true })} />
-									{errors.apiKey && <p className="text-xs text-destructive">This field is required</p>}
-									<p className="text-xs text-muted-foreground">Temporary access token from Meta</p>
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="accountName">Account Name</Label>
-									<Input id="accountName" placeholder="My Business Account" {...register("accountName")} />
-								</div>
-							</>
+							<div className="flex flex-col items-center justify-center py-4">
+								<p className="text-sm text-muted-foreground mb-2">Connect automatically with Meta</p>
+
+								<Button type="button" onClick={startWhatsappSignup} disabled={isLoading}>
+									{isLoading ? (
+										<>
+											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+											Connecting...
+										</>
+									) : (
+										"Sync WhatsApp"
+									)}
+								</Button>
+							</div>
 						)}
 
 						{integration.type === "website" && (
@@ -148,21 +183,23 @@ export function ConnectIntegrationDialog({ children, integration }: ConnectInteg
 						)}
 					</div>
 
-					<DialogFooter>
-						<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-							Cancel
-						</Button>
-						<Button type="submit" disabled={isLoading}>
-							{isLoading ? (
-								<>
-									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Connecting...
-								</>
-							) : (
-								"Connect"
-							)}
-						</Button>
-					</DialogFooter>
+					{integration.type !== "whatsapp" && (
+						<DialogFooter>
+							<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+								Cancel
+							</Button>
+							<Button type="submit" disabled={isLoading}>
+								{isLoading ? (
+									<>
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+										Connecting...
+									</>
+								) : (
+									"Connect"
+								)}
+							</Button>
+						</DialogFooter>
+					)}
 				</form>
 			</DialogContent>
 		</Dialog>
