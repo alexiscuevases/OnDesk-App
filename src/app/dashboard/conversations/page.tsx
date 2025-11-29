@@ -1,11 +1,11 @@
 "use client";
 
-import { ConversationsList } from "@/components/dashboard/lists/conversations-list";
-import { Card, CardContent } from "@/components/ui/card";
+import { ConversationsList } from "@/modules/dashboard/components/lists/conversations-list";
+import { Card, CardContent } from "@/ui/card";
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/lib/constants/conversation";
+import { Input } from "@/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
+import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/core/constants/conversation";
 import { useState } from "react";
 
 export type Filters = {
@@ -71,3 +71,4 @@ export default function ConversationsPage() {
 		</div>
 	);
 }
+

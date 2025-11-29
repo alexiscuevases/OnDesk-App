@@ -1,11 +1,11 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/ui/card";
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/ui/tabs";
 import { useState } from "react";
-import { IntegrationsList } from "@/components/dashboard/lists/integrations-list";
+import { IntegrationsList } from "@/modules/dashboard/components/lists/integrations-list";
 
 export type IntegrationsFilters = {
 	searchQuery: string;
@@ -60,3 +60,4 @@ export default function IntegrationsPage() {
 		</div>
 	);
 }
+

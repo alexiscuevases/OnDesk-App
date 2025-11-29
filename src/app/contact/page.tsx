@@ -1,10 +1,10 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { SiteHeader } from "@/modules/shared/components/site-header";
+import { SiteFooter } from "@/modules/shared/components/site-footer";
+import { Button } from "@/ui/button";
+import { Card } from "@/ui/card";
+import { Input } from "@/ui/input";
+import { Label } from "@/ui/label";
+import { Textarea } from "@/ui/textarea";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { platformConfigs } from "@/configs/platform";
 
@@ -121,3 +121,4 @@ export default function ContactPage() {
 		</div>
 	);
 }
+

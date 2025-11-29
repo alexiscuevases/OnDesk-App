@@ -1,4 +1,4 @@
-import { SignInForm } from "@/components/site/forms/sign-in-form";
+import { SignInForm } from "@/modules/shared/components/forms/sign-in-form";
 import { platformConfigs } from "@/configs/platform";
 import { Bot } from "lucide-react";
 import Link from "next/link";
@@ -46,3 +46,4 @@ export default function SignInPage() {
 		</div>
 	);
 }
+

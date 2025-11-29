@@ -1,8 +1,8 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Card, CardContent } from "@/components/ui/card";
+import { SiteHeader } from "@/modules/shared/components/site-header";
+import { SiteFooter } from "@/modules/shared/components/site-footer";
+import { Button } from "@/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/ui/accordion";
+import { Card, CardContent } from "@/ui/card";
 import { MessageCircle, Mail } from "lucide-react";
 import Link from "next/link";
 import { platformConfigs } from "@/configs/platform";
@@ -186,3 +186,4 @@ export default function FAQPage() {
 		</div>
 	);
 }
+

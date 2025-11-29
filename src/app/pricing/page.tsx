@@ -1,7 +1,7 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { PricingSection } from "@/components/site/pricing/pricing-section";
-import { PricingFAQ } from "@/components/site/pricing/pricing-faq";
+import { SiteHeader } from "@/modules/shared/components/site-header";
+import { SiteFooter } from "@/modules/shared/components/site-footer";
+import { PricingSection } from "@/modules/shared/components/pricing/pricing-section";
+import { PricingFAQ } from "@/modules/shared/components/pricing/pricing-faq";
 
 export default function PricingPage() {
 	return (
@@ -15,3 +15,4 @@ export default function PricingPage() {
 		</div>
 	);
 }
+

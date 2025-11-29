@@ -1,13 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/card";
+import { Button } from "@/ui/button";
 import { Bot, MessageSquare, TrendingUp, Zap, Plus, ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { RecentConversations } from "@/components/dashboard/recent-conversations";
-import { ActivityChart } from "@/components/dashboard/activity-chart";
-import { useStats } from "@/hooks/use-stats";
-import { Skeleton } from "@/components/ui/skeleton";
+import { RecentConversations } from "@/modules/dashboard/components/recent-conversations";
+import { ActivityChart } from "@/modules/dashboard/components/activity-chart";
+import { useStats } from "@/core/hooks/use-stats";
+import { Skeleton } from "@/ui/skeleton";
 
 export default function DashboardPage() {
 	const { stats, isLoading } = useStats();
@@ -116,3 +116,4 @@ export default function DashboardPage() {
 		</div>
 	);
 }
+

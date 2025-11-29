@@ -1,5 +1,5 @@
-import { CreateAgentDialog } from "@/components/dashboard/dialogs/create-agent-dialog";
-import { AgentsList } from "@/components/dashboard/lists/agents-list";
+import { CreateAgentDialog } from "@/modules/dashboard/components/dialogs/create-agent-dialog";
+import { AgentsList } from "@/modules/dashboard/components/lists/agents-list";
 
 export default function AgentsPage() {
 	return (
@@ -18,3 +18,4 @@ export default function AgentsPage() {
 		</div>
 	);
 }
+

@@ -1,8 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GeneralSettings } from "@/components/dashboard/settings/general-settings"
-import { BillingSettings } from "@/components/dashboard/settings/billing-settings"
-import { NotificationSettings } from "@/components/dashboard/settings/notification-settings"
-import { SecuritySettings } from "@/components/dashboard/settings/security-settings"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
+import { GeneralSettings } from "@/modules/dashboard/components/settings/general-settings"
+import { BillingSettings } from "@/modules/dashboard/components/settings/billing-settings"
+import { NotificationSettings } from "@/modules/dashboard/components/settings/notification-settings"
+import { SecuritySettings } from "@/modules/dashboard/components/settings/security-settings"
 
 export default function SettingsPage() {
   return (
@@ -41,3 +41,4 @@ export default function SettingsPage() {
     </div>
   )
 }
+

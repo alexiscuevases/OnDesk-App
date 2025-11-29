@@ -1,8 +1,8 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { SiteHeader } from "@/modules/shared/components/site-header";
+import { SiteFooter } from "@/modules/shared/components/site-footer";
+import { Button } from "@/ui/button";
+import { Badge } from "@/ui/badge";
+import { Separator } from "@/ui/separator";
 import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";

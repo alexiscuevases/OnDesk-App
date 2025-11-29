@@ -1,6 +1,6 @@
-import { AnalyticsOverview } from "@/components/dashboard/analytics-overview";
-import { PerformanceMetrics } from "@/components/dashboard/performance-metrics";
-import { AgentComparison } from "@/components/dashboard/agent-comparison";
+import { AnalyticsOverview } from "@/modules/dashboard/components/analytics-overview";
+import { PerformanceMetrics } from "@/modules/dashboard/components/performance-metrics";
+import { AgentComparison } from "@/modules/dashboard/components/agent-comparison";
 
 export default function AnalysisPage() {
 	return (
@@ -22,3 +22,4 @@ export default function AnalysisPage() {
 		</div>
 	);
 }
+

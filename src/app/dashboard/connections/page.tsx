@@ -1,4 +1,4 @@
-import { ConnectionsList } from "@/components/dashboard/lists/connections-list";
+import { ConnectionsList } from "@/modules/dashboard/components/lists/connections-list";
 
 export default function ConnectionsPage() {
 	return (
@@ -14,3 +14,4 @@ export default function ConnectionsPage() {
 		</div>
 	);
 }
+

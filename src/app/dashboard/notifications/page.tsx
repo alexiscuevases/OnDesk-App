@@ -1,6 +1,6 @@
-import { NotificationsList } from "@/components/dashboard/lists/notifications-list";
-import { NotificationsSettings } from "@/components/dashboard/notifications-settings";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { NotificationsList } from "@/modules/dashboard/components/lists/notifications-list";
+import { NotificationsSettings } from "@/modules/dashboard/components/notifications-settings";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 
 export default function NotificationsPage() {
 	return (
@@ -34,3 +34,4 @@ export default function NotificationsPage() {
 		</div>
 	);
 }
+

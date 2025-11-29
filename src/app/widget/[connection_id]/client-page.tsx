@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { AlertCircle, Loader2, MessageCircle, Send, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/ui/card";
+import { Input } from "@/ui/input";
+import { Textarea } from "@/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StartConversationInput, startConversationSchema } from "@/lib/validations/widget";
-import { useWidget } from "@/hooks/use-widget";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { formatDate } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { StartConversationInput, startConversationSchema } from "@/core/validations/widget";
+import { useWidget } from "@/core/hooks/use-widget";
+import { Label } from "@/ui/label";
+import { Alert, AlertDescription } from "@/ui/alert";
+import { formatDate } from "@/core/utils/utils";
+import { ScrollArea } from "@/ui/scroll-area";
 
 interface Props {
 	connectionId: string;

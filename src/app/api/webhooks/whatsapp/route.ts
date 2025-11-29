@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from "@/lib/whatsapp";
-import { Connection } from "@/lib/validations/connection";
-import { Conversation } from "@/lib/validations/conversation";
-import { notifications } from "@/lib/services/notifications";
-import { ai } from "@/lib/services/ai";
-import { Message } from "@/lib/validations/message";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from "@/core/utils/whatsapp";
+import { Connection } from "@/core/validations/connection";
+import { Conversation } from "@/core/validations/conversation";
+import { notifications } from "@/core/services/notifications";
+import { ai } from "@/core/services/ai";
+import { Message } from "@/core/validations/message";
+import { supabaseAdmin } from "@/core/supabase/admin";
 
 const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN!;
 if (!WHATSAPP_VERIFY_TOKEN) throw new Error("Please define all Whatsapp environment variables");
@@ -269,3 +269,4 @@ async function processStatusUpdates(statuses: Array<any>, connection: Connection
 		}
 	}
 }
+

@@ -2,20 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
+import { Badge } from "@/ui/badge";
+import { Button } from "@/ui/button";
 import { ArrowLeft, Bot, MoreVertical, MessageCircle } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import type { Conversation } from "@/lib/validations/conversation";
-import { useMessages } from "@/hooks/use-messages";
-import { Messages, MessagesSkeleton } from "@/components/dashboard/messages";
-import { useAuth } from "@/components/providers/auth-provider";
-import { useConversations } from "@/hooks/use-conversations";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatDate } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/dropdown-menu";
+import type { Conversation } from "@/core/validations/conversation";
+import { useMessages } from "@/core/hooks/use-messages";
+import { Messages, MessagesSkeleton } from "@/modules/dashboard/components/messages";
+import { useAuth } from "@/modules/shared/components/providers/auth-provider";
+import { useConversations } from "@/core/hooks/use-conversations";
+import { Skeleton } from "@/ui/skeleton";
+import { ScrollArea } from "@/ui/scroll-area";
+import { formatDate } from "@/core/utils/utils";
 
 interface Props {
 	conversation_id: string;

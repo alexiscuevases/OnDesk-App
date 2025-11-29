@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { stripe, StripeCheckoutSession, StripeEvent, StripeSubscription } from "@/lib/stripe";
-import { supabaseAdmin } from "@/lib/supabase/admin";
-import { Team } from "@/lib/validations/team";
+import { stripe, StripeCheckoutSession, StripeEvent, StripeSubscription } from "@/core/utils/stripe";
+import { supabaseAdmin } from "@/core/supabase/admin";
+import { Team } from "@/core/validations/team";
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
 if (!STRIPE_WEBHOOK_SECRET || !STRIPE_WEBHOOK_SECRET) throw new Error("Please define all Stripe environment variables");
@@ -122,3 +122,4 @@ export async function POST(req: Request) {
 		return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
 	}
 }
+

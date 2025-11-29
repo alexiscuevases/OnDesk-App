@@ -2,10 +2,10 @@
 
 import { AppConfigs } from "@/configs/app";
 import { platformConfigs } from "@/configs/platform";
-import { stripe } from "@/lib/stripe";
-import { createClient } from "@/lib/supabase/server";
-import { Profile } from "@/lib/validations/profile";
-import { Team } from "@/lib/validations/team";
+import { stripe } from "@/core/utils/stripe";
+import { createClient } from "@/core/supabase/server";
+import { Profile } from "@/core/validations/profile";
+import { Team } from "@/core/validations/team";
 
 export async function startCheckoutSession(productId: string, teamId: string) {
 	const product = platformConfigs.plans.find((p) => p.id === productId);

@@ -1,12 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/card";
+import { Button } from "@/ui/button";
+import { Input } from "@/ui/input";
+import { Label } from "@/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Camera } from "lucide-react";
-import { useAuth } from "@/components/providers/auth-provider";
+import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 
 export default function ProfilePage() {
 	const { profile } = useAuth();
@@ -86,3 +86,4 @@ export default function ProfilePage() {
 		</div>
 	);
 }
+

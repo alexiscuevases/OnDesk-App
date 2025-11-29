@@ -2,14 +2,14 @@
 
 import { Suspense } from "react";
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/card";
+import { Button } from "@/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { startCheckoutSession, verifyCheckoutSession } from "@/actions/stripe";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/ui/alert";
 import { platformConfigs } from "@/configs/platform";
 import { AppConfigs } from "@/configs/app";
 
@@ -185,3 +185,4 @@ export default function SelectPlanPage() {
 		</Suspense>
 	);
 }
+

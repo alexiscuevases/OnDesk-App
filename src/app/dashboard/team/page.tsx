@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/ui/button";
 import { UserPlus } from "lucide-react";
-import { TeamMembersList } from "@/components/dashboard/lists/team-members-list";
-import { InviteTeamDialog } from "@/components/dashboard/dialogs/invite-team-dialog";
+import { TeamMembersList } from "@/modules/dashboard/components/lists/team-members-list";
+import { InviteTeamDialog } from "@/modules/dashboard/components/dialogs/invite-team-dialog";
 
 export default function TeamPage() {
 	return (
@@ -25,3 +25,4 @@ export default function TeamPage() {
 		</div>
 	);
 }
+
