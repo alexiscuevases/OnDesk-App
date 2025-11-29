@@ -3,6 +3,158 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
+import type { Message } from "@/modules/conversations/validations/message";
+import { useAuth } from "@/modules/shared/components/providers/auth-provider";
+import { Connection } from "@/modules/connections/validations/connection";
+import { Conversation } from "@/modules/conversations/validations/conversation";
+import { createWhatsAppAPI } from "@/core/utils/whatsapp";
+
+interface SendMessage {
+    role: Message["role"];
+    message: string;
+}
+
+export function useMessages(conversationId?: string) {
+    const { profile } = useAuth();
+    const supabase = createClient();
+    const queryClient = useQueryClient();
+
+    const {
+        data: messages = [],
+        isLoading,
+        error,
+        refetch: fetchMessages,
+    } = useQuery<Message[]>({
+        queryKey: ["messages", conversationId],
+        queryFn: async () => {
+            if (!profile) throw new Error("Not authenticated");
+
+            const { data, error: fetchError } = await supabase
+                .from("messages")
+	"use client";
+
+	import { useEffect } from "react";
+	import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+	import { createClient } from "@/core/supabase/client";
+	import { Conversation } from "@/modules/conversations/validations/conversation";
+	import type { Message } from "@/modules/conversations/validations/message";
+
+	export function useMessages(conversationId: string) {
+		const supabase = createClient();
+		const queryClient = useQueryClient();
+
+		const {
+			data: messages = [],
+			isLoading,
+			error,
+			refetch: fetchMessages,
+		} = useQuery<Message[]>({
+			queryKey: ["messages", conversationId],
+			queryFn: async () => {
+				const { data, error: fetchError } = await supabase
+					.from("messages")
+					.select("*")
+					.eq("conversation_id", conversationId)
+					.order("created_at", { ascending: true })
+					.returns<Message[]>()
+					.limit(200);
+				if (fetchError) throw fetchError;
+
+				return data || [];
+			},
+			enabled: !!conversationId,
+		});
+
+		const sendMessageMutation = useMutation({
+			mutationFn: async (message: string) => {
+				if (!conversationId) return;
+
+				const { data, error: messageError } = await supabase
+					.from("messages")
+					.insert({
+						conversation_id: conversationId,
+						role: "user",
+						content: message,
+						content_type: "text",
+					})
+					.select()
+					.single<Message>();
+				if (messageError) throw messageError;
+
+				return data;
+			},
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
+			},
+		});
+		const sendMessage = async (message: string) => await sendMessageMutation.mutateAsync(message);
+
+		useEffect(() => {
+			if (!conversationId) return;
+
+			const messagesChannel = supabase
+				.channel(`messages-${conversationId}`)
+				.on(
+					"postgres_changes",
+					{
+						event: "*",
+						schema: "public",
+						table: "messages",
+						filter: `conversation_id=eq.${conversationId}`,
+					},
+					(payload) => {
+						if (payload.eventType === "INSERT") {
+							queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) => {
+								const newMsg = payload.new as Message;
+								const exists = old.find((msg) => msg.id === newMsg.id);
+								if (exists) return old.map((msg) => (msg.id === newMsg.id ? newMsg : msg));
+
+								return [...old, newMsg];
+							});
+						} else if (payload.eventType === "UPDATE") {
+							queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) =>
+								old.map((msg) => (msg.id === payload.new.id ? (payload.new as Message) : msg))
+							);
+						} else if (payload.eventType === "DELETE") {
+							queryClient.setQueryData<Message[]>(["messages", conversationId], (old = []) => old.filter((msg) => msg.id !== payload.old.id));
+						}
+					}
+				)
+				.subscribe();
+
+			return () => {
+				supabase.removeChannel(messagesChannel);
+			};
+		}, [conversationId, queryClient]);
+
+		return {
+			messages,
+			isLoading,
+			error,
+			fetchMessages,
+			sendMessage,
+		};
+	}
+
+        return () => {
+            supabase.removeChannel(messagesChannel);
+        };
+    }, [conversationId, queryClient]);
+
+    return {
+        messages,
+        isLoading,
+        error: error?.message || null,
+        fetchMessages,
+        sendMessage,
+        isLoadingSendMessage: sendMessageMutation.isPending,
+    };
+}
+"use client";
+
+import { useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createClient } from "@/core/supabase/client";
 import type { Message } from "@/core/validations/message";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 import { Connection } from "@/core/validations/connection";

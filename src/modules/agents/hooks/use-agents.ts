@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { Agent, CreateAgentInput, UpdateAgentInput } from "@/core/validations/agent";
+import type { Agent, CreateAgentInput, UpdateAgentInput } from "@/modules/agents/validations/agent";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 
 export function useAgents() {

@@ -2,6 +2,135 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
+import type { TeamMember } from "@/modules/team/validations/team_member";
+import type { CreateTeamInput, Team } from "@/modules/team/validations/team";
+import { useAuth } from "@/modules/shared/components/providers/auth-provider";
+
+export function useTeams() {
+    const { profile, refreshProfile } = useAuth();
+    const supabase = createClient();
+    const queryClient = useQueryClient();
+
+    const {
+        data: currentTeam = null,
+		"use client";
+
+		import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+		import { createClient } from "@/core/supabase/client";
+		import type { TeamMember } from "@/modules/team/validations/team_member";
+		import type { CreateTeamInput, Team } from "@/modules/team/validations/team";
+		import { useAuth } from "@/modules/shared/components/providers/auth-provider";
+
+		export function useTeams() {
+			const { profile, refreshProfile } = useAuth();
+			const supabase = createClient();
+			const queryClient = useQueryClient();
+
+			const {
+				data: teams = [],
+				isLoading,
+				error,
+				refetch: fetchTeams,
+			} = useQuery<Team[]>({
+				queryKey: ["teams", profile?.id],
+				queryFn: async () => {
+					if (!profile) throw new Error("Not authenticated");
+
+					const { data, error: fetchError } = await supabase
+						.from("teams")
+						.select("*")
+						.order("created_at", { ascending: false });
+					if (fetchError) throw fetchError;
+
+					return data || [];
+				},
+				enabled: !!profile,
+			});
+
+			const createTeamMutation = useMutation({
+				mutationFn: async (input: CreateTeamInput) => {
+					if (!profile) throw new Error("Not authenticated");
+
+					const { data, error: createError } = await supabase
+						.from("teams")
+						.insert(input)
+						.select("*")
+						.single<Team>();
+					if (createError) throw createError;
+
+					await supabase.from("team_members").insert({ profile_id: profile.id, team_id: data.id, role: "owner" });
+
+					return data;
+				},
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: ["teams", profile?.id] });
+					refreshProfile?.();
+				},
+			});
+			const createTeam = async (input: CreateTeamInput) => await createTeamMutation.mutateAsync(input);
+
+			const updateTeamMutation = useMutation({
+				mutationFn: async ({ id, input }: { id: string; input: Team }) => {
+					if (!profile) throw new Error("Not authenticated");
+
+					const { data, error: updateError } = await supabase.from("teams").update(input).eq("id", id).select().single<Team>();
+					if (updateError) throw updateError;
+
+					return data;
+				},
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: ["teams", profile?.id] });
+				},
+			});
+			const updateTeam = async (id: string, input: Team) => await updateTeamMutation.mutateAsync({ id, input });
+
+			return {
+				teams,
+				isLoading,
+				error: error?.message || null,
+				fetchTeams,
+				createTeam,
+				updateTeam,
+			};
+		}
+                .from("team_members")
+                .select("*")
+                .eq("user_id", profile.id)
+                .eq("team_id", teamId)
+                .eq("status", "active")
+                .single<TeamMember>();
+            if (memberError || !teamMember) throw memberError ?? new Error("No perteneces a este equipo");
+
+            const { error: updateError } = await supabase.from("profiles").update({ team_id: teamId }).eq("id", profile.id);
+            if (updateError) throw updateError;
+
+            return true;
+        },
+        onSuccess: async () => {
+            await refreshProfile();
+        },
+    });
+    const switchTeam = async (teamId: string) => await switchTeamMutation.mutateAsync(teamId);
+
+    return {
+        currentTeam,
+        teams,
+        isLoadingCurrentTeam,
+        isLoadingTeams,
+        currentTeamError: currentTeamError?.message || null,
+        teamsError: teamsError?.message || null,
+        createTeam,
+        isLoadingCreateTeam: createTeamMutation.isPending,
+        createTeamError: createTeamMutation.error?.message || null,
+        switchTeam,
+        fetchCurrentTeam,
+        fetchTeams,
+    };
+}
+"use client";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createClient } from "@/core/supabase/client";
 import type { TeamMember } from "@/core/validations/team_member";
 import type { CreateTeamInput, Team } from "@/core/validations/team";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";

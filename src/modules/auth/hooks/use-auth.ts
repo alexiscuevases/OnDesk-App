@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/core/supabase/client";
-import type { RecoveryPasswordInput, SignInInput, SignUpInput, UpdatePasswordInput } from "../validations/auth";
+import type { RecoveryPasswordInput, SignInInput, SignUpInput, UpdatePasswordInput } from "@/modules/auth/validations/auth";
 import { AppConfigs } from "@/core/configs/app";
 
 export function useAuth() {
@@ -112,4 +112,3 @@ export function useAuth() {
 		error,
 	};
 }
-

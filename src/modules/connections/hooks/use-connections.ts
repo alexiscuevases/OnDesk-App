@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { baseCreateConnectionInput, baseUpdateConnectionInput, Connection, UpdateConnectionInput } from "@/core/validations/connection";
+import type { baseCreateConnectionInput, baseUpdateConnectionInput, Connection, UpdateConnectionInput } from "@/modules/connections/validations/connection";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 
 export function useConnections() {

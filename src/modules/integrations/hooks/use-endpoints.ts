@@ -2,13 +2,173 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { Endpoint, CreateEndpointInput, UpdateEndpointInput } from "@/core/validations/endpoint";
+import type { Endpoint, CreateEndpointInput, UpdateEndpointInput } from "@/modules/integrations/validations/endpoint";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
-import { endpoints as Endpoints_Service } from "@/core/services/endpoints";
 
 export function useEndpoints(agentId?: string) {
 	const { profile } = useAuth();
 	const supabase = createClient();
+	const queryClient = useQueryClient();
+
+	const {
+		data: endpoints = [],
+		isLoading,
+		error,
+		refetch: fetchEndpoints,
+	} = useQuery<Endpoint[]>({
+		queryKey: ["endpoints", agentId],
+		queryFn: async () => {
+			if (!profile) throw new Error("Not authenticated");
+			if (!agentId) return [];
+
+			const { data, error: fetchError } = await supabase.from("endpoints").select("*").eq("agent_id", agentId).order("created_at", { ascending: false });
+			if (fetchError) throw fetchError;
+
+			return data || [];
+		},
+		enabled: !!profile && !!agentId,
+	});
+
+	const createEndpointMutation = useMutation({
+		mutationFn: async (input: CreateEndpointInput) => {
+			if (!profile) throw new Error("Not authenticated");
+
+			const { data, error: createError } = await supabase
+				.from("endpoints")
+				.insert({
+					agent_id: input.agent_id,
+					marketplace_id: input.marketplace_id,
+					name: input.name,
+					description: input.description,
+					method: input.method,
+					url: input.url,
+					headers_schema: input.headers_schema,
+					params_schema: input.params_schema,
+					response_schema: input.response_schema,
+					timeout: input.timeout,
+					retry_count: input.retry_count,
+					is_active: input.is_active,
+				})
+				.select("*")
+				.single<Endpoint>();
+			if (createError) throw createError;
+
+			return data;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["endpoints", agentId] });
+		},
+	});
+	const createEndpoint = async (input: CreateEndpointInput) => await createEndpointMutation.mutateAsync(input);
+
+	("use client");
+
+	import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+	import { createClient } from "@/core/supabase/client";
+	import type { Endpoint, CreateEndpointInput, UpdateEndpointInput } from "@/modules/integrations/validations/endpoint";
+	import { useAuth } from "@/modules/shared/components/providers/auth-provider";
+
+	export function useEndpoints() {
+		const { profile } = useAuth();
+		const supabase = createClient();
+		const queryClient = useQueryClient();
+
+		const {
+			data: endpoints = [],
+			isLoading,
+			error,
+			refetch: fetchEndpoints,
+		} = useQuery<Endpoint[]>({
+			queryKey: ["endpoints", profile?.team_id],
+			queryFn: async () => {
+				if (!profile) throw new Error("Not authenticated");
+
+				const { data, error: fetchError } = await supabase
+					.from("endpoints")
+					.select("*")
+					.eq("team_id", profile.team_id)
+					.order("created_at", { ascending: false })
+					.returns<Endpoint[]>();
+				if (fetchError) throw fetchError;
+
+				return data || [];
+			},
+			enabled: !!profile,
+		});
+
+		const createEndpointMutation = useMutation({
+			mutationFn: async (input: CreateEndpointInput) => {
+				if (!profile) throw new Error("Not authenticated");
+
+				const { data, error: createError } = await supabase
+					.from("endpoints")
+					.insert({
+						team_id: input.team_id,
+						name: input.name,
+						url: input.url,
+						method: input.method,
+						headers: input.headers,
+						body: input.body,
+						status: input.status,
+					})
+					.select("*")
+					.single<Endpoint>();
+				if (createError) throw createError;
+
+				return data;
+			},
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["endpoints", profile?.team_id] });
+			},
+		});
+		const createEndpoint = async (input: CreateEndpointInput) => await createEndpointMutation.mutateAsync(input);
+
+		const updateEndpointMutation = useMutation({
+			mutationFn: async ({ id, input }: { id: string; input: UpdateEndpointInput }) => {
+				if (!profile) throw new Error("Not authenticated");
+
+				const updateData: UpdateEndpointInput = {};
+				if (input.name) updateData.name = input.name;
+				if (input.url) updateData.url = input.url;
+				if (input.method) updateData.method = input.method;
+				if (input.headers) updateData.headers = input.headers;
+				if (input.body) updateData.body = input.body;
+				if (input.status) updateData.status = input.status;
+
+				const { data, error: updateError } = await supabase.from("endpoints").update(updateData).eq("id", id).select("*").single<Endpoint>();
+				if (updateError) throw updateError;
+
+				return data;
+			},
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["endpoints", profile?.team_id] });
+			},
+		});
+		const updateEndpoint = async (id: string, input: UpdateEndpointInput) => await updateEndpointMutation.mutateAsync({ id, input });
+
+		const deleteEndpointMutation = useMutation({
+			mutationFn: async (id: string) => {
+				if (!profile) throw new Error("Not authenticated");
+
+				const { error: deleteError } = await supabase.from("endpoints").delete().eq("id", id);
+				if (deleteError) throw deleteError;
+			},
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["endpoints", profile?.team_id] });
+			},
+		});
+		const deleteEndpoint = async (id: string) => await deleteEndpointMutation.mutateAsync(id);
+
+		return {
+			endpoints,
+			isLoading,
+			error: error?.message || null,
+			fetchEndpoints,
+			createEndpoint,
+			updateEndpoint,
+			deleteEndpoint,
+		};
+	}
 	const queryClient = useQueryClient();
 
 	const {
