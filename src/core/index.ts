@@ -23,4 +23,3 @@ export * from "./constants/index";
 // Supabase
 export { createClient as createSupabaseClient } from "./supabase/client";
 export { createClient as createSupabaseServerClient } from "./supabase/server";
-

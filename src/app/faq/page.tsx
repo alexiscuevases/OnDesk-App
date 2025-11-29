@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Card, CardContent } from "@/ui/card";
 import { MessageCircle, Mail } from "lucide-react";
 import Link from "next/link";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 const faqCategories = [
 	{
@@ -186,4 +186,5 @@ export default function FAQPage() {
 		</div>
 	);
 }
+
 

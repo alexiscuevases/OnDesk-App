@@ -6,7 +6,7 @@ import { createClient } from "@/core/supabase/client";
 import type { Notification } from "@/core/validations/notification";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 import { toast } from "sonner";
-import { AppConfigs } from "@/configs/app";
+import { AppConfigs } from "@/core/configs/app";
 
 export function useNotifications(fromDashboardHeader = false) {
 	const { profile } = useAuth();
@@ -120,3 +120,4 @@ export function useNotifications(fromDashboardHeader = false) {
 		markAllAsRead,
 	};
 }
+

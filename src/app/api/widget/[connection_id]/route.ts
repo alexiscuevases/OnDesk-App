@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/core/supabase/admin";
-import { AppConfigs } from "@/configs/app";
+import { AppConfigs } from "@/core/configs/app";
 import { Connection } from "@/core/validations/connection";
 
 export async function GET(request: Request, { params }: { params: Promise<{ connection_id: string }> }) {

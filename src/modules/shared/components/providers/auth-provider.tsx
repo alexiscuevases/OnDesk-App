@@ -5,7 +5,7 @@ import { createClient } from "@/core/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { Profile } from "@/core/validations/profile";
-import { AppConfigs } from "@/configs/app";
+import { AppConfigs } from "@/core/configs/app";
 
 type AuthContextType = {
 	user: User | null;
@@ -112,3 +112,4 @@ export const useAuth = () => {
 	if (!context) throw new Error("useAuth must be used within an AuthProvider");
 	return context;
 };
+

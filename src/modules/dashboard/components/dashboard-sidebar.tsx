@@ -16,7 +16,7 @@ import {
 	SidebarMenuItem,
 } from "@/ui/sidebar";
 import { TeamSwitcher } from "./team-switcher";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 const mainNavItems = [
 	{ title: "Home", href: "/dashboard", icon: Home },
@@ -90,3 +90,4 @@ export function DashboardSidebar() {
 		</Sidebar>
 	);
 }
+

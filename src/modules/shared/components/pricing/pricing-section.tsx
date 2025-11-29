@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/ui/card";
-import { AppConfigs } from "@/configs/app";
-import { platformConfigs } from "@/configs/platform";
+import { AppConfigs } from "@/core/configs/app";
+import { platformConfigs } from "@/core/configs/platform";
 import { Check } from "lucide-react";
 import Link from "next/link";
 
@@ -82,3 +82,4 @@ export function PricingSection() {
 		</section>
 	);
 }
+

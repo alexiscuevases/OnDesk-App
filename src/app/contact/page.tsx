@@ -6,7 +6,7 @@ import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
 import { Textarea } from "@/ui/textarea";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 export default function ContactPage() {
 	return (
@@ -121,4 +121,5 @@ export default function ContactPage() {
 		</div>
 	);
 }
+
 

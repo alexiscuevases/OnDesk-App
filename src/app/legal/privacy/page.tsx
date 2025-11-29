@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/modules/shared/components/site-header";
 import { SiteFooter } from "@/modules/shared/components/site-footer";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 export default function PrivacyPage() {
 	return (
@@ -119,4 +119,5 @@ export default function PrivacyPage() {
 		</div>
 	);
 }
+
 

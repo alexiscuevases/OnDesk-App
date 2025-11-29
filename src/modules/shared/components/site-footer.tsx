@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Bot } from "lucide-react";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 export function SiteFooter() {
 	return (
@@ -94,3 +94,4 @@ export function SiteFooter() {
 		</footer>
 	);
 }
+

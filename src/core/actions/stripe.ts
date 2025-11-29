@@ -1,7 +1,7 @@
 "use server";
 
-import { AppConfigs } from "@/configs/app";
-import { platformConfigs } from "@/configs/platform";
+import { AppConfigs } from "@/core/configs/app";
+import { platformConfigs } from "@/core/configs/platform";
 import { stripe } from "@/core/utils/stripe";
 import { createClient } from "@/core/supabase/server";
 import { Profile } from "@/core/validations/profile";
@@ -126,3 +126,4 @@ export async function verifyCheckoutSession(sessionId: string, teamId: string) {
 		return { success: false, error: "Failed to verify session" };
 	}
 }
+

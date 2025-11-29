@@ -6,7 +6,7 @@ import { Separator } from "@/ui/separator";
 import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 // Mock data - in production, this would come from your backend
 const blogPosts = {

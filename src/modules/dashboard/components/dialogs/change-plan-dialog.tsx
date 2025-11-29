@@ -6,7 +6,7 @@ import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { Card, CardContent } from "@/ui/card";
 import { Check } from "lucide-react";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 interface ChangePlanDialogProps {
 	children: React.ReactNode;
@@ -73,3 +73,4 @@ export function ChangePlanDialog({ children }: ChangePlanDialogProps) {
 		</Dialog>
 	);
 }
+

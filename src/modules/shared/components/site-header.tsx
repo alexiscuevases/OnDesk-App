@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/ui/button";
 import { Bot } from "lucide-react";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "./language-switcher";
 
@@ -50,3 +50,4 @@ export function SiteHeader() {
 		</header>
 	);
 }
+

@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { Languages, Check } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/ui/dropdown-menu";
 import { Button } from "@/ui/button";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 const languages = [
 	{ code: "en", label: "English", flag: "🇺🇸" },
@@ -49,3 +49,4 @@ export function LanguageSwitcher() {
 		</DropdownMenu>
 	);
 }
+

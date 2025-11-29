@@ -14,7 +14,7 @@ import { CreateTeamInput, createTeamSchema } from "@/core/validations/team";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/ui/alert";
-import { AppConfigs } from "@/configs/app";
+import { AppConfigs } from "@/core/configs/app";
 import { AuthProvider, useAuth } from "@/modules/shared/components/providers/auth-provider";
 
 function CreateTeamContent() {
@@ -132,4 +132,5 @@ export default function CreateTeamPage() {
 		</AuthProvider>
 	);
 }
+
 

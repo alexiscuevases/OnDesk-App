@@ -6,7 +6,7 @@ import { Badge } from "@/ui/badge";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 const blogPosts = [
 	{
@@ -129,4 +129,5 @@ export default function BlogPage() {
 		</div>
 	);
 }
+
 

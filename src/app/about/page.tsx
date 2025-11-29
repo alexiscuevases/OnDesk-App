@@ -4,7 +4,7 @@ import { Button } from "@/ui/button";
 import { Card, CardContent } from "@/ui/card";
 import { ArrowRight, Bot, Target, Users, Zap } from "lucide-react";
 import Link from "next/link";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 export default function AboutPage() {
 	return (
@@ -115,4 +115,5 @@ export default function AboutPage() {
 		</div>
 	);
 }
+
 

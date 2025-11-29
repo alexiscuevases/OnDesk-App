@@ -1,6 +1,6 @@
 "use client";
 
-import { AppConfigs } from "@/configs/app";
+import { AppConfigs } from "@/core/configs/app";
 import { createClient } from "@/core/supabase/client";
 import { Connection } from "@/core/validations/connection";
 import { Conversation } from "@/core/validations/conversation";
@@ -149,3 +149,4 @@ export function useWidget(connectionId: string) {
 		sendMessageError: sendMessageMutation.error,
 	};
 }
+

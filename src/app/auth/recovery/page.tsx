@@ -1,5 +1,5 @@
 import { RecoveryForm } from "@/modules/shared/components/forms/recovery-form";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 import { Bot } from "lucide-react";
 import Link from "next/link";
 
@@ -46,4 +46,5 @@ export default function RecoveryPage() {
 		</div>
 	);
 }
+
 

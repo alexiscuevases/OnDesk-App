@@ -1,5 +1,5 @@
 import { Button } from "@/ui/button";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -51,3 +51,4 @@ export function HeroSection() {
 		</section>
 	);
 }
+

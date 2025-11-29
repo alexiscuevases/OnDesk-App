@@ -1,5 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/ui/accordion";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 
 const faqs = [
 	{
@@ -51,3 +51,4 @@ export function PricingFAQ() {
 		</section>
 	);
 }
+

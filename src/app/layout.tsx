@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/modules/shared/components/providers/theme-provider";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from "@/core/configs/platform";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryProvider } from "@/modules/shared/components/providers/query-provider";
 
@@ -38,4 +38,5 @@ export default async function RootLayout({
 		</html>
 	);
 }
+
 

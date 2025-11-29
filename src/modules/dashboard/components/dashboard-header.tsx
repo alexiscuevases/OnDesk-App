@@ -4,14 +4,7 @@ import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Bell, Search, Menu, Loader2, Sun, Moon, LogOut, Settings, User, MonitorCog } from "lucide-react";
 import { useSidebar } from "@/ui/sidebar";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/dropdown-menu";
 import { Badge } from "@/ui/badge";
 import Link from "next/link";
 import { ScrollArea } from "@/ui/scroll-area";

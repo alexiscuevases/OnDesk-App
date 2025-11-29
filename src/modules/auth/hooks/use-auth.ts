@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/core/supabase/client";
 import type { RecoveryPasswordInput, SignInInput, SignUpInput, UpdatePasswordInput } from "../validations/auth";
-import { AppConfigs } from "@/configs/app";
+import { AppConfigs } from "@/core/configs/app";
 
 export function useAuth() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -112,3 +112,4 @@ export function useAuth() {
 		error,
 	};
 }
+

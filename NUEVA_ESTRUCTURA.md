@@ -118,6 +118,7 @@ src/
 ## 🔄 Guía de Imports Actualizados
 
 ### ❌ Antes (Antigua Estructura)
+
 ```typescript
 import { useAuth } from "@/hooks/use-auth";
 import { signUpSchema } from "@/lib/validations/auth";
@@ -128,6 +129,7 @@ import { RecentConversations } from "@/components/dashboard/recent-conversations
 ```
 
 ### ✅ Después (Nueva Estructura)
+
 ```typescript
 import { useAuth } from "@/core/hooks/use-auth";
 // O usando el index del módulo:
@@ -189,7 +191,7 @@ modules/auth/
 ✅ **Lazy Loading**: Cargar módulos bajo demanda  
 ✅ **Testing**: Tests aislados por módulo  
 ✅ **Colaboración**: Múltiples desarrolladores sin conflictos  
-✅ **Reutilización**: Core utilities accesibles globalmente  
+✅ **Reutilización**: Core utilities accesibles globalmente
 
 ---
 
@@ -247,11 +249,11 @@ import { stripe } from "@/core/utils/stripe";
 
 ## 🔗 Referencias
 
-- **Arquitectura**: Feature-based modules
-- **UI Components**: shadcn/ui via @/ui
-- **Hooks**: React hooks centralizados en core/
-- **Validaciones**: Zod schemas centralizados en core/validations
-- **Supabase**: Clientes centralizados en core/supabase
+-   **Arquitectura**: Feature-based modules
+-   **UI Components**: shadcn/ui via @/ui
+-   **Hooks**: React hooks centralizados en core/
+-   **Validaciones**: Zod schemas centralizados en core/validations
+-   **Supabase**: Clientes centralizados en core/supabase
 
 ---
 
@@ -272,8 +274,8 @@ Ej: `agent.ts`, `team.ts`, `connection.ts`
 
 **P: ¿Puedo importar entre módulos?**  
 R: Sí, pero solo desde sus exports públicos (index.ts)  
-Ej: ✅ `from "@/modules/auth"` 
-     ❌ `from "@/modules/auth/hooks/use-auth"` (acceso privado)
+Ej: ✅ `from "@/modules/auth"`
+❌ `from "@/modules/auth/hooks/use-auth"` (acceso privado)
 
 ---
 
