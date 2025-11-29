@@ -5,7 +5,7 @@ import { Label } from "@/ui/label";
 import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/modules/auth";
-import { signInSchema, type SignInInput } from "@/core/validations/auth";
+import { signInSchema, type SignInInput } from "@/modules/auth/validations/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/ui/alert";

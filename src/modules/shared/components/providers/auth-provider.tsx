@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/core/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { Profile } from "@/core/validations/profile";
+import { Profile } from "@/modules/auth/validations/profile";
 import { AppConfigs } from "@/core/configs/app";
 
 type AuthContextType = {

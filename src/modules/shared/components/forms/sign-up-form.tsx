@@ -8,7 +8,7 @@ import { Checkbox } from "@/ui/checkbox";
 import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/modules/auth";
-import { signUpSchema, type SignUpInput } from "@/core/validations/auth";
+import { signUpSchema, type SignUpInput } from "@/modules/auth/validations/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription } from "@/ui/alert";

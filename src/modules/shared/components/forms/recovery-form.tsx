@@ -10,7 +10,7 @@ import { Label } from "@/ui/label";
 import { Alert, AlertDescription } from "@/ui/alert";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { RecoveryPasswordInput, recoveryPasswordSchema } from "@/core/validations/auth";
+import { RecoveryPasswordInput, recoveryPasswordSchema } from "@/modules/auth/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export function RecoveryForm() {

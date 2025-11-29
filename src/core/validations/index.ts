@@ -1,7 +1,8 @@
-// Core validations - Shared across modules
-export * from "./auth";
-export * from "./profile";
-export * from "./marketplace_author";
+// Core validations - Shared across modules (NONE - all moved to modules)
+// Re-export from their new locations for backwards compatibility:
+export * from "@/modules/auth/validations/auth";
+export * from "@/modules/auth/validations/profile";
+export * from "@/modules/marketplace/validations/marketplace_author";
 
 // Module-specific validations - Import from their respective modules:
 // export * from "@/modules/agents/validations/agent";

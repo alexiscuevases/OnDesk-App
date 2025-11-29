@@ -4,7 +4,7 @@ import { AppConfigs } from "@/core/configs/app";
 import { platformConfigs } from "@/core/configs/platform";
 import { stripe } from "@/core/utils/stripe";
 import { createClient } from "@/core/supabase/server";
-import { Profile } from "@/core/validations/profile";
+import { Profile } from "@/modules/auth/validations/profile";
 import { Team } from "@/modules/team/validations/team";
 
 export async function startCheckoutSession(productId: string, teamId: string) {

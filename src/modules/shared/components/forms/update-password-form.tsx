@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { UpdatePasswordInput, updatePasswordSchema } from "@/core/validations/auth";
+import { UpdatePasswordInput, updatePasswordSchema } from "@/modules/auth/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 

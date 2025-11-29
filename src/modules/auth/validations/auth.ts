@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { profileSchema } from "@/core/validations/profile";
+import { profileSchema } from "./profile";
 
 /**
  * SignUp

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Team } from "@/core/validations/team";
+import type { Team } from "@/modules/team/validations/team";
 
 /**
  * Base
