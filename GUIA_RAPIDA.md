@@ -67,11 +67,11 @@ import { DashboardHeader } from "@/modules/dashboard/components/dashboard-header
 
 ```typescript
 // No uses imports del viejo sistema
-import { Button } from "@/components/ui/button";  // ❌
-import { useAuth } from "@/hooks/use-auth";        // ❌
-import { cn } from "@/lib/utils";                  // ❌
-import { AppConfigs } from "@/configs/app";        // ❌
-import { startCheckoutSession } from "@/actions/stripe";  // ❌
+import { Button } from "@/components/ui/button"; // ❌
+import { useAuth } from "@/hooks/use-auth"; // ❌
+import { cn } from "@/lib/utils"; // ❌
+import { AppConfigs } from "@/configs/app"; // ❌
+import { startCheckoutSession } from "@/actions/stripe"; // ❌
 ```
 
 ## 🏗️ Crear Nuevas Características
@@ -131,8 +131,8 @@ Todas las server actions están centralizadas en `src/core/actions/`:
 "use server";
 
 export async function miAccion(params: any) {
-  // Tu lógica aquí
-  return resultado;
+	// Tu lógica aquí
+	return resultado;
 }
 
 // src/core/actions/index.ts
@@ -166,11 +166,11 @@ import { cn } from "@/core/utils/utils";
 
 ## 📊 Estadísticas
 
-- **Módulos**: 11 features modulares
-- **Componentes Core**: 20+ UI components
-- **Custom Hooks**: 14 hooks reutilizables
-- **Validaciones**: 14 Zod schemas
-- **Server Actions**: Stripe, auth, etc.
+-   **Módulos**: 11 features modulares
+-   **Componentes Core**: 20+ UI components
+-   **Custom Hooks**: 14 hooks reutilizables
+-   **Validaciones**: 14 Zod schemas
+-   **Server Actions**: Stripe, auth, etc.
 
 ## 🐛 Troubleshooting
 
@@ -188,14 +188,15 @@ import { cn } from "@/core/utils/utils";
 
 ## 📚 Recursos
 
-- [NUEVA_ESTRUCTURA.md](./NUEVA_ESTRUCTURA.md) - Documentación completa
-- [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md) - Guía de migración
-- [ARQUITECTURA_FINAL.txt](./ARQUITECTURA_FINAL.txt) - Detalles técnicos
+-   [NUEVA_ESTRUCTURA.md](./NUEVA_ESTRUCTURA.md) - Documentación completa
+-   [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md) - Guía de migración
+-   [ARQUITECTURA_FINAL.txt](./ARQUITECTURA_FINAL.txt) - Detalles técnicos
 
 ## 👥 Preguntas?
 
 Esta es la estructura final y estable. Todos los imports deben seguir este patrón.
 
 ---
+
 **Última actualización:** Migración completa finalizada
 **Build Status:** ✅ Pasando (8.9s)

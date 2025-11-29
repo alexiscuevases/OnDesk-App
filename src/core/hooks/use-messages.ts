@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { Message } from "@/core/validations/message";
+import type { Message } from "@/modules/conversations/validations/message";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
-import { Connection } from "@/core/validations/connection";
-import { Conversation } from "@/core/validations/conversation";
+import { Connection } from "@/modules/connections/validations/connection";
+import { Conversation } from "@/modules/conversations/validations/conversation";
 import { createWhatsAppAPI } from "@/core/utils/whatsapp";
 
 interface SendMessage {

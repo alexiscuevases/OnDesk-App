@@ -8,10 +8,10 @@ import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
 import { Textarea } from "@/ui/textarea";
 import { Loader2 } from "lucide-react";
-import { useConnections } from "@/core/hooks/use-connections";
-import { Connection, CreateConnectionInput, createConnectionSchema } from "@/core/validations/connection";
+import { useConnections } from "@/modules/connections/hooks/use-connections";
+import { Connection, CreateConnectionInput, createConnectionSchema } from "@/modules/connections/validations/connection";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTeams } from "@/core/hooks/use-teams";
+import { useTeams } from "@/modules/team/hooks/use-teams";
 import { toast } from "sonner";
 
 interface ConnectIntegrationDialogProps {

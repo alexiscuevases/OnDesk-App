@@ -9,13 +9,13 @@ import { Separator } from "@/ui/separator";
 import { Star, Download, Clock, User, Package, CheckCircle2, AlertCircle, Loader2, Plug } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/ui/alert";
-import { Marketplace } from "@/core/validations/marketplace";
+import { Marketplace } from "@/modules/marketplace/validations/marketplace";
 import { formatDate_DistanceToNow } from "@/core/utils/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
-import { useIntegrations } from "@/core/hooks/use-integrations";
-import { CreateIntegrationInput, createIntegrationSchema } from "@/core/validations/integration";
+import { useIntegrations } from "@/modules/integrations/hooks/use-integrations";
+import { CreateIntegrationInput, createIntegrationSchema } from "@/modules/integrations/validations/integration";
 
 interface MarketplaceAgentDetailsDialogProps {
 	open: boolean;

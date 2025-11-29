@@ -8,9 +8,9 @@ import { Skeleton } from "@/ui/skeleton";
 import { Bot, Settings, MoreVertical, Power, Loader2, Trash2, CheckCircle2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/dropdown-menu";
 import { ConfigureAgentDialog } from "../dialogs/configure-agent-dialog";
-import { useAgents } from "@/core/hooks/use-agents";
+import { useAgents } from "@/modules/agents/hooks/use-agents";
 import { toast } from "sonner";
-import { Agent } from "@/core/validations/agent";
+import { Agent } from "@/modules/agents/validations/agent";
 import { Alert, AlertDescription } from "@/ui/alert";
 import { formatDate_DistanceToNow } from "@/core/utils/utils";
 

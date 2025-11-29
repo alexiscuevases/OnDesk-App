@@ -1,5 +1,5 @@
 // Hooks
-export { useConnections } from "@/core/hooks/use-connections";
+export { useConnections } from "@/modules/connections/hooks/use-connections";
 
 // Validations & Types
-export * from "@/core/validations/connection";
+export * from "@/modules/connections/validations/connection";

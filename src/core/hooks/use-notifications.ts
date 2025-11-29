@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { Notification } from "@/core/validations/notification";
+import type { Notification } from "@/modules/notifications/validations/notification";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 import { toast } from "sonner";
 import { AppConfigs } from "@/core/configs/app";

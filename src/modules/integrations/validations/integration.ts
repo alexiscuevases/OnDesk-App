@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { CONNECTION_DEFAULT_STATUS, CONNECTION_STATUSES } from "../constants/connection";
-import { Marketplace } from "./marketplace";
+import { CONNECTION_DEFAULT_STATUS, CONNECTION_STATUSES } from "@/modules/connections/constants/connection";
+import { Marketplace } from "@/modules/marketplace/validations/marketplace";
 
 /**
  * Base

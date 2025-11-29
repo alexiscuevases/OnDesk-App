@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { Conversation } from "@/core/validations/conversation";
+import type { Conversation } from "@/modules/conversations/validations/conversation";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 
 export function useConversations() {

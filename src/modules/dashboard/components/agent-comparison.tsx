@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/card";
 import { Progress } from "@/ui/progress";
 import { Skeleton } from "@/ui/skeleton";
-import { useAgents } from "@/core/hooks/use-agents";
+import { useAgents } from "@/modules/agents/hooks/use-agents";
 import { Bot } from "lucide-react";
 
 export function AgentComparison() {

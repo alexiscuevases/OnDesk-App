@@ -10,11 +10,11 @@ import { Label } from "@/ui/label";
 import { Textarea } from "@/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
 import { Plus, Loader2 } from "lucide-react";
-import { useAgents } from "@/core/hooks/use-agents";
-import { useTeams } from "@/core/hooks/use-teams";
+import { useAgents } from "@/modules/agents/hooks/use-agents";
+import { useTeams } from "@/modules/team/hooks/use-teams";
 import { toast } from "sonner";
-import { CreateAgentInput, createAgentSchema } from "@/core/validations/agent";
-import { AGENT_MODELS_OBJECT, AGENT_STATUSES_OBJECT, AGENT_TYPES_OBJECT } from "@/core/constants/agent";
+import { CreateAgentInput, createAgentSchema } from "@/modules/agents/validations/agent";
+import { AGENT_MODELS_OBJECT, AGENT_STATUSES_OBJECT, AGENT_TYPES_OBJECT } from "@/modules/agents/constants/agent";
 
 export function CreateAgentDialog() {
 	const [open, setOpen] = useState(false);

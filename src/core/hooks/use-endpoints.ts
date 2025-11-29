@@ -2,9 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { Endpoint, CreateEndpointInput, UpdateEndpointInput } from "@/core/validations/endpoint";
+import type { Endpoint, CreateEndpointInput, UpdateEndpointInput } from "@/modules/integrations/validations/endpoint";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
-import { endpoints as Endpoints_Service } from "@/core/services/endpoints";
+import { endpoints as Endpoints_Service } from "@/modules/integrations/services/endpoints";
 
 export function useEndpoints(agentId?: string) {
 	const { profile } = useAuth();

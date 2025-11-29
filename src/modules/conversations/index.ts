@@ -1,5 +1,5 @@
 // Hooks
-export { useConversations } from "@/core/hooks/use-conversations";
+export { useConversations } from "@/modules/conversations/hooks/use-conversations";
 
 // Validations & Types
-export * from "@/core/validations/conversation";
+export * from "@/modules/conversations/validations/conversation";

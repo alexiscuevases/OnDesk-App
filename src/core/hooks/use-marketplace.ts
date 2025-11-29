@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
-import { Marketplace } from "@/core/validations/marketplace";
+import { Marketplace } from "@/modules/marketplace/validations/marketplace";
 
 export function useMarketplace() {
 	const { profile } = useAuth();

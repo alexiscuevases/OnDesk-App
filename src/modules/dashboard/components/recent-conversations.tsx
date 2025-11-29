@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback } from "@/ui/avatar";
 import { Badge } from "@/ui/badge";
 import { Skeleton } from "@/ui/skeleton";
-import { useConversations } from "@/core/hooks/use-conversations";
+import { useConversations } from "@/modules/conversations/hooks/use-conversations";
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
 import { formatDate_DistanceToNow } from "@/core/utils/utils";

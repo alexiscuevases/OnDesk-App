@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/ui/card";
 import { Search } from "lucide-react";
 import { Input } from "@/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
-import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/core/constants/conversation";
+import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/modules/conversations/constants/conversation";
 import { useState } from "react";
 
 export type Filters = {

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from "@/core/utils/whatsapp";
-import { Connection } from "@/core/validations/connection";
-import { Conversation } from "@/core/validations/conversation";
-import { notifications } from "@/core/services/notifications";
+import { Connection } from "@/modules/connections/validations/connection";
+import { Conversation } from "@/modules/conversations/validations/conversation";
+import { notifications } from "@/modules/notifications/services/notifications";
 import { ai } from "@/core/services/ai";
-import { Message } from "@/core/validations/message";
+import { Message } from "@/modules/conversations/validations/message";
 import { supabaseAdmin } from "@/core/supabase/admin";
 
 const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN!;

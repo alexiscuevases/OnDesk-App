@@ -7,8 +7,8 @@ import { Skeleton } from "@/ui/skeleton";
 import { MessageCircle, Globe, Smartphone, Mail, Check, Plus, CheckCircle2 } from "lucide-react";
 import { ConnectIntegrationDialog } from "../dialogs/connect-integration-dialog";
 import { ManageIntegrationDialog } from "../dialogs/manage-integration-dialog";
-import { useConnections } from "@/core/hooks/use-connections";
-import { Connection } from "@/core/validations/connection";
+import { useConnections } from "@/modules/connections/hooks/use-connections";
+import { Connection } from "@/modules/connections/validations/connection";
 import { Alert, AlertDescription } from "@/ui/alert";
 
 interface Integration {

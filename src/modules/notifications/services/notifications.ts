@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../supabase/admin";
+import { supabaseAdmin } from "@/core/supabase/admin";
 import { Notification } from "../validations/notification";
 
 interface NewConversation {

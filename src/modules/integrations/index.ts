@@ -1,5 +1,5 @@
 // Hooks
-export { useIntegrations } from "@/core/hooks/use-integrations";
+export { useIntegrations } from "@/modules/integrations/hooks/use-integrations";
 
 // Validations & Types
-export * from "@/core/validations/integration";
+export * from "@/modules/integrations/validations/integration";

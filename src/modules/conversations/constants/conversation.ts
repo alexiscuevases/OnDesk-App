@@ -1,4 +1,4 @@
-import { CONNECTION_TYPES_OBJECT } from "./connection";
+import { CONNECTION_TYPES_OBJECT } from "@/modules/connections/constants/connection";
 
 export const CONVERSATION_CHANNELS_OBJECT = CONNECTION_TYPES_OBJECT;
 export const CONVERSATION_CHANNELS = Object.keys(CONVERSATION_CHANNELS_OBJECT) as (keyof typeof CONVERSATION_CHANNELS_OBJECT)[];

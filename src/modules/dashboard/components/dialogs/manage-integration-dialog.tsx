@@ -8,8 +8,8 @@ import { Card, CardContent } from "@/ui/card";
 import { Switch } from "@/ui/switch";
 import { Label } from "@/ui/label";
 import { Trash2, ExternalLink } from "lucide-react";
-import { useConnections } from "@/core/hooks/use-connections";
-import { Connection } from "@/core/validations/connection";
+import { useConnections } from "@/modules/connections/hooks/use-connections";
+import { Connection } from "@/modules/connections/validations/connection";
 import { toast } from "sonner";
 import { formatDate } from "@/core/utils/utils";
 

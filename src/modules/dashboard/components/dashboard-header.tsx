@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Badge } from "@/ui/badge";
 import Link from "next/link";
 import { ScrollArea } from "@/ui/scroll-area";
-import { useNotifications } from "@/core/hooks/use-notifications";
+import { useNotifications } from "@/modules/notifications/hooks/use-notifications";
 import { useTheme } from "next-themes";
 import { Card, CardContent } from "@/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";

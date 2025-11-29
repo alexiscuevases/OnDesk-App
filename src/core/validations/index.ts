@@ -1,15 +1,17 @@
-// Validations exports - re-export all validation schemas and types
-export * from "./agent";
+// Core validations - Shared across modules
 export * from "./auth";
-export * from "./connection";
-export * from "./conversation";
-export * from "./endpoint";
-export * from "./integration";
-export * from "./marketplace";
-export * from "./marketplace_author";
-export * from "./message";
-export * from "./notification";
 export * from "./profile";
-export * from "./team";
-export * from "./team_member";
-export * from "./widget";
+export * from "./marketplace_author";
+
+// Module-specific validations - Import from their respective modules:
+// export * from "@/modules/agents/validations/agent";
+// export * from "@/modules/connections/validations/connection";
+// export * from "@/modules/conversations/validations/conversation";
+// export * from "@/modules/conversations/validations/message";
+// export * from "@/modules/integrations/validations/endpoint";
+// export * from "@/modules/integrations/validations/integration";
+// export * from "@/modules/marketplace/validations/marketplace";
+// export * from "@/modules/notifications/validations/notification";
+// export * from "@/modules/team/validations/team";
+// export * from "@/modules/team/validations/team_member";
+// export * from "@/modules/widget/validations/widget";

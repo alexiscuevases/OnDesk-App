@@ -13,8 +13,8 @@ import { Badge } from "@/ui/badge";
 import { Card, CardContent } from "@/ui/card";
 import { Switch } from "@/ui/switch";
 import { Trash2, Plus, Play, Code, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
-import { useEndpoints } from "@/core/hooks/use-endpoints";
-import { type Endpoint, type CreateEndpointInput, createEndpointSchema } from "@/core/validations/endpoint";
+import { useEndpoints } from "@/modules/integrations/hooks/use-endpoints";
+import { type Endpoint, type CreateEndpointInput, createEndpointSchema } from "@/modules/integrations/validations/endpoint";
 import { toast } from "sonner";
 
 interface ManageEndpointsDialogProps {

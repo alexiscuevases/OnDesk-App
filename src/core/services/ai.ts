@@ -1,10 +1,10 @@
 import { supabaseAdmin } from "../supabase/admin";
-import { Conversation } from "../validations/conversation";
-import { Message } from "../validations/message";
-import { Endpoint } from "../validations/endpoint";
+import { Conversation } from "@/modules/conversations/validations/conversation";
+import { Message } from "@/modules/conversations/validations/message";
+import { Endpoint } from "@/modules/integrations/validations/endpoint";
 import { generateText } from "ai";
 import { createDeepSeek } from "@ai-sdk/deepseek";
-import { endpoints as Endpoints_Service } from "./endpoints";
+import { endpoints as Endpoints_Service } from "@/modules/integrations/services/endpoints";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
 if (!DEEPSEEK_API_KEY) throw new Error("Please define all AI environment variables");

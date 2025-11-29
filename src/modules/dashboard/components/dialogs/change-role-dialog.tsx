@@ -8,9 +8,9 @@ import { Label } from "@/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/ui/radio-group";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { TeamMember } from "@/core/validations/team_member";
-import { useTeamMembers } from "@/core/hooks/use-team_members";
-import { useTeams } from "@/core/hooks/use-teams";
+import { TeamMember } from "@/modules/team/validations/team_member";
+import { useTeamMembers } from "@/modules/team/hooks/use-team_members";
+import { useTeams } from "@/modules/team/hooks/use-teams";
 
 interface ChangeRoleDialogProps {
 	children: React.ReactNode;

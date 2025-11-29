@@ -7,7 +7,7 @@ import { Button } from "@/ui/button";
 import { Skeleton } from "@/ui/skeleton";
 import { MessageSquare, Clock, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { useConversations } from "@/core/hooks/use-conversations";
+import { useConversations } from "@/modules/conversations/hooks/use-conversations";
 import { Alert, AlertDescription } from "@/ui/alert";
 import { formatDate_DistanceToNow } from "@/core/utils/utils";
 import { useEffect, useState } from "react";

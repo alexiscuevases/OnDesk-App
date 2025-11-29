@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
-import type { InviteTeamMemberInput, TeamMember } from "@/core/validations/team_member";
+import type { InviteTeamMemberInput, TeamMember } from "@/modules/team/validations/team_member";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 
 export function useTeamMembers(currentTeamId: string) {

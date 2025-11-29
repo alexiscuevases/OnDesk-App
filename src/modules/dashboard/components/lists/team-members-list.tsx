@@ -10,8 +10,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { MoreVertical, Mail, Loader2, Users, CheckCircle2 } from "lucide-react";
 import { ChangeRoleDialog } from "../dialogs/change-role-dialog";
 import { toast } from "sonner";
-import { useTeamMembers } from "@/core/hooks/use-team_members";
-import { useTeams } from "@/core/hooks/use-teams";
+import { useTeamMembers } from "@/modules/team/hooks/use-team_members";
+import { useTeams } from "@/modules/team/hooks/use-teams";
 import { Alert, AlertDescription } from "@/ui/alert";
 import { formatDate_DistanceToNow } from "@/core/utils/utils";
 

@@ -1,7 +1,7 @@
 // Hooks
-export { useTeams } from "@/core/hooks/use-teams";
-export { useTeamMembers } from "@/core/hooks/use-team_members";
+export { useTeams } from "@/modules/team/hooks/use-teams";
+export { useTeamMembers } from "@/modules/team/hooks/use-team_members";
 
 // Validations & Types
-export * from "@/core/validations/team";
-export * from "@/core/validations/team_member";
+export * from "@/modules/team/validations/team";
+export * from "@/modules/team/validations/team_member";

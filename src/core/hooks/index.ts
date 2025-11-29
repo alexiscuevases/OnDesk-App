@@ -1,17 +1,17 @@
-// Hooks exports
-export { useAgents } from "./use-agents";
-export { useConnections } from "./use-connections";
-export { useConversations } from "./use-conversations";
-export { useEndpoints } from "./use-endpoints";
-export { useIntegrations } from "./use-integrations";
-export { useMarketplace } from "./use-marketplace";
-export { useMessages } from "./use-messages";
+// Core hooks - Shared across modules
 export { useIsMobile as useMobile } from "./use-mobile";
-export { useNotifications } from "./use-notifications";
 export { useStats } from "./use-stats";
-export { useTeams } from "./use-teams";
-export { useTeamMembers } from "./use-team_members";
-export { useWidget } from "./use-widget";
 
-// Note: useAuth is now in @/modules/auth
+// Module-specific hooks - Import from their respective modules:
+// import { useAgents } from "@/modules/agents/hooks/use-agents";
+// import { useConnections } from "@/modules/connections/hooks/use-connections";
+// import { useConversations } from "@/modules/conversations/hooks/use-conversations";
+// import { useMessages } from "@/modules/conversations/hooks/use-messages";
+// import { useEndpoints } from "@/modules/integrations/hooks/use-endpoints";
+// import { useIntegrations } from "@/modules/integrations/hooks/use-integrations";
+// import { useMarketplace } from "@/modules/marketplace/hooks/use-marketplace";
+// import { useNotifications } from "@/modules/notifications/hooks/use-notifications";
+// import { useTeams } from "@/modules/team/hooks/use-teams";
+// import { useTeamMembers } from "@/modules/team/hooks/use-team_members";
+// import { useWidget } from "@/modules/widget/hooks/use-widget";
 // import { useAuth } from "@/modules/auth";

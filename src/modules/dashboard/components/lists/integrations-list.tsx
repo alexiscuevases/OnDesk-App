@@ -6,8 +6,8 @@ import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { Bot, Plug, Star } from "lucide-react";
 import { IntegrationsFilters } from "@/app/dashboard/integrations/page";
-import { Integration } from "@/core/validations/integration";
-import { useIntegrations } from "@/core/hooks/use-integrations";
+import { Integration } from "@/modules/integrations/validations/integration";
+import { useIntegrations } from "@/modules/integrations/hooks/use-integrations";
 import { IntegrationDetailsDialog } from "../dialogs/integration-details-dialog";
 
 interface IntegrationsListProps {

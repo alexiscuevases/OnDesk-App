@@ -11,8 +11,8 @@ import { Alert, AlertDescription } from "@/ui/alert";
 import { formatDate_DistanceToNow } from "@/core/utils/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useIntegrations } from "@/core/hooks/use-integrations";
-import { CreateIntegrationInput, Integration, UpdateIntegrationInput, updateIntegrationSchema } from "@/core/validations/integration";
+import { useIntegrations } from "@/modules/integrations/hooks/use-integrations";
+import { CreateIntegrationInput, Integration, UpdateIntegrationInput, updateIntegrationSchema } from "@/modules/integrations/validations/integration";
 
 interface IntegrationDetailsDialogProps {
 	open: boolean;

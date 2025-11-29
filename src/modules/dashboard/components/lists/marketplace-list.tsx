@@ -7,8 +7,8 @@ import { Badge } from "@/ui/badge";
 import { Bot, Plug, Star } from "lucide-react";
 import { MarketplaceAgentDetailsDialog } from "../dialogs/marketplace-agent-details-dialog";
 import type { MarketplaceFilters } from "@/app/dashboard/marketplace/page";
-import { Marketplace } from "@/core/validations/marketplace";
-import { useMarketplace } from "@/core/hooks/use-marketplace";
+import { Marketplace } from "@/modules/marketplace/validations/marketplace";
+import { useMarketplace } from "@/modules/marketplace/hooks/use-marketplace";
 
 interface MarketplaceListProps {
 	filters: MarketplaceFilters;

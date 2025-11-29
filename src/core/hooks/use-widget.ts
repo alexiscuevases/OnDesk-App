@@ -2,10 +2,10 @@
 
 import { AppConfigs } from "@/core/configs/app";
 import { createClient } from "@/core/supabase/client";
-import { Connection } from "@/core/validations/connection";
-import { Conversation } from "@/core/validations/conversation";
-import { Message } from "@/core/validations/message";
-import { StartConversationInput } from "@/core/validations/widget";
+import { Connection } from "@/modules/connections/validations/connection";
+import { Conversation } from "@/modules/conversations/validations/conversation";
+import { Message } from "@/modules/conversations/validations/message";
+import { StartConversationInput } from "@/modules/widget/validations/widget";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 

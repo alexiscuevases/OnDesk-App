@@ -5,7 +5,7 @@ import { platformConfigs } from "@/core/configs/platform";
 import { stripe } from "@/core/utils/stripe";
 import { createClient } from "@/core/supabase/server";
 import { Profile } from "@/core/validations/profile";
-import { Team } from "@/core/validations/team";
+import { Team } from "@/modules/team/validations/team";
 
 export async function startCheckoutSession(productId: string, teamId: string) {
 	const product = platformConfigs.plans.find((p) => p.id === productId);
@@ -126,4 +126,3 @@ export async function verifyCheckoutSession(sessionId: string, teamId: string) {
 		return { success: false, error: "Failed to verify session" };
 	}
 }
-

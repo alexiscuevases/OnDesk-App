@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../supabase/admin";
+import { supabaseAdmin } from "@/core/supabase/admin";
 import { Endpoint } from "../validations/endpoint";
 
 export class Endpoints {

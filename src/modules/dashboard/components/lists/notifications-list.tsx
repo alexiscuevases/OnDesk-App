@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Skeleton } from "@/ui/skeleton";
 import { Clock, Bell, CheckCircle2 } from "lucide-react";
-import { useNotifications } from "@/core/hooks/use-notifications";
+import { useNotifications } from "@/modules/notifications/hooks/use-notifications";
 import { formatDate_DistanceToNow, getNotificationIcon } from "@/core/utils/utils";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/ui/alert";

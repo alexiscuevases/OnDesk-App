@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/core/supabase/admin";
 import { AppConfigs } from "@/core/configs/app";
-import { Connection } from "@/core/validations/connection";
+import { Connection } from "@/modules/connections/validations/connection";
 
 export async function GET(request: Request, { params }: { params: Promise<{ connection_id: string }> }) {
 	const connectionId = (await params).connection_id;

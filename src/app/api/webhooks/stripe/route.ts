@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { stripe, StripeCheckoutSession, StripeEvent, StripeSubscription } from "@/core/utils/stripe";
 import { supabaseAdmin } from "@/core/supabase/admin";
-import { Team } from "@/core/validations/team";
+import { Team } from "@/modules/team/validations/team";
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
 if (!STRIPE_WEBHOOK_SECRET || !STRIPE_WEBHOOK_SECRET) throw new Error("Please define all Stripe environment variables");

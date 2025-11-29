@@ -1,5 +1,5 @@
 // Hooks
-export { useNotifications } from "@/core/hooks/use-notifications";
+export { useNotifications } from "@/modules/notifications/hooks/use-notifications";
 
 // Validations & Types
-export * from "@/core/validations/notification";
+export * from "@/modules/notifications/validations/notification";

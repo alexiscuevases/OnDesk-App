@@ -1,5 +1,5 @@
 // Hooks
-export { useWidget } from "@/core/hooks/use-widget";
+export { useWidget } from "@/modules/widget/hooks/use-widget";
 
 // Validations & Types
-export * from "@/core/validations/widget";
+export * from "@/modules/widget/validations/widget";

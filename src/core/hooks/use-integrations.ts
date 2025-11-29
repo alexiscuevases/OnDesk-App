@@ -3,8 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/core/supabase/client";
 import { useAuth } from "@/modules/shared/components/providers/auth-provider";
-import { CreateIntegrationInput, Integration, UpdateIntegrationInput } from "@/core/validations/integration";
-import { Marketplace } from "@/core/validations/marketplace";
+import { CreateIntegrationInput, Integration, UpdateIntegrationInput } from "@/modules/integrations/validations/integration";
+import { Marketplace } from "@/modules/marketplace/validations/marketplace";
 
 export function useIntegrations() {
 	const { profile } = useAuth();

@@ -12,12 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Badge } from "@/ui/badge";
 import { Loader2, Webhook } from "lucide-react";
-import { useAgents } from "@/core/hooks/use-agents";
-import { useEndpoints } from "@/core/hooks/use-endpoints";
+import { useAgents } from "@/modules/agents/hooks/use-agents";
+import { useEndpoints } from "@/modules/integrations/hooks/use-endpoints";
 import { toast } from "sonner";
-import { Agent, UpdateAgentInput, updateAgentSchema } from "@/core/validations/agent";
+import { Agent, UpdateAgentInput, updateAgentSchema } from "@/modules/agents/validations/agent";
 import { ManageEndpointsDialog } from "./manage-endpoints-dialog";
-import { AGENT_MODELS_OBJECT, AGENT_STATUSES_OBJECT, AGENT_TYPES_OBJECT } from "@/core/constants/agent";
+import { AGENT_MODELS_OBJECT, AGENT_STATUSES_OBJECT, AGENT_TYPES_OBJECT } from "@/modules/agents/constants/agent";
 import { Slider } from "@/ui/slider";
 
 interface ConfigureAgentDialogProps {

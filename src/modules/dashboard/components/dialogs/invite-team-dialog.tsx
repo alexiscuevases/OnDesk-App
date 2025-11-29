@@ -11,11 +11,11 @@ import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
 import { Loader2 } from "lucide-react";
-import { useTeams } from "@/core/hooks/use-teams";
+import { useTeams } from "@/modules/team/hooks/use-teams";
 import { toast } from "sonner";
-import { InviteTeamMemberInput, inviteTeamMemberSchema, TeamMember } from "@/core/validations/team_member";
-import { useTeamMembers } from "@/core/hooks/use-team_members";
-import { TEAM_MEMBER_ROLES_OBJECT } from "@/core/constants/team_member";
+import { InviteTeamMemberInput, inviteTeamMemberSchema, TeamMember } from "@/modules/team/validations/team_member";
+import { useTeamMembers } from "@/modules/team/hooks/use-team_members";
+import { TEAM_MEMBER_ROLES_OBJECT } from "@/modules/team/constants/team_member";
 
 export function InviteTeamDialog({ children }: { children: React.ReactNode }) {
 	const [open, setOpen] = useState(false);
