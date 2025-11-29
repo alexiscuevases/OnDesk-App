@@ -1,2 +1,3 @@
 // Server Actions exports
-export * from "./stripe";
+// Stripe actions are now in @/modules/stripe/actions
+export * from "@/modules/stripe/actions";

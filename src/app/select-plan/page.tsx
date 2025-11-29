@@ -7,7 +7,7 @@ import { Button } from "@/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { startCheckoutSession, verifyCheckoutSession } from "@/core/actions/stripe";
+import { startCheckoutSession, verifyCheckoutSession } from "@/modules/stripe/actions/stripe";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/ui/alert";
 import { platformConfigs } from "@/core/configs/platform";
