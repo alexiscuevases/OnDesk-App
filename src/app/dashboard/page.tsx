@@ -6,7 +6,7 @@ import { Bot, MessageSquare, TrendingUp, Zap, Plus, ArrowUpRight, ArrowDownRight
 import Link from "next/link";
 import { RecentConversations } from "@/modules/dashboard/components/recent-conversations";
 import { ActivityChart } from "@/modules/dashboard/components/activity-chart";
-import { useStats } from "@/core/hooks/use-stats";
+import { useStats } from "@/modules/dashboard/hooks/use-stats";
 import { Skeleton } from "@/ui/skeleton";
 
 export default function DashboardPage() {
@@ -116,4 +116,3 @@ export default function DashboardPage() {
 		</div>
 	);
 }
-

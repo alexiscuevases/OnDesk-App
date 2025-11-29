@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Skeleton } from "@/ui/skeleton";
 import { TrendingUp, TrendingDown, MessageSquare, Users, Clock, CheckCircle } from "lucide-react";
-import { useStats } from "@/core/hooks/use-stats";
+import { useStats } from "@/modules/dashboard/hooks/use-stats";
 
 export function AnalyticsOverview() {
 	const { stats, isLoading } = useStats();
