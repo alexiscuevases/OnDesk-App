@@ -17,9 +17,9 @@ import Link from "next/link";
 import { ScrollArea } from "@/ui/scroll-area";
 import { useNotifications } from "@/core/hooks/use-notifications";
 import { useTheme } from "next-themes";
-import { Card, CardContent } from "../ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useAuth } from "../providers/auth-provider";
+import { Card, CardContent } from "@/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
+import { useAuth } from "@/modules/shared/components/providers/auth-provider";
 import { toast } from "sonner";
 import { formatDate_DistanceToNow } from "@/core/utils/utils";
 

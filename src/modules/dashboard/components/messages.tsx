@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, CardContent } from "../ui/card";
-import { ScrollArea } from "../ui/scroll-area";
-import { Textarea } from "../ui/textarea";
+import { Card, CardContent } from "@/ui/card";
+import { ScrollArea } from "@/ui/scroll-area";
+import { Textarea } from "@/ui/textarea";
 import { useMessages } from "@/core/hooks/use-messages";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { AlertCircle, Bot, Check, CheckCheck, Loader2, Send, User } from "lucide-react";
 import { Conversation } from "@/core/validations/conversation";
-import { Button } from "../ui/button";
-import { Skeleton } from "../ui/skeleton";
+import { Button } from "@/ui/button";
+import { Skeleton } from "@/ui/skeleton";
 import { toast } from "sonner";
 import { formatDate } from "@/core/utils/utils";
 
