@@ -1,7 +1,7 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { SiteHeader } from '@/modules/marketing/site-header';
+import { SiteFooter } from '@/modules/marketing/site-footer';
+import { Card } from '@/shared/components/ui/card';
+import { Badge } from '@/shared/components/ui/badge';
 import { CheckCircle2, Circle, Clock } from "lucide-react";
 
 const roadmapItems = [

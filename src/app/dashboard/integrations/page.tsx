@@ -1,11 +1,11 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from '@/shared/components/ui/card';
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from '@/shared/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { useState } from "react";
-import { IntegrationsList } from "@/components/dashboard/lists/integrations-list";
+import { IntegrationsList } from '@/modules/dashboard/lists/integrations-list';
 
 export type IntegrationsFilters = {
 	searchQuery: string;

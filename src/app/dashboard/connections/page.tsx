@@ -1,4 +1,4 @@
-import { ConnectionsList } from "@/components/dashboard/lists/connections-list";
+import { ConnectionsList } from '@/modules/dashboard/lists/connections-list';
 
 export default function ConnectionsPage() {
 	return (

@@ -1,8 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GeneralSettings } from "@/components/dashboard/settings/general-settings"
-import { BillingSettings } from "@/components/dashboard/settings/billing-settings"
-import { NotificationSettings } from "@/components/dashboard/settings/notification-settings"
-import { SecuritySettings } from "@/components/dashboard/settings/security-settings"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs'
+import { GeneralSettings } from '@/modules/dashboard/settings/general-settings'
+import { BillingSettings } from '@/modules/dashboard/settings/billing-settings'
+import { NotificationSettings } from '@/modules/dashboard/settings/notification-settings'
+import { SecuritySettings } from '@/modules/dashboard/settings/security-settings'
 
 export default function SettingsPage() {
   return (

@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
-import { AppConfigs } from "@/configs/app";
-import { Connection } from "@/lib/validations/connection";
+import { supabaseAdmin } from '@/shared/lib/supabase/admin';
+import { AppConfigs } from '@/shared/configs/app';
+import { Connection } from '@/modules/connections/lib/validations';
 
 export async function GET(request: Request, { params }: { params: Promise<{ connection_id: string }> }) {
-	const connectionId = (await params).connection_id;
-	const { data: connection, error: teamError } = await supabaseAdmin.from("connections").select("*").eq("id", connectionId).single<Connection>();
-	if (teamError || !connection) return new NextResponse("Connection not found", { status: 404 });
+    const connectionId = (await params).connection_id;
+    const { data: connection, error: teamError } = await supabaseAdmin.from("connections").select("*").eq("id", connectionId).single<Connection>();
+    if (teamError || !connection) return new NextResponse("Connection not found", { status: 404 });
 
-	const script = `
+    const script = `
         (function() {
             const iframe = document.createElement('iframe');
             iframe.src = '${AppConfigs.url}/widget/${connectionId}';
@@ -34,7 +34,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ conn
         })();
     `;
 
-	return new NextResponse(script, {
-		headers: { "Content-Type": "application/javascript" },
-	});
+    return new NextResponse(script, {
+        headers: { "Content-Type": "application/javascript" },
+    });
 }

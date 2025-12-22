@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from "@/lib/whatsapp";
-import { Connection } from "@/lib/validations/connection";
-import { Conversation } from "@/lib/validations/conversation";
-import { notifications } from "@/lib/services/notifications";
-import { ai } from "@/lib/services/ai";
-import { Message } from "@/lib/validations/message";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { type WhatsAppWebhookPayload, type WhatsAppWebhookMessage, createWhatsAppAPI } from '@/shared/lib/whatsapp';
+import { Connection } from '@/modules/connections/lib/validations';
+import { Conversation } from '@/modules/conversations/lib/validations';
+import { Message } from '@/modules/messages/lib/validations';
+import { notifications } from '@/modules/notifications/services/notifications';
+import { ai } from '@/modules/ai/services/ai';
+import { supabaseAdmin } from '@/shared/lib/supabase/admin';
 
 const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN!;
 if (!WHATSAPP_VERIFY_TOKEN) throw new Error("Please define all Whatsapp environment variables");

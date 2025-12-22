@@ -2,20 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from '@/shared/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
+import { Badge } from '@/shared/components/ui/badge';
+import { Button } from '@/shared/components/ui/button';
 import { ArrowLeft, Bot, MoreVertical, MessageCircle } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import type { Conversation } from "@/lib/validations/conversation";
-import { useMessages } from "@/hooks/use-messages";
-import { Messages, MessagesSkeleton } from "@/components/dashboard/messages";
-import { useAuth } from "@/components/providers/auth-provider";
-import { useConversations } from "@/hooks/use-conversations";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatDate } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/components/ui/dropdown-menu';
+import type { Conversation } from '@/modules/conversations/lib/validations';
+import { useMessages } from '@/modules/messages/hooks/use-messages';
+import { Messages, MessagesSkeleton } from '@/modules/dashboard/messages';
+import { useAuth } from '@/shared/providers/auth-provider';
+import { useConversations } from '@/modules/conversations/hooks/use-conversations';
+import { Skeleton } from '@/shared/components/ui/skeleton';
+import { ScrollArea } from '@/shared/components/ui/scroll-area';
+import { formatDate } from '@/shared/lib/utils';
 
 interface Props {
 	conversation_id: string;
@@ -122,7 +122,7 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuItem onClick={() => setAssignOpen(true)}>Assign to Agent</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => { }} disabled>Assign to Agent (Coming soon)</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem variant="destructive">Delete Conversation</DropdownMenuItem>
 					</DropdownMenuContent>
@@ -196,7 +196,7 @@ export default function SingleConversationClientPage({ conversation_id }: Props)
 
 					<Card>
 						<CardContent className="p-6 space-y-2">
-							<Button variant="outline" className="w-full bg-transparent" onClick={() => setAssignOpen(true)}>
+							<Button variant="outline" className="w-full bg-transparent" onClick={() => { }} disabled>
 								Assign / Change Agent
 							</Button>
 						</CardContent>

@@ -1,10 +1,10 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { SiteHeader } from '@/modules/marketing/site-header';
+import { SiteFooter } from '@/modules/marketing/site-footer';
+import { Button } from '@/shared/components/ui/button';
+import { Card, CardContent } from '@/shared/components/ui/card';
 import { ArrowRight, Bot, Target, Users, Zap } from "lucide-react";
 import Link from "next/link";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from '@/shared/configs/platform';
 
 export default function AboutPage() {
 	return (

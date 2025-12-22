@@ -2,16 +2,16 @@
 
 import { Suspense } from "react";
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { Check, Loader2 } from "lucide-react";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { startCheckoutSession, verifyCheckoutSession } from "@/actions/stripe";
+import { startCheckoutSession, verifyCheckoutSession } from '@/shared/actions/stripe';
 import { useSearchParams, useRouter } from "next/navigation";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { platformConfigs } from "@/configs/platform";
-import { AppConfigs } from "@/configs/app";
+import { Alert, AlertDescription } from '@/shared/components/ui/alert';
+import { platformConfigs } from '@/shared/configs/platform';
+import { AppConfigs } from '@/shared/configs/app';
 
 const stripePromise = loadStripe(AppConfigs.stripe.publishableKey);
 

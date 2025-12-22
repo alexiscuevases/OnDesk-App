@@ -1,7 +1,7 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { PricingSection } from "@/components/site/pricing/pricing-section";
-import { PricingFAQ } from "@/components/site/pricing/pricing-faq";
+import { SiteHeader } from '@/modules/marketing/site-header';
+import { SiteFooter } from '@/modules/marketing/site-footer';
+import { PricingSection } from '@/modules/marketing/pricing/pricing-section';
+import { PricingFAQ } from '@/modules/marketing/pricing/pricing-faq';
 
 export default function PricingPage() {
 	return (

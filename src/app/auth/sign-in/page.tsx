@@ -1,5 +1,5 @@
-import { SignInForm } from "@/components/site/forms/sign-in-form";
-import { platformConfigs } from "@/configs/platform";
+import { SignInForm } from '@/modules/marketing/forms/sign-in-form';
+import { platformConfigs } from '@/shared/configs/platform';
 import { Bot } from "lucide-react";
 import Link from "next/link";
 

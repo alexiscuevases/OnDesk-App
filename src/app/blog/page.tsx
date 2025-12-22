@@ -1,12 +1,12 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { SiteHeader } from '@/modules/marketing/site-header';
+import { SiteFooter } from '@/modules/marketing/site-footer';
+import { Button } from '@/shared/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Badge } from '@/shared/components/ui/badge';
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from '@/shared/configs/platform';
 
 const blogPosts = [
 	{

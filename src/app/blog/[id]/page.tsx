@@ -1,12 +1,12 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { SiteHeader } from '@/modules/marketing/site-header';
+import { SiteFooter } from '@/modules/marketing/site-footer';
+import { Button } from '@/shared/components/ui/button';
+import { Badge } from '@/shared/components/ui/badge';
+import { Separator } from '@/shared/components/ui/separator';
 import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { platformConfigs } from "@/configs/platform";
+import { platformConfigs } from '@/shared/configs/platform';
 
 // Mock data - in production, this would come from your backend
 const blogPosts = {

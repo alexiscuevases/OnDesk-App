@@ -1,11 +1,11 @@
 "use client";
 
-import { ConversationsList } from "@/components/dashboard/lists/conversations-list";
-import { Card, CardContent } from "@/components/ui/card";
+import { ConversationsList } from '@/modules/dashboard/lists/conversations-list';
+import { Card, CardContent } from '@/shared/components/ui/card';
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from "@/lib/constants/conversation";
+import { Input } from '@/shared/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { CONVERSATION_CHANNELS_OBJECT, CONVERSATION_STATUSES_OBJECT } from '@/modules/conversations/lib/constants';
 import { useState } from "react";
 
 export type Filters = {

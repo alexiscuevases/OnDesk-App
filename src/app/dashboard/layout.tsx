@@ -1,9 +1,9 @@
 import type React from "react";
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { Toaster } from "@/components/ui/sonner";
-import { AuthProvider } from "@/components/providers/auth-provider";
+import { DashboardSidebar } from '@/modules/dashboard/dashboard-sidebar';
+import { DashboardHeader } from '@/modules/dashboard/dashboard-header';
+import { SidebarProvider } from '@/shared/components/ui/sidebar';
+import { Toaster } from '@/shared/components/ui/sonner';
+import { AuthProvider } from '@/shared/providers/auth-provider';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	return (

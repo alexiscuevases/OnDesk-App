@@ -1,5 +1,5 @@
-import { RecoveryForm } from "@/components/site/forms/recovery-form";
-import { platformConfigs } from "@/configs/platform";
+import { RecoveryForm } from '@/modules/marketing/forms/recovery-form';
+import { platformConfigs } from '@/shared/configs/platform';
 import { Bot } from "lucide-react";
 import Link from "next/link";
 

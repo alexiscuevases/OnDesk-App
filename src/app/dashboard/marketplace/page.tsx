@@ -1,10 +1,10 @@
 "use client";
 
-import { MarketplaceList } from "@/components/dashboard/lists/marketplace-list";
-import { Card, CardContent } from "@/components/ui/card";
+import { MarketplaceList } from '@/modules/dashboard/lists/marketplace-list';
+import { Card, CardContent } from '@/shared/components/ui/card';
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from '@/shared/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { useState } from "react";
 
 export type MarketplaceFilters = {

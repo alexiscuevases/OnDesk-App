@@ -1,6 +1,6 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { platformConfigs } from "@/configs/platform";
+import { SiteHeader } from '@/modules/marketing/site-header';
+import { SiteFooter } from '@/modules/marketing/site-footer';
+import { platformConfigs } from '@/shared/configs/platform';
 
 export default function PrivacyPage() {
 	return (

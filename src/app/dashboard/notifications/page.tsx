@@ -1,6 +1,6 @@
-import { NotificationsList } from "@/components/dashboard/lists/notifications-list";
-import { NotificationsSettings } from "@/components/dashboard/notifications-settings";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { NotificationsList } from '@/modules/dashboard/lists/notifications-list';
+import { NotificationsSettings } from '@/modules/dashboard/notifications-settings';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 
 export default function NotificationsPage() {
 	return (

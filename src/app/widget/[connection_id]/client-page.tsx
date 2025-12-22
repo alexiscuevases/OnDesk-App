@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { AlertCircle, Loader2, MessageCircle, Send, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from '@/shared/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/shared/components/ui/card';
+import { Input } from '@/shared/components/ui/input';
+import { Textarea } from '@/shared/components/ui/textarea';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StartConversationInput, startConversationSchema } from "@/lib/validations/widget";
-import { useWidget } from "@/hooks/use-widget";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { formatDate } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { StartConversationInput, startConversationSchema } from '@/modules/widget/lib/validations';
+import { useWidget } from '@/modules/widget/hooks/use-widget';
+import { Label } from '@/shared/components/ui/label';
+import { Alert, AlertDescription } from '@/shared/components/ui/alert';
+import { formatDate } from '@/shared/lib/utils';
+import { ScrollArea } from '@/shared/components/ui/scroll-area';
 
 interface Props {
 	connectionId: string;
@@ -156,11 +156,10 @@ export default function WidgetClientPage({ connectionId }: Props) {
 												<div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
 													<div className="flex flex-col max-w-2/3 gap-2">
 														<div
-															className={`inline-block w-fit rounded-lg px-3 py-2 text-sm wrap-break-words ${
-																message.role === "user"
-																	? "bg-primary text-primary-foreground self-end"
-																	: "bg-muted text-foreground self-start"
-															}`}>
+															className={`inline-block w-fit rounded-lg px-3 py-2 text-sm wrap-break-words ${message.role === "user"
+																? "bg-primary text-primary-foreground self-end"
+																: "bg-muted text-foreground self-start"
+																}`}>
 															{message.content}
 														</div>
 														<span
