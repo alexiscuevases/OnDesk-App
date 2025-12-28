@@ -1,4 +1,4 @@
-import { SignUpForm } from '@/modules/marketing/forms/sign-up-form';
+import { SignUpForm } from '@/modules/auth/forms/sign-up-form';
 import { platformConfigs } from '@/shared/configs/platform';
 import { Bot } from "lucide-react";
 import Link from "next/link";
